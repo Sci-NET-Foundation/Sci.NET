@@ -53,7 +53,7 @@ jobs:
         run: |
           dotnet tool restore
           $coveragePath = "${{ github.workspace }}\coverage.xml"
-          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"Sci-NET-Foundation_Sci.NET" /o:"sci-net-foundation" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.vscoveragexml.reportsPaths=$coveragePath
+          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"SciDotNet-Foundation_Sci.NET" /o:"scidotnet-foundation" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.vscoveragexml.reportsPaths=$coveragePath
           dotnet build --no-incremental
           dotnet dotnet-coverage collect "dotnet test" -f xml -o "$coveragePath"
           ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
