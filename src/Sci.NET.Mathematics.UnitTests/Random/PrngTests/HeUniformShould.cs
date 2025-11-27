@@ -1,0 +1,204 @@
+﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
+
+using Sci.NET.Common.Memory;
+using Sci.NET.Common.Numerics;
+using Sci.NET.Mathematics.Random;
+using Sci.NET.Tests.Framework.Assertions;
+
+namespace Sci.NET.Mathematics.UnitTests.Random.PrngTests;
+
+public class HeUniformShould : PrngTestBase
+{
+    [Theory]
+    [InlineData(5)]
+    [InlineData(10)]
+    [InlineData(30)]
+    public void NotBeEqual_WhenRunTwice_BFloat16(int fanIn)
+    {
+        foreach (var seed in Seeds)
+        {
+            // Arrange
+            using var aMemory = new SystemMemoryBlock<BFloat16>(fanIn);
+            using var bMemory = new SystemMemoryBlock<BFloat16>(fanIn);
+            var prng = new Prng(seed);
+
+            // Act
+            prng.FillHeUniform(aMemory, fanIn);
+            prng.FillHeUniform(bMemory, fanIn);
+
+            // Assert
+            var aArray = aMemory.ToArray();
+            var bArray = bMemory.ToArray();
+
+            aArray.Should().NotBeEquivalentTo(bArray);
+        }
+    }
+
+    [Theory]
+    [InlineData(5)]
+    [InlineData(10)]
+    [InlineData(30)]
+    public void NotBeEqual_WhenRunTwice_Float16(int fanIn)
+    {
+        foreach (var seed in Seeds)
+        {
+            // Arrange
+            using var aMemory = new SystemMemoryBlock<Half>(fanIn);
+            using var bMemory = new SystemMemoryBlock<Half>(fanIn);
+            var prng = new Prng(seed);
+
+            // Act
+            prng.FillHeUniform(aMemory, fanIn);
+            prng.FillHeUniform(bMemory, fanIn);
+
+            // Assert
+            var aArray = aMemory.ToArray();
+            var bArray = bMemory.ToArray();
+
+            aArray.Should().NotBeEquivalentTo(bArray);
+        }
+    }
+
+    [Theory]
+    [InlineData(5)]
+    [InlineData(10)]
+    [InlineData(30)]
+    public void NotBeEqual_WhenRunTwice_Float32(int fanIn)
+    {
+        foreach (var seed in Seeds)
+        {
+            // Arrange
+            using var aMemory = new SystemMemoryBlock<float>(fanIn);
+            using var bMemory = new SystemMemoryBlock<float>(fanIn);
+            var prng = new Prng(seed);
+
+            // Act
+            prng.FillHeUniform(aMemory, fanIn);
+            prng.FillHeUniform(bMemory, fanIn);
+
+            // Assert
+            var aArray = aMemory.ToArray();
+            var bArray = bMemory.ToArray();
+
+            aArray.Should().NotBeEquivalentTo(bArray);
+        }
+    }
+
+    [Theory]
+    [InlineData(5)]
+    [InlineData(10)]
+    [InlineData(30)]
+    public void NotBeEqual_WhenRunTwice_Float64(int fanIn)
+    {
+        foreach (var seed in Seeds)
+        {
+            // Arrange
+            using var aMemory = new SystemMemoryBlock<double>(fanIn);
+            using var bMemory = new SystemMemoryBlock<double>(fanIn);
+            var prng = new Prng(seed);
+
+            // Act
+            prng.FillHeUniform(aMemory, fanIn);
+            prng.FillHeUniform(bMemory, fanIn);
+
+            // Assert
+            var aArray = aMemory.ToArray();
+            var bArray = bMemory.ToArray();
+
+            aArray.Should().NotBeEquivalentTo(bArray);
+        }
+    }
+
+    [Theory]
+    [InlineData(5)]
+    [InlineData(10)]
+    [InlineData(30)]
+    public void BeInCorrectRange_BFloat16(int fanIn)
+    {
+        foreach (var seed in Seeds)
+        {
+            // Arrange
+            using var memory = new SystemMemoryBlock<BFloat16>(fanIn);
+            var prng = new Prng(seed);
+
+            // Act
+            prng.FillHeUniform(memory, fanIn);
+
+            // Assert
+            var array = memory.ToArray();
+            var limit = BFloat16.Sqrt(6f / fanIn);
+
+            array.Should().AllBeInRange(-limit, limit);
+        }
+    }
+
+    [Theory]
+    [InlineData(5)]
+    [InlineData(10)]
+    [InlineData(30)]
+    public void BeInCorrectRange_Float16(int fanIn)
+    {
+        foreach (var seed in Seeds)
+        {
+            // Arrange
+            using var memory = new SystemMemoryBlock<Half>(fanIn);
+            var prng = new Prng(seed);
+
+            // Act
+            prng.FillHeUniform(memory, fanIn);
+
+            // Assert
+            var array = memory.ToArray();
+            var limit = Half.Sqrt((Half)(6f / fanIn));
+
+            array.Should().AllBeInRange(-limit, limit);
+        }
+    }
+
+    [Theory]
+    [InlineData(5)]
+    [InlineData(10)]
+    [InlineData(30)]
+    public void BeInCorrectRange_Float32(int fanIn)
+    {
+        foreach (var seed in Seeds)
+        {
+            // Arrange
+            using var memory = new SystemMemoryBlock<float>(fanIn);
+            var prng = new Prng(seed);
+
+            // Act
+            prng.FillHeUniform(memory, fanIn);
+
+            // Assert
+            var array = memory.ToArray();
+            var limit = float.Sqrt(6f / fanIn);
+
+            array.Should().AllBeInRange(-limit, limit);
+        }
+    }
+
+    [Theory]
+    [InlineData(5)]
+    [InlineData(10)]
+    [InlineData(30)]
+    public void BeInCorrectRange_Float64(int fanIn)
+    {
+        foreach (var seed in Seeds)
+        {
+            // Arrange
+            using var memory = new SystemMemoryBlock<double>(fanIn);
+            var prng = new Prng(seed);
+
+            // Act
+            prng.FillHeUniform(memory, fanIn);
+
+            // Assert
+            var array = memory.ToArray();
+            var limit = double.Sqrt(6f / fanIn);
+
+            array.Should().AllBeInRange(-limit, limit);
+        }
+    }
+}
