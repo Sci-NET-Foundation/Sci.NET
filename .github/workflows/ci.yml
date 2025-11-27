@@ -1,0 +1,54 @@
+name: .NET
+
+on:
+  push:
+    branches:
+      - 'main' 
+      - 'release/*'
+  pull_request:
+    branches:
+      - '*'
+      - '**/*'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4.3.0
+      env:
+        NUGET_AUTH_TOKEN: '%NUGET_AUTH_TOKEN%'
+    - uses: actions/checkout@v3
+      with: 
+        fetch-depth: 0
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v4.2.0
+      with:
+        versionSpec: '6.4.x'
+    - name: Determine Version
+      uses: gittools/actions/gitversion/execute@v4.2.0
+      with:
+        useConfigFile: true
+    - name: Create and push tag
+      if: github.event_name != 'pull_request'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git tag -a "${{ env.GitVersion_FullSemVer }}" -m "V.${{ env.GitVersion_FullSemVer }}"
+        git push origin "${{ env.GitVersion_FullSemVer }}"
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+    - name: Pack NuGet packages
+      if: github.event_name != 'pull_request'
+      shell: pwsh
+      run: |
+        dotnet pack -c Release /p:Version=${{ env.GitVersion_FullSemVer }}
+    - name: Publish NuGet packages
+      if: github.event_name != 'pull_request'
+      run: dotnet nuget push "${{ github.workspace }}/Artifacts/bin/Release/*.nupkg" --source https://nuget.pkg.github.com/Sci-NET-Foundation/index.json --api-key ${{ github.token }}
