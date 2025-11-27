@@ -1,5 +1,8 @@
 name: .NET
 
+permissions:
+  contents: write
+
 on:
   push:
     branches:
@@ -32,7 +35,6 @@ jobs:
       with:
         useConfigFile: true
     - name: Create and push tag
-      if: github.event_name != 'pull_request'
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
