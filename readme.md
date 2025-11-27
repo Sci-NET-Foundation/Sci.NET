@@ -1,13 +1,13 @@
-![Logo](https://github.com/SciDotNet/Sci.NET/blob/main/eng/build-props/images/icon-128.png)
-[![.NET](https://github.com/SciDotNet/Sci.NET/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/SciDotNet/Sci.NET/actions/workflows/ci.yml)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=SciDotNet_Sci.NET&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=SciDotNet_Sci.NET)
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=SciDotNet_Sci.NET&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=SciDotNet_Sci.NET)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=SciDotNet_Sci.NET&metric=coverage)](https://sonarcloud.io/summary/new_code?id=SciDotNet_Sci.NET)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=SciDotNet_Sci.NET&metric=bugs)](https://sonarcloud.io/summary/new_code?id=SciDotNet_Sci.NET)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=SciDotNet_Sci.NET&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=SciDotNet_Sci.NET)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=SciDotNet_Sci.NET&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=SciDotNet_Sci.NET)
-[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=SciDotNet_Sci.NET&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=SciDotNet_Sci.NET)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=SciDotNet_Sci.NET&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=SciDotNet_Sci.NET)
+![Logo](https://github.com/Sci-NET-Foundation/Sci.NET/blob/main/eng/build-props/images/icon-128.png)
+[![.NET](https://github.com/Sci-NET-Foundation/Sci.NET/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Sci-NET-Foundation/Sci.NET/actions/workflows/ci.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Sci-NET-Foundation_Sci.NET&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Sci-NET-Foundation_Sci.NET)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Sci-NET-Foundation_Sci.NET&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=Sci-NET-Foundation_Sci.NET)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Sci-NET-Foundation_Sci.NET&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Sci-NET-Foundation_Sci.NET)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Sci-NET-Foundation_Sci.NET&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Sci-NET-Foundation_Sci.NET)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Sci-NET-Foundation_Sci.NET&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Sci-NET-Foundation_Sci.NET)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Sci-NET-Foundation_Sci.NET&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=Sci-NET-Foundation_Sci.NET)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=Sci-NET-Foundation_Sci.NET&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=Sci-NET-Foundation_Sci.NET)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=Sci-NET-Foundation_Sci.NET&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=Sci-NET-Foundation_Sci.NET)
 
 # Sci.NET (Early Development)
 
@@ -26,7 +26,7 @@ backends.
 
 ## License
 
-[Apache License 2.0](https://github.com/SciDotNet/Sci.NET/blob/main/LICENSE/)
+[Apache License 2.0](https://github.com/Sci-NET-Foundation/Sci.NET/blob/main/LICENSE/)
 
 **Some packages include third-party components with specific licensing requirements**
 
@@ -49,7 +49,7 @@ Windows and Linux.
 Setup your environment with the build scripts:
 
 ```bash
-  git clone https://github.com/SciDotNet/Sci.NET.git
+  git clone https://github.com/Sci-NET-Foundation/Sci.NET.git
   cd Sci.NET
   ./build-dev.cmd
 ```
@@ -57,7 +57,7 @@ Setup your environment with the build scripts:
 Or to build a release version:
 
 ```bash
-  git clone https://github.com/SciDotNet/Sci.NET.git
+  git clone https://github.com/Sci-NET-Foundation/Sci.NET.git
   cd Sci.NET
   ./build-release.cmd
 ```
@@ -77,4 +77,3 @@ Or to build a release version:
 ## Third Party
 
 - [NVIDIA CUDA](https://docs.nvidia.com/cuda/eula/index.html)
-- [ImageSharp](https://github.com/SixLabors/ImageSharp)
