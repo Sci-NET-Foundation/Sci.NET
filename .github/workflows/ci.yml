@@ -2,6 +2,7 @@ name: .NET
 
 permissions:
   contents: write
+  packages: write
 
 on:
   push:
@@ -48,10 +49,8 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Pack NuGet packages
-      if: github.event_name != 'pull_request'
       shell: pwsh
       run: |
         dotnet pack -c Release /p:Version=${{ env.GitVersion_FullSemVer }}
     - name: Publish NuGet packages
-      if: github.event_name != 'pull_request'
       run: dotnet nuget push "${{ github.workspace }}/Artifacts/bin/Release/*.nupkg" --source https://nuget.pkg.github.com/Sci-NET-Foundation/index.json --api-key ${{ github.token }}
