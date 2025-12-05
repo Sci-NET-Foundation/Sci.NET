@@ -20,7 +20,7 @@ public interface IEqualityOperationKernels
     /// <param name="result">The result.</param>
     /// <param name="n">The number of elements to compare.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>.</typeparam>
-    public void PointwiseEqualsKernel<TNumber>(IMemoryBlock<TNumber> leftOperand, IMemoryBlock<TNumber> rightOperand, IMemoryBlock<TNumber> result, long n)
+    public void PointwiseEqual<TNumber>(IMemoryBlock<TNumber> leftOperand, IMemoryBlock<TNumber> rightOperand, IMemoryBlock<TNumber> result, long n)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
@@ -31,7 +31,7 @@ public interface IEqualityOperationKernels
     /// <param name="result">The result.</param>
     /// <param name="n">The number of elements to compare.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>.</typeparam>
-    public void PointwiseNotEqualKernel<TNumber>(IMemoryBlock<TNumber> leftOperand, IMemoryBlock<TNumber> rightOperand, IMemoryBlock<TNumber> result, long n)
+    public void PointwiseNotEqual<TNumber>(IMemoryBlock<TNumber> leftOperand, IMemoryBlock<TNumber> rightOperand, IMemoryBlock<TNumber> result, long n)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
@@ -44,7 +44,7 @@ public interface IEqualityOperationKernels
     /// <param name="result">The result.</param>
     /// <param name="n">The number of elements to compare.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>.</typeparam>
-    public void PointwiseGreaterThanKernel<TNumber>(IMemoryBlock<TNumber> leftOperand, IMemoryBlock<TNumber> rightOperand, IMemoryBlock<TNumber> result, long n)
+    public void PointwiseGreaterThan<TNumber>(IMemoryBlock<TNumber> leftOperand, IMemoryBlock<TNumber> rightOperand, IMemoryBlock<TNumber> result, long n)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
@@ -56,7 +56,7 @@ public interface IEqualityOperationKernels
     /// <param name="result">The result.</param>
     /// <param name="n">The number of elements to compare.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>.</typeparam>
-    public void PointwiseGreaterThanOrEqualKernel<TNumber>(IMemoryBlock<TNumber> leftOperand, IMemoryBlock<TNumber> rightOperand, IMemoryBlock<TNumber> result, long n)
+    public void PointwiseGreaterThanOrEqual<TNumber>(IMemoryBlock<TNumber> leftOperand, IMemoryBlock<TNumber> rightOperand, IMemoryBlock<TNumber> result, long n)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
@@ -67,7 +67,7 @@ public interface IEqualityOperationKernels
     /// <param name="result">The result.</param>
     /// <param name="n">The number of elements to compare.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>.</typeparam>
-    public void PointwiseLessThanKernel<TNumber>(IMemoryBlock<TNumber> leftOperand, IMemoryBlock<TNumber> rightOperand, IMemoryBlock<TNumber> result, long n)
+    public void PointwiseLessThan<TNumber>(IMemoryBlock<TNumber> leftOperand, IMemoryBlock<TNumber> rightOperand, IMemoryBlock<TNumber> result, long n)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
@@ -78,6 +78,6 @@ public interface IEqualityOperationKernels
     /// <param name="result">The result.</param>
     /// <param name="n">The number of elements to compare.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>.</typeparam>
-    public void PointwiseLessThanOrEqualKernel<TNumber>(IMemoryBlock<TNumber> leftOperand, IMemoryBlock<TNumber> rightOperand, IMemoryBlock<TNumber> result, long n)
+    public void PointwiseLessThanOrEqual<TNumber>(IMemoryBlock<TNumber> leftOperand, IMemoryBlock<TNumber> rightOperand, IMemoryBlock<TNumber> result, long n)
         where TNumber : unmanaged, INumber<TNumber>;
 }

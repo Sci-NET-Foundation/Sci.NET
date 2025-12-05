@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Sci.NET.Common.Attributes;
@@ -541,6 +542,58 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     public void Release(Guid id)
     {
         _ = _rentals.Remove(id);
+    }
+
+    /// <summary>
+    /// Loads a vector from the memory block at the specified index.
+    /// </summary>
+    /// <param name="i">The index to load the vector from.</param>
+    /// <returns>>The loaded vector.</returns>
+    [MethodImpl(ImplementationOptions.HotPath)]
+    public unsafe Vector<T> LoadVector(long i)
+    {
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
+        ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(i + Vector<T>.Count, Length);
+        ArgumentOutOfRangeException.ThrowIfLessThan(i, 0);
+
+        return Vector.Load(Pointer + i);
+    }
+
+    /// <summary>
+    /// Unsafely loads a vector from the memory block at the specified index without bounds checking.
+    /// </summary>
+    /// <param name="i">The index to load the vector from.</param>
+    /// <returns>>The loaded vector.</returns>
+    [MethodImpl(ImplementationOptions.HotPath)]
+    public unsafe Vector<T> UnsafeLoadUncheckedVector(long i)
+    {
+        return Vector.Load(Pointer + i);
+    }
+
+    /// <summary>
+    /// Stores a vector to the memory block at the specified index.
+    /// </summary>
+    /// <param name="i">The index to store the vector to.</param>
+    /// <param name="vector">>The vector to store.</param>
+    [MethodImpl(ImplementationOptions.HotPath)]
+    public unsafe void StoreVector(long i, Vector<T> vector)
+    {
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
+        ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(i + Vector<T>.Count, Length);
+        ArgumentOutOfRangeException.ThrowIfLessThan(i, 0);
+
+        vector.Store(Pointer + i);
+    }
+
+    /// <summary>
+    /// Unsafely stores a vector to the memory block at the specified index without bounds checking.
+    /// </summary>
+    /// <param name="i">The index to store the vector to.</param>
+    /// <param name="vector">>The vector to store.</param>
+    [MethodImpl(ImplementationOptions.HotPath)]
+    public unsafe void UnsafeStoreUncheckedVector(long i, Vector<T> vector)
+    {
+        vector.Store(Pointer + i);
     }
 
     /// <summary>

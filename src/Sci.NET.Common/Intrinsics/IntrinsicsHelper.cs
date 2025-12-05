@@ -29,17 +29,21 @@ public static class IntrinsicsHelper
     /// <returns>The required alignment as a <see cref="UIntPtr"/>.</returns>
     public static UIntPtr CalculateRequiredAlignment()
     {
-        if (Avx512F.IsSupported)
+        if ((AvailableInstructionSets & SimdInstructionSet.Avx512F) != 0)
         {
             return new UIntPtr(64);
         }
 
-        if (Avx2.IsSupported || Avx.IsSupported)
+        if ((AvailableInstructionSets & SimdInstructionSet.Avx2) != 0 ||
+            (AvailableInstructionSets & SimdInstructionSet.Avx) != 0)
         {
             return new UIntPtr(32);
         }
 
-        if (Sse41.IsSupported || Sse3.IsSupported || Sse2.IsSupported || Sse.IsSupported)
+        if ((AvailableInstructionSets & SimdInstructionSet.Sse41) != 0 ||
+            (AvailableInstructionSets & SimdInstructionSet.Sse2) != 0 ||
+            (AvailableInstructionSets & SimdInstructionSet.Sse2) != 0 ||
+            (AvailableInstructionSets & SimdInstructionSet.Sse) != 0)
         {
             return new UIntPtr(16);
         }
@@ -101,5 +105,24 @@ public static class IntrinsicsHelper
         {
             AvailableInstructionSets |= SimdInstructionSet.Fma;
         }
+    }
+
+    /// <summary>
+    /// Checks if AVX and FMA instruction sets are supported.
+    /// </summary>
+    /// <returns>A value indicating whether AVX and FMA are supported.</returns>
+    public static bool IsAvxFmaSupported()
+    {
+        return (AvailableInstructionSets & SimdInstructionSet.Avx2) != 0 &&
+               (AvailableInstructionSets & SimdInstructionSet.Fma) != 0;
+    }
+
+    /// <summary>
+    /// Checks if AVX instruction set is supported.
+    /// </summary>
+    /// <returns>A value indicating whether AVX is supported.</returns>
+    public static bool IsAvxSupported()
+    {
+        return (AvailableInstructionSets & SimdInstructionSet.Avx2) != 0;
     }
 }

@@ -27,9 +27,9 @@ public interface ITensorBackend
     public IArithmeticKernels Arithmetic { get; }
 
     /// <summary>
-    /// Gets the <see cref="IPowerKernels"/> instance for the <see cref="ITensorBackend"/>.
+    /// Gets the <see cref="IExponentialKernels"/> instance for the <see cref="ITensorBackend"/>.
     /// </summary>
-    public IPowerKernels Power { get; }
+    public IExponentialKernels Exponential { get; }
 
     /// <summary>
     /// Gets the <see cref="IDevice"/> instance for the <see cref="ITensorBackend"/>.

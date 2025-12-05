@@ -111,9 +111,16 @@ public class HypotShould : IntegrationTestBase
     public void ReturnExpectedResult_GivenLargeFp32(IDevice device)
     {
         // Arrange
-        var left = Tensor.FromArray<float>(Enumerable.Range(0, 1024).Select(x => (float)x).ToArray());
-        var right = Tensor.FromArray<float>(Enumerable.Range(0, 1024).Select(x => (float)(x * 2)).ToArray());
-        var expected = Tensor.FromArray<float>(Enumerable.Range(0, 1024).Select(x => (float)Math.Sqrt((x * x) + (2 * x * 2 * x))).ToArray());
+        var left = Tensor.Random.Uniform<float>(new Shape(1000, 100), -100f, 100f, seed: 123456).ToTensor();
+        var right = Tensor.Random.Uniform<float>(new Shape(1000, 100), -100f, 100f, seed: 654321).ToTensor();
+        var expected = Tensor.Zeros<float>(new Shape(1000, 100));
+
+        for (var i = 0; i < left.Shape.ElementCount; i++)
+        {
+            var l = left.Memory[i];
+            var r = right.Memory[i];
+            expected.Memory[i] = MathF.Sqrt((l * l) + (r * r));
+        }
 
         left.To(device);
         right.To(device);
@@ -122,7 +129,7 @@ public class HypotShould : IntegrationTestBase
         var result = left.Hypot(right);
 
         // Assert
-        result.Should().HaveEquivalentElements(expected.ToArray());
+        result.Should().HaveApproximatelyEquivalentElements(expected.ToArray(), 0.0001f);
     }
 
     [Theory]
@@ -130,9 +137,9 @@ public class HypotShould : IntegrationTestBase
     public void ReturnExpectedResult_GivenLargeFp64(IDevice device)
     {
         // Arrange
-        var left = Tensor.FromArray<double>(Enumerable.Range(0, 1024).Select(x => (double)x).ToArray());
-        var right = Tensor.FromArray<double>(Enumerable.Range(0, 1024).Select(x => (double)(x * 2)).ToArray());
-        var expected = Tensor.FromArray<double>(Enumerable.Range(0, 1024).Select(x => Math.Sqrt((x * x) + (2 * x * 2 * x))).ToArray());
+        var left = Tensor.FromArray<double>(Enumerable.Range(0, 1051).Select(x => (double)x).ToArray());
+        var right = Tensor.FromArray<double>(Enumerable.Range(0, 1051).Select(x => (double)(x * 2)).ToArray());
+        var expected = Tensor.FromArray<double>(Enumerable.Range(0, 1051).Select(x => Math.Sqrt((x * x) + (2 * x * 2 * x))).ToArray());
 
         left.To(device);
         right.To(device);

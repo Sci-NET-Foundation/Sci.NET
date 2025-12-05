@@ -15,7 +15,7 @@ public class GELUBackwardShould : IntegrationTestBase
     public void ReturnCorrectValues_GivenFloat(IDevice device)
     {
         // Arrange
-        var value = Tensor.FromArray<float>(new float[] { -4, -2, -1, -0.75f, 0, 1, 2, 60 });
+        var value = Tensor.FromArray<float>(new float[] { -50, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 60 });
 
         value.To(device);
 
@@ -25,8 +25,10 @@ public class GELUBackwardShould : IntegrationTestBase
         // Assert
         result
             .Should()
-            .HaveShape(8)
+            .HaveShape(12)
             .And
-            .HaveApproximatelyEquivalentElements(new float[] { -0.032137435f, -0.14650725f, -0.085086465f, 0.0026758164f, 0.5f, 1.0850865f, 1.1465073f, 1f }, 1e-6f);
+            .HaveApproximatelyEquivalentElements(
+                new float[] { 0F, -0.0003351313F, -0.011584155F, -0.086099304F, -0.08296409F, 0.5F, 1.0829642F, 1.0860993F, 1.0115842F, 1.0003352F, 1.0000015F, 1F },
+                1e-6f);
     }
 }

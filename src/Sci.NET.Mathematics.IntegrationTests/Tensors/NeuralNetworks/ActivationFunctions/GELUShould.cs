@@ -15,7 +15,7 @@ public class GELUShould : IntegrationTestBase
     public void ReturnCorrectValues_GivenFloat(IDevice device)
     {
         // Arrange
-        var value = Tensor.FromArray<float>(new float[] { -4, -2, -1, -0.75f, 0, 1, 2, 60 });
+        var value = Tensor.FromArray<float>(new float[] { -4, -2, -1, -0.75f, 0, 1, 2, 50, 60 });
 
         value.To(device);
 
@@ -25,8 +25,8 @@ public class GELUShould : IntegrationTestBase
         // Assert
         result
             .Should()
-            .HaveShape(8)
+            .HaveShape(9)
             .And
-            .HaveApproximatelyEquivalentElements(new float[] { -7.021427E-05f, -0.04540229f, -0.15880802f, -0.17003945f, 0, 0.841192f, 1.9545977f, 60 }, 1e-6f);
+            .HaveApproximatelyEquivalentElements(new float[] { -7.021427E-05f, -0.04540229f, -0.15880802f, -0.17003945f, 0, 0.841192f, 1.9545977f, 50, 60 }, 1e-6f);
     }
 }

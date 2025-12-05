@@ -4,6 +4,7 @@
 using System.Numerics;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Tensors;
+using Sci.NET.Tests.Framework.Assertions;
 using Sci.NET.Tests.Framework.Integration;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.Arithmetic;
@@ -54,18 +55,6 @@ public class AbsShould : IntegrationTestBase
         AbsVectorTest<ulong>(new ulong[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new ulong[] { 1, 2, 3 });
     }
 
-    private static Array AbsVectorTest<TNumber>(TNumber[] numbers, IDevice device)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var vector = Tensor.FromArray<TNumber>(numbers).ToVector();
-
-        vector.To(device);
-
-        var result = vector.Abs();
-
-        return result.ToArray();
-    }
-
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenMatrix(IDevice device)
@@ -108,6 +97,54 @@ public class AbsShould : IntegrationTestBase
         AbsTensorTest<uint>(new uint[,,] { { { 1, 2, 3, 4 }, { 5, 6, 7, 8 } }, { { 9, 10, 11, 12 }, { 13, 14, 15, 16 } } }, device).Should().BeEquivalentTo(new uint[,,] { { { 1, 2, 3, 4 }, { 5, 6, 7, 8 } }, { { 9, 10, 11, 12 }, { 13, 14, 15, 16 } } });
         AbsTensorTest<long>(new long[,,] { { { -1, -2, -3, -4 }, { -5, -6, -7, -8 } }, { { -9, -10, -11, -12 }, { -13, -14, -15, -16 } } }, device).Should().BeEquivalentTo(new long[,,] { { { 1, 2, 3, 4 }, { 5, 6, 7, 8 } }, { { 9, 10, 11, 12 }, { 13, 14, 15, 16 } } });
         AbsTensorTest<ulong>(new ulong[,,] { { { 1, 2, 3, 4 }, { 5, 6, 7, 8 } }, { { 9, 10, 11, 12 }, { 13, 14, 15, 16 } } }, device).Should().BeEquivalentTo(new ulong[,,] { { { 1, 2, 3, 4 }, { 5, 6, 7, 8 } }, { { 9, 10, 11, 12 }, { 13, 14, 15, 16 } } });
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenLargeTensorFp32(IDevice device)
+    {
+        // Arrange
+        var shape = new Shape(1000, 200);
+        var randomTensor = Tensor.Random.Uniform<float>(shape, -100f, 100f, seed: 123456).ToTensor();
+        var expected = Tensor.FromArray<float>(randomTensor.Memory.ToArray().Select(MathF.Abs).ToArray()).Reshape(shape);
+
+        randomTensor.To(device);
+
+        // Act
+        var result = randomTensor.Abs();
+
+        // Assert
+        result.Should().HaveEquivalentElements(expected.ToArray());
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenLargeTensorFp64(IDevice device)
+    {
+        // Arrange
+        var shape = new Shape(1000, 200);
+        var randomTensor = Tensor.Random.Uniform<double>(shape, -100f, 100f, seed: 123456).ToTensor();
+        var expected = Tensor.FromArray<double>(randomTensor.Memory.ToArray().Select(Math.Abs).ToArray()).Reshape(shape);
+
+        randomTensor.To(device);
+
+        // Act
+        var result = randomTensor.Abs();
+
+        // Assert
+        result.Should().HaveEquivalentElements(expected.ToArray());
+    }
+
+    private static Array AbsVectorTest<TNumber>(TNumber[] numbers, IDevice device)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var vector = Tensor.FromArray<TNumber>(numbers).ToVector();
+
+        vector.To(device);
+
+        var result = vector.Abs();
+
+        return result.ToArray();
     }
 
     private static Array AbsTensorTest<TNumber>(TNumber[,,] numbers, IDevice device)

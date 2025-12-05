@@ -1,0 +1,34 @@
+// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
+
+using System.Runtime.Intrinsics;
+
+namespace Sci.NET.Mathematics.Backends.Managed.MicroKernels;
+
+/// <summary>
+/// Interface for unary vectorized operations with scalar that support AVX2 with FMA.
+/// </summary>
+public interface IUnaryOperationWithScalarAvxFma : IUnaryOperationWithScalarAvxTail
+{
+    /// <summary>
+    /// Determines whether AVX2 with FMA is supported on the current hardware.
+    /// </summary>
+    /// <returns>A value indicating whether AVX2 with FMA is supported.</returns>
+    public static abstract bool IsAvxFmaSupported();
+
+    /// <summary>
+    /// Invokes the vectorized operation on the input Vector256.
+    /// </summary>
+    /// <param name="input">The input.</param>
+    /// <param name="scalar">The scalar value.</param>
+    /// <returns>The result of the operation.</returns>
+    public static abstract Vector256<float> ApplyAvxFmaFp32(Vector256<float> input, Vector256<float> scalar);
+
+    /// <summary>
+    /// Invokes the vectorized operation on the input Vector256.
+    /// </summary>
+    /// <param name="input">The left input.</param>
+    /// <param name="scalar">The scalar value.</param>
+    /// <returns>The result of the operation.</returns>
+    public static abstract Vector256<double> ApplyAvxFmaFp64(Vector256<double> input, Vector256<double> scalar);
+}

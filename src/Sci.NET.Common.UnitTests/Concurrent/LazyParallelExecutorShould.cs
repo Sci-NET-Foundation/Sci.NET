@@ -41,7 +41,7 @@ public class LazyParallelExecutorShould
             increment,
             i => result[i] = i);
 
-        for (var i = 0; i < iterations; ++i)
+        for (var i = 0; i < iterations; i++)
         {
             result[i].Should().Be(i % increment == 0 ? i : 0);
         }

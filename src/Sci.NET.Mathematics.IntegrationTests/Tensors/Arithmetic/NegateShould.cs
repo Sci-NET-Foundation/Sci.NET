@@ -6,11 +6,46 @@ using Sci.NET.Common.Numerics;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Tensors;
 using Sci.NET.Tests.Framework.Integration;
+using Sci.NET.Tests.Framework.Assertions;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.Arithmetic;
 
 public class NegateShould : IntegrationTestBase
 {
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void NegateTensor_GivenLargeFp32(IDevice device)
+    {
+        // Arrange
+        var tensor = Tensor.Random.Uniform<float>(new Shape(1000, 200), -1000f, 1000f, seed: 123456).ToTensor();
+        var expected = Tensor.FromArray<float>(tensor.Memory.ToArray().Select(x => -x).ToArray()).Reshape(tensor.Shape);
+
+        tensor.To(device);
+
+        // Act
+        var result = tensor.Negate();
+
+        // Assert
+        result.Should().HaveEquivalentElements(expected.ToArray());
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void NegateTensor_GivenLargeFp64(IDevice device)
+    {
+        // Arrange
+        var tensor = Tensor.Random.Uniform<double>(new Shape(1000, 200), -1000f, 1000f, seed: 123456).ToTensor();
+        var expected = Tensor.FromArray<double>(tensor.Memory.ToArray().Select(x => -x).ToArray()).Reshape(tensor.Shape);
+
+        tensor.To(device);
+
+        // Act
+        var result = tensor.Negate();
+
+        // Assert
+        result.Should().HaveEquivalentElements(expected.ToArray());
+    }
+
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void NegateTensor_GivenScalar(IDevice device)
@@ -28,17 +63,6 @@ public class NegateShould : IntegrationTestBase
         NegateScalarTest<ulong>(1, device).Should().Be(1);
     }
 
-    private static TNumber NegateScalarTest<TNumber>(TNumber number, IDevice device)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var scalar = new Scalar<TNumber>(number);
-        scalar.To(device);
-
-        var result = scalar.Negate();
-
-        return result.Value;
-    }
-
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void NegateTensor_GivenVector(IDevice device)
@@ -54,17 +78,6 @@ public class NegateShould : IntegrationTestBase
         NegateVectorTest<uint>(new uint[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new uint[] { 1, 2, 3 });
         NegateVectorTest<long>(new long[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new long[] { -1, -2, -3 });
         NegateVectorTest<ulong>(new ulong[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new ulong[] { 1, 2, 3 });
-    }
-
-    private static Array NegateVectorTest<TNumber>(TNumber[] numbers, IDevice device)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var vector = Tensor.FromArray<TNumber>(numbers).ToVector();
-        vector.To(device);
-
-        var result = vector.Negate();
-
-        return result.ToArray();
     }
 
     [Theory]
@@ -110,6 +123,28 @@ public class NegateShould : IntegrationTestBase
         NegateTensorTest<uint>(new uint[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new uint[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } });
         NegateTensorTest<long>(new long[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new long[,,] { { { -1, -2, -3 }, { -4, -5, -6 } }, { { -7, -8, -9 }, { -10, -11, -12 } } });
         NegateTensorTest<ulong>(new ulong[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new ulong[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } });
+    }
+
+    private static TNumber NegateScalarTest<TNumber>(TNumber number, IDevice device)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var scalar = new Scalar<TNumber>(number);
+        scalar.To(device);
+
+        var result = scalar.Negate();
+
+        return result.Value;
+    }
+
+    private static Array NegateVectorTest<TNumber>(TNumber[] numbers, IDevice device)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var vector = Tensor.FromArray<TNumber>(numbers).ToVector();
+        vector.To(device);
+
+        var result = vector.Negate();
+
+        return result.ToArray();
     }
 
     private static Array NegateTensorTest<TNumber>(TNumber[,,] numbers, IDevice device)

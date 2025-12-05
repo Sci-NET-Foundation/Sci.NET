@@ -4,6 +4,8 @@
 using System.Numerics;
 using BenchmarkDotNet.Attributes;
 using Sci.NET.Common.Numerics;
+using Sci.NET.Mathematics.Backends;
+using Sci.NET.Mathematics.Backends.Managed;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Benchmarks.Managed;
@@ -21,6 +23,7 @@ public class ManagedBinaryArithmeticBenchmarks<TNumber>
         (new Shape(400, 200, 100, 50), new Shape(200, 100, 50)),
     ];
 
+    private IArithmeticKernels _arithmeticKernels = default!;
     private Tensor<TNumber> _leftTensor = default!;
     private Tensor<TNumber> _rightTensor = default!;
     private Tensor<TNumber> _result = default!;
@@ -30,6 +33,8 @@ public class ManagedBinaryArithmeticBenchmarks<TNumber>
     {
         TNumber min;
         TNumber max;
+
+        Tensor.SetDefaultBackend<ManagedTensorBackend>();
 
         if (GenericMath.IsFloatingPoint<TNumber>())
         {
@@ -47,32 +52,34 @@ public class ManagedBinaryArithmeticBenchmarks<TNumber>
             max = TNumber.CreateChecked(10);
         }
 
+        _arithmeticKernels = ManagedTensorBackend.Instance.Arithmetic;
         _leftTensor = Tensor.Random.Uniform<TNumber>(Shapes.LeftShape, min, max, seed: 123456).ToTensor();
         _rightTensor = Tensor.Random.Uniform<TNumber>(Shapes.RightShape, min, max, seed: 654321).ToTensor();
+        _result = Tensor.Zeros<TNumber>(_leftTensor.Shape).ToTensor();
     }
 
     [Benchmark]
     public void Add()
     {
-        _result = _leftTensor.Add(_rightTensor);
+        _arithmeticKernels.Add(_leftTensor, _rightTensor, _result);
     }
 
     [Benchmark]
     public void Subtract()
     {
-        _result = _leftTensor.Subtract(_rightTensor);
+        _arithmeticKernels.Subtract(_leftTensor, _rightTensor, _result);
     }
 
     [Benchmark]
     public void Multiply()
     {
-        _result = _leftTensor.Multiply(_rightTensor);
+        _arithmeticKernels.Multiply(_leftTensor, _rightTensor, _result);
     }
 
     [Benchmark]
     public void Divide()
     {
-        _result = _leftTensor.Divide(_rightTensor);
+        _arithmeticKernels.Divide(_leftTensor, _rightTensor, _result);
     }
 
     [GlobalCleanup]

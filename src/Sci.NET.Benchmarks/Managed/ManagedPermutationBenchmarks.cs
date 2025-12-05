@@ -4,6 +4,7 @@
 using System.Numerics;
 using BenchmarkDotNet.Attributes;
 using Sci.NET.Common.Numerics;
+using Sci.NET.Mathematics.Backends.Managed;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Benchmarks.Managed;
@@ -29,6 +30,8 @@ public class ManagedPermutationBenchmarks<TNumber>
     {
         TNumber min;
         TNumber max;
+
+        Tensor.SetDefaultBackend<ManagedTensorBackend>();
 
         if (GenericMath.IsFloatingPoint<TNumber>())
         {
