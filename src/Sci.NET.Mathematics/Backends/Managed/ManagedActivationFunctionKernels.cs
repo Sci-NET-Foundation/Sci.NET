@@ -6,8 +6,6 @@ using Sci.NET.Mathematics.Backends.Managed.Iterators;
 using Sci.NET.Mathematics.Backends.Managed.MicroKernels.ActivationFunctions;
 using Sci.NET.Mathematics.Backends.Managed.MicroKernels.Arithmetic;
 using Sci.NET.Mathematics.Backends.Managed.MicroKernels.Exponential;
-using Sci.NET.Mathematics.Concurrency;
-using Sci.NET.Mathematics.Memory;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends.Managed;
@@ -172,58 +170,24 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             value.Memory.Length);
     }
 
-    public void HardTanh<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber min, TNumber max)
+    public unsafe void HardTanh<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber min, TNumber max)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
-        var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            inputMemory.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-#pragma warning disable IDE0045
-                if (inputMemory[i] < min)
-                {
-                    outputMemory[i] = min;
-                }
-                else if (inputMemory[i] > max)
-                {
-                    outputMemory[i] = max;
-                }
-                else
-                {
-                    outputMemory[i] = inputMemory[i];
-                }
-#pragma warning restore IDE0045
-            });
+        ManagedParameterizedUnaryOperation.For(
+            value.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            new ClampMicroKernel<TNumber>(min, max),
+            value.Memory.Length);
     }
 
-    public void HardTanhBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber min, TNumber max)
+    public unsafe void HardTanhBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber min, TNumber max)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
-        var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            inputMemory.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-#pragma warning disable IDE0045
-                if (inputMemory[i] <= min || inputMemory[i] >= max)
-                {
-                    outputMemory[i] = TNumber.Zero;
-                }
-                else
-                {
-                    outputMemory[i] = TNumber.One;
-                }
-#pragma warning restore IDE0045
-            });
+        ManagedParameterizedUnaryOperation.For(
+            value.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            new ClampBackwardMicroKernel<TNumber>(min, max),
+            value.Memory.Length);
     }
 
     public unsafe void HardSigmoid<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
