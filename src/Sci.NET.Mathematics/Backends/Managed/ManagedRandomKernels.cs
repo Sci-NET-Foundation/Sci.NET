@@ -2,8 +2,9 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
-using Sci.NET.Common.Memory;
-using Sci.NET.Common.Numerics;
+using System.Runtime.CompilerServices;
+using Sci.NET.Mathematics.Memory;
+using Sci.NET.Mathematics.Numerics;
 using Sci.NET.Mathematics.Random;
 using Sci.NET.Mathematics.Tensors;
 
@@ -26,84 +27,84 @@ internal class ManagedRandomKernels : IRandomKernels
         if (typeof(TNumber) == typeof(BFloat16))
         {
             prng.FillUniform(
-                memoryBlock.DangerousReinterpretCast<BFloat16>(),
+                Unsafe.As<SystemMemoryBlock<BFloat16>>(memoryBlock),
                 BFloat16.CreateChecked(min),
                 BFloat16.CreateChecked(max));
         }
         else if (typeof(TNumber) == typeof(Half))
         {
             prng.FillUniform(
-                memoryBlock.DangerousReinterpretCast<Half>(),
+                Unsafe.As<SystemMemoryBlock<Half>>(memoryBlock),
                 Half.CreateChecked(min),
                 Half.CreateChecked(max));
         }
         else if (typeof(TNumber) == typeof(float))
         {
             prng.FillUniform(
-                memoryBlock.DangerousReinterpretCast<float>(),
+                Unsafe.As<SystemMemoryBlock<float>>(memoryBlock),
                 float.CreateChecked(min),
                 float.CreateChecked(max));
         }
         else if (typeof(TNumber) == typeof(double))
         {
             prng.FillUniform(
-                memoryBlock.DangerousReinterpretCast<double>(),
+                Unsafe.As<SystemMemoryBlock<double>>(memoryBlock),
                 double.CreateChecked(min),
                 double.CreateChecked(max));
         }
         else if (typeof(TNumber) == typeof(sbyte))
         {
             prng.FillUniform(
-                memoryBlock.DangerousReinterpretCast<sbyte>(),
+                Unsafe.As<SystemMemoryBlock<sbyte>>(memoryBlock),
                 sbyte.CreateChecked(min),
                 sbyte.CreateChecked(max));
         }
         else if (typeof(TNumber) == typeof(byte))
         {
             prng.FillUniform(
-                memoryBlock.DangerousReinterpretCast<byte>(),
+                Unsafe.As<SystemMemoryBlock<byte>>(memoryBlock),
                 byte.CreateChecked(min),
                 byte.CreateChecked(max));
         }
         else if (typeof(TNumber) == typeof(ushort))
         {
             prng.FillUniform(
-                memoryBlock.DangerousReinterpretCast<ushort>(),
+                Unsafe.As<SystemMemoryBlock<ushort>>(memoryBlock),
                 ushort.CreateChecked(min),
                 ushort.CreateChecked(max));
         }
         else if (typeof(TNumber) == typeof(short))
         {
             prng.FillUniform(
-                memoryBlock.DangerousReinterpretCast<short>(),
+                Unsafe.As<SystemMemoryBlock<short>>(memoryBlock),
                 short.CreateChecked(min),
                 short.CreateChecked(max));
         }
         else if (typeof(TNumber) == typeof(uint))
         {
             prng.FillUniform(
-                memoryBlock.DangerousReinterpretCast<uint>(),
+                Unsafe.As<SystemMemoryBlock<uint>>(memoryBlock),
                 uint.CreateChecked(min),
                 uint.CreateChecked(max));
         }
         else if (typeof(TNumber) == typeof(int))
         {
             prng.FillUniform(
-                memoryBlock.DangerousReinterpretCast<int>(),
+                Unsafe.As<SystemMemoryBlock<int>>(memoryBlock),
                 int.CreateChecked(min),
                 int.CreateChecked(max));
         }
         else if (typeof(TNumber) == typeof(ulong))
         {
             prng.FillUniform(
-                memoryBlock.DangerousReinterpretCast<ulong>(),
+                Unsafe.As<SystemMemoryBlock<ulong>>(memoryBlock),
                 ulong.CreateChecked(min),
                 ulong.CreateChecked(max));
         }
         else if (typeof(TNumber) == typeof(long))
         {
             prng.FillUniform(
-                memoryBlock.DangerousReinterpretCast<long>(),
+                Unsafe.As<SystemMemoryBlock<long>>(memoryBlock),
                 long.CreateChecked(min),
                 long.CreateChecked(max));
         }
@@ -126,28 +127,28 @@ internal class ManagedRandomKernels : IRandomKernels
         if (typeof(TNumber) == typeof(Half))
         {
             prng.FillNormal(
-                memoryBlock.DangerousReinterpretCast<Half>(),
+                Unsafe.As<SystemMemoryBlock<Half>>(memoryBlock),
                 Half.CreateChecked(mean),
                 Half.CreateChecked(stdDev));
         }
         else if (typeof(TNumber) == typeof(BFloat16))
         {
             prng.FillNormal(
-                memoryBlock.DangerousReinterpretCast<BFloat16>(),
+                Unsafe.As<SystemMemoryBlock<BFloat16>>(memoryBlock),
                 BFloat16.CreateChecked(mean),
                 BFloat16.CreateChecked(stdDev));
         }
         else if (typeof(TNumber) == typeof(float))
         {
             prng.FillNormal(
-                memoryBlock.DangerousReinterpretCast<float>(),
+                Unsafe.As<SystemMemoryBlock<float>>(memoryBlock),
                 float.CreateChecked(mean),
                 float.CreateChecked(stdDev));
         }
         else if (typeof(TNumber) == typeof(double))
         {
             prng.FillNormal(
-                memoryBlock.DangerousReinterpretCast<double>(),
+                Unsafe.As<SystemMemoryBlock<double>>(memoryBlock),
                 double.CreateChecked(mean),
                 double.CreateChecked(stdDev));
         }
@@ -170,28 +171,28 @@ internal class ManagedRandomKernels : IRandomKernels
         if (typeof(TNumber) == typeof(Half))
         {
             prng.FillXavierUniform(
-                memoryBlock.DangerousReinterpretCast<Half>(),
+                Unsafe.As<SystemMemoryBlock<Half>>(memoryBlock),
                 inputUnits,
                 outputUnits);
         }
         else if (typeof(TNumber) == typeof(BFloat16))
         {
             prng.FillXavierUniform(
-                memoryBlock.DangerousReinterpretCast<BFloat16>(),
+                Unsafe.As<SystemMemoryBlock<BFloat16>>(memoryBlock),
                 inputUnits,
                 outputUnits);
         }
         else if (typeof(TNumber) == typeof(float))
         {
             prng.FillXavierUniform(
-                memoryBlock.DangerousReinterpretCast<float>(),
+                Unsafe.As<SystemMemoryBlock<float>>(memoryBlock),
                 inputUnits,
                 outputUnits);
         }
         else if (typeof(TNumber) == typeof(double))
         {
             prng.FillXavierUniform(
-                memoryBlock.DangerousReinterpretCast<double>(),
+                Unsafe.As<SystemMemoryBlock<double>>(memoryBlock),
                 inputUnits,
                 outputUnits);
         }
@@ -214,28 +215,28 @@ internal class ManagedRandomKernels : IRandomKernels
         if (typeof(TNumber) == typeof(BFloat16))
         {
             prng.FillXavierNormal(
-                memoryBlock.DangerousReinterpretCast<BFloat16>(),
+                Unsafe.As<SystemMemoryBlock<BFloat16>>(memoryBlock),
                 inputUnits,
                 outputUnits);
         }
         else if (typeof(TNumber) == typeof(Half))
         {
             prng.FillXavierNormal(
-                memoryBlock.DangerousReinterpretCast<Half>(),
+                Unsafe.As<SystemMemoryBlock<Half>>(memoryBlock),
                 inputUnits,
                 outputUnits);
         }
         else if (typeof(TNumber) == typeof(float))
         {
             prng.FillXavierNormal(
-                memoryBlock.DangerousReinterpretCast<float>(),
+                Unsafe.As<SystemMemoryBlock<float>>(memoryBlock),
                 inputUnits,
                 outputUnits);
         }
         else if (typeof(TNumber) == typeof(double))
         {
             prng.FillXavierNormal(
-                memoryBlock.DangerousReinterpretCast<double>(),
+                Unsafe.As<SystemMemoryBlock<double>>(memoryBlock),
                 inputUnits,
                 outputUnits);
         }
@@ -258,25 +259,25 @@ internal class ManagedRandomKernels : IRandomKernels
         if (typeof(TNumber) == typeof(BFloat16))
         {
             prng.FillHeUniform(
-                memoryBlock.DangerousReinterpretCast<BFloat16>(),
+                Unsafe.As<SystemMemoryBlock<BFloat16>>(memoryBlock),
                 inputUnits);
         }
         else if (typeof(TNumber) == typeof(Half))
         {
             prng.FillHeUniform(
-                memoryBlock.DangerousReinterpretCast<Half>(),
+                Unsafe.As<SystemMemoryBlock<Half>>(memoryBlock),
                 inputUnits);
         }
         else if (typeof(TNumber) == typeof(float))
         {
             prng.FillHeUniform(
-                memoryBlock.DangerousReinterpretCast<float>(),
+                Unsafe.As<SystemMemoryBlock<float>>(memoryBlock),
                 inputUnits);
         }
         else if (typeof(TNumber) == typeof(double))
         {
             prng.FillHeUniform(
-                memoryBlock.DangerousReinterpretCast<double>(),
+                Unsafe.As<SystemMemoryBlock<double>>(memoryBlock),
                 inputUnits);
         }
         else
@@ -298,25 +299,25 @@ internal class ManagedRandomKernels : IRandomKernels
         if (typeof(TNumber) == typeof(BFloat16))
         {
             prng.FillHeNormal(
-                memoryBlock.DangerousReinterpretCast<BFloat16>(),
+                Unsafe.As<SystemMemoryBlock<BFloat16>>(memoryBlock),
                 inputUnits);
         }
         else if (typeof(TNumber) == typeof(Half))
         {
             prng.FillHeNormal(
-                memoryBlock.DangerousReinterpretCast<Half>(),
+                Unsafe.As<SystemMemoryBlock<Half>>(memoryBlock),
                 inputUnits);
         }
         else if (typeof(TNumber) == typeof(float))
         {
             prng.FillHeNormal(
-                memoryBlock.DangerousReinterpretCast<float>(),
+                Unsafe.As<SystemMemoryBlock<float>>(memoryBlock),
                 inputUnits);
         }
         else if (typeof(TNumber) == typeof(double))
         {
             prng.FillHeNormal(
-                memoryBlock.DangerousReinterpretCast<double>(),
+                Unsafe.As<SystemMemoryBlock<double>>(memoryBlock),
                 inputUnits);
         }
         else

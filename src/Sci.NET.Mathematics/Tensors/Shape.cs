@@ -4,7 +4,7 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using Sci.NET.Common.Performance;
+using Sci.NET.Mathematics.Performance;
 
 namespace Sci.NET.Mathematics.Tensors;
 

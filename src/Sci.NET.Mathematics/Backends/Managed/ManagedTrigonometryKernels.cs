@@ -2,8 +2,8 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
-using Sci.NET.Common.Concurrency;
-using Sci.NET.Common.Memory;
+using Sci.NET.Mathematics.Concurrency;
+using Sci.NET.Mathematics.Memory;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends.Managed;

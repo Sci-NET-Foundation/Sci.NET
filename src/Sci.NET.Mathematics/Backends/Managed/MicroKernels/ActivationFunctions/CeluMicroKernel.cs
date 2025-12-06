@@ -5,14 +5,23 @@ using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
-using Sci.NET.Common.Performance;
+using Sci.NET.Mathematics.Performance;
 
 namespace Sci.NET.Mathematics.Backends.Managed.MicroKernels.ActivationFunctions;
 
 [SuppressMessage("Roslynator", "RCS1158:Static member in generic type should use a type parameter", Justification = "By design")]
-internal class CeluMicroKernel<TNumber> : IUnaryOperationWithScalar<TNumber>, IUnaryOperationWithScalarAvx, IUnaryOperationWithScalarAvxFma
+internal class CeluMicroKernel<TNumber> : IUnaryParameterizedOperation<CeluMicroKernel<TNumber>, TNumber>,
+    IUnaryParameterizedOperationAvx<CeluMicroKernel<TNumber>>,
+    IUnaryParameterizedOperationAvxFma<CeluMicroKernel<TNumber>>
     where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
 {
+    private readonly MicroKernelParameter<TNumber> _alpha;
+
+    public CeluMicroKernel(MicroKernelParameter<TNumber> alpha)
+    {
+        _alpha = alpha;
+    }
+
     [MethodImpl(ImplementationOptions.HotPath)]
     public static bool IsAvxSupported()
     {
@@ -26,43 +35,43 @@ internal class CeluMicroKernel<TNumber> : IUnaryOperationWithScalar<TNumber>, IU
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static TNumber ApplyScalar(TNumber input, TNumber scalar)
+    public static TNumber ApplyScalar(TNumber input, CeluMicroKernel<TNumber> instance)
     {
-        return TNumber.Max(TNumber.Zero, input) + TNumber.Min(TNumber.Zero, scalar * (TNumber.Exp(input / scalar) - TNumber.One));
+        return TNumber.Max(TNumber.Zero, input) + TNumber.Min(TNumber.Zero, instance._alpha.ScalarValue * (TNumber.Exp(input / instance._alpha.ScalarValue) - TNumber.One));
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static float ApplyTailFp32(float input, float scalar)
-    {
-        throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static double ApplyTailFp64(double input, double scalar)
+    public static float ApplyTailFp32(float input, CeluMicroKernel<TNumber> instance)
     {
         throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> ApplyAvxFp32(Vector256<float> input, Vector256<float> scalar)
+    public static double ApplyTailFp64(double input, CeluMicroKernel<TNumber> instance)
     {
         throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> ApplyAvxFp64(Vector256<double> input, Vector256<double> scalar)
+    public static Vector256<float> ApplyAvxFp32(Vector256<float> input, CeluMicroKernel<TNumber> instance)
     {
         throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> ApplyAvxFmaFp32(Vector256<float> input, Vector256<float> scalar)
+    public static Vector256<double> ApplyAvxFp64(Vector256<double> input, CeluMicroKernel<TNumber> instance)
     {
         throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> ApplyAvxFmaFp64(Vector256<double> input, Vector256<double> scalar)
+    public static Vector256<float> ApplyAvxFmaFp32(Vector256<float> input, CeluMicroKernel<TNumber> instance)
+    {
+        throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
+    }
+
+    [MethodImpl(ImplementationOptions.HotPath)]
+    public static Vector256<double> ApplyAvxFmaFp64(Vector256<double> input, CeluMicroKernel<TNumber> instance)
     {
         throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
     }

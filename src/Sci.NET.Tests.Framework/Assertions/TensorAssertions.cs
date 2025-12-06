@@ -4,7 +4,7 @@
 using System.Numerics;
 using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
-using Sci.NET.Common.Numerics;
+using Sci.NET.Mathematics.Numerics;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Tests.Framework.Assertions;

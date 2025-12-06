@@ -7,11 +7,11 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Newtonsoft.Json;
-using Sci.NET.Common.Attributes;
-using Sci.NET.Common.Exceptions;
-using Sci.NET.Common.Numerics;
-using Sci.NET.Common.Performance;
-using Sci.NET.Common.Streams;
+using Sci.NET.Mathematics.Attributes;
+using Sci.NET.Mathematics.Exceptions;
+using Sci.NET.Mathematics.Numerics;
+using Sci.NET.Mathematics.Performance;
+using Sci.NET.Mathematics.Streams;
 using Sci.NET.Mathematics.Tensors.Serialization.Implementations.Safetensors;
 
 namespace Sci.NET.Mathematics.Tensors.Serialization.Implementations;

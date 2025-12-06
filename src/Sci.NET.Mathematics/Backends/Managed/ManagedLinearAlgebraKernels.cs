@@ -6,13 +6,13 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
-using Sci.NET.Common.Concurrency;
-using Sci.NET.Common.Intrinsics;
-using Sci.NET.Common.Memory;
-using Sci.NET.Common.Performance;
 using Sci.NET.Mathematics.Backends.Managed.Buffers;
 using Sci.NET.Mathematics.Backends.Managed.Iterators;
 using Sci.NET.Mathematics.Backends.Managed.MicroKernels.LinearAlgebra;
+using Sci.NET.Mathematics.Concurrency;
+using Sci.NET.Mathematics.Intrinsics;
+using Sci.NET.Mathematics.Memory;
+using Sci.NET.Mathematics.Performance;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends.Managed;

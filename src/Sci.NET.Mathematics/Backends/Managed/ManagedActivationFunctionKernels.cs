@@ -2,12 +2,12 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
-using Sci.NET.Common.Concurrency;
-using Sci.NET.Common.Memory;
 using Sci.NET.Mathematics.Backends.Managed.Iterators;
 using Sci.NET.Mathematics.Backends.Managed.MicroKernels.ActivationFunctions;
 using Sci.NET.Mathematics.Backends.Managed.MicroKernels.Arithmetic;
 using Sci.NET.Mathematics.Backends.Managed.MicroKernels.Exponential;
+using Sci.NET.Mathematics.Concurrency;
+using Sci.NET.Mathematics.Memory;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends.Managed;
@@ -60,10 +60,10 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
 
         sumBuffer.Backend.Reduction.ReduceAddAll(result, sumBuffer);
 
-        ManagedUnaryOperationWithScalarIterator.For<DivideByScalarMicroKernel<TNumber>, TNumber>(
+        ManagedParameterizedUnaryOperation.For(
             result.Memory.ToPointer(),
             result.Memory.ToPointer(),
-            sumBuffer.Value,
+            new DivideByScalarMicroKernel<TNumber>(sumBuffer.Value),
             result.Memory.Length);
     }
 
@@ -79,60 +79,60 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
     public unsafe void LeakyReLU<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber alpha)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        ManagedUnaryOperationWithScalarIterator.For<LeakyReLUMicroKernel<TNumber>, TNumber>(
+        ManagedParameterizedUnaryOperation.For(
             value.Memory.ToPointer(),
             result.Memory.ToPointer(),
-            alpha,
+            new LeakyReLUMicroKernel<TNumber>(alpha),
             value.Memory.Length);
     }
 
     public unsafe void LeakyReLUBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber alpha)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        ManagedUnaryOperationWithScalarIterator.For<LeakyReLUBackwardMicroKernel<TNumber>, TNumber>(
+        ManagedParameterizedUnaryOperation.For(
             value.Memory.ToPointer(),
             result.Memory.ToPointer(),
-            alpha,
+            new LeakyReLUBackwardMicroKernel<TNumber>(alpha),
             value.Memory.Length);
     }
 
     public unsafe void Elu<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber alpha)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
-        ManagedUnaryOperationWithScalarIterator.For<EluMicroKernel<TNumber>, TNumber>(
+        ManagedParameterizedUnaryOperation.For(
             value.Memory.ToPointer(),
             result.Memory.ToPointer(),
-            alpha,
+            new EluMicroKernel<TNumber>(alpha),
             value.Memory.Length);
     }
 
     public unsafe void EluBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber alpha)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
-        ManagedUnaryOperationWithScalarIterator.For<EluBackwardMicroKernel<TNumber>, TNumber>(
+        ManagedParameterizedUnaryOperation.For(
             value.Memory.ToPointer(),
             result.Memory.ToPointer(),
-            alpha,
+            new EluBackwardMicroKernel<TNumber>(alpha),
             value.Memory.Length);
     }
 
     public unsafe void Celu<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber alpha)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
-        ManagedUnaryOperationWithScalarIterator.For<CeluMicroKernel<TNumber>, TNumber>(
+        ManagedParameterizedUnaryOperation.For(
             value.Memory.ToPointer(),
             result.Memory.ToPointer(),
-            alpha,
+            new CeluMicroKernel<TNumber>(alpha),
             value.Memory.Length);
     }
 
     public unsafe void CeluBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber alpha)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
-        ManagedUnaryOperationWithScalarIterator.For<CeluBackwardMicroKernel<TNumber>, TNumber>(
+        ManagedParameterizedUnaryOperation.For(
             value.Memory.ToPointer(),
             result.Memory.ToPointer(),
-            alpha,
+            new CeluBackwardMicroKernel<TNumber>(alpha),
             value.Memory.Length);
     }
 

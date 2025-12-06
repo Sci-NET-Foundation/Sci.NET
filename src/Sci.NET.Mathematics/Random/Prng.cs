@@ -3,8 +3,8 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
-using Sci.NET.Common.Memory;
-using Sci.NET.Common.Numerics;
+using Sci.NET.Mathematics.Memory;
+using Sci.NET.Mathematics.Numerics;
 
 namespace Sci.NET.Mathematics.Random;
 

@@ -3,7 +3,7 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics.X86;
-using Sci.NET.Common.Performance;
+using Sci.NET.Mathematics.Performance;
 
 namespace Sci.NET.Mathematics.Backends.Managed.Buffers;
 

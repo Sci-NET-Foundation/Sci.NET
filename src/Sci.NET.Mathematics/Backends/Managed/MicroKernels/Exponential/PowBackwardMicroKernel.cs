@@ -5,14 +5,23 @@ using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
-using Sci.NET.Common.Performance;
+using Sci.NET.Mathematics.Performance;
 
 namespace Sci.NET.Mathematics.Backends.Managed.MicroKernels.Exponential;
 
 [SuppressMessage("Roslynator", "RCS1158:Static member in generic type should use a type parameter", Justification = "By design")]
-internal class PowBackwardMicroKernel<TNumber> : IUnaryOperationWithScalar<TNumber>, IUnaryOperationWithScalarAvx, IUnaryOperationWithScalarAvxFma
+internal class PowBackwardMicroKernel<TNumber> : IUnaryParameterizedOperation<PowBackwardMicroKernel<TNumber>, TNumber>,
+    IUnaryParameterizedOperationAvx<PowBackwardMicroKernel<TNumber>>,
+    IUnaryParameterizedOperationAvxFma<PowBackwardMicroKernel<TNumber>>
     where TNumber : unmanaged, INumber<TNumber>, IPowerFunctions<TNumber>
 {
+    private readonly MicroKernelParameter<TNumber> _exponentParameter;
+
+    public PowBackwardMicroKernel(MicroKernelParameter<TNumber> exponentParameter)
+    {
+        _exponentParameter = exponentParameter;
+    }
+
     [MethodImpl(ImplementationOptions.HotPath)]
     public static bool IsAvxSupported()
     {
@@ -26,43 +35,43 @@ internal class PowBackwardMicroKernel<TNumber> : IUnaryOperationWithScalar<TNumb
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static TNumber ApplyScalar(TNumber input, TNumber scalar)
+    public static TNumber ApplyScalar(TNumber input, PowBackwardMicroKernel<TNumber> instance)
     {
-        return input * TNumber.Pow(input, scalar - TNumber.One);
+        return input * TNumber.Pow(input, instance._exponentParameter.ScalarValue - TNumber.One);
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static float ApplyTailFp32(float input, float scalar)
-    {
-        throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static double ApplyTailFp64(double input, double scalar)
+    public static float ApplyTailFp32(float input, PowBackwardMicroKernel<TNumber> instance)
     {
         throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> ApplyAvxFp32(Vector256<float> input, Vector256<float> scalar)
+    public static double ApplyTailFp64(double input, PowBackwardMicroKernel<TNumber> instance)
     {
         throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> ApplyAvxFp64(Vector256<double> input, Vector256<double> scalar)
+    public static Vector256<float> ApplyAvxFp32(Vector256<float> input, PowBackwardMicroKernel<TNumber> instance)
     {
         throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> ApplyAvxFmaFp32(Vector256<float> input, Vector256<float> scalar)
+    public static Vector256<double> ApplyAvxFp64(Vector256<double> input, PowBackwardMicroKernel<TNumber> instance)
     {
         throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> ApplyAvxFmaFp64(Vector256<double> input, Vector256<double> scalar)
+    public static Vector256<float> ApplyAvxFmaFp32(Vector256<float> input, PowBackwardMicroKernel<TNumber> instance)
+    {
+        throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
+    }
+
+    [MethodImpl(ImplementationOptions.HotPath)]
+    public static Vector256<double> ApplyAvxFmaFp64(Vector256<double> input, PowBackwardMicroKernel<TNumber> instance)
     {
         throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
     }

@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Sci.NET.Common\Sci.NET.Common.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Update="Tensors\Extensions\TrigExtensions.tt">
         <Generator>TextTemplatingFileGenerator</Generator>
         <LastGenOutput>TrigExtensions.cs</LastGenOutput>
@@ -34,6 +30,7 @@
 
     <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" />
+      <PackageReference Include="System.Management" />
     </ItemGroup>
 
 </Project>

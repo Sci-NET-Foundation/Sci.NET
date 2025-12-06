@@ -4,9 +4,9 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
-using Sci.NET.Common.Memory;
 using Sci.NET.Mathematics.Backends;
 using Sci.NET.Mathematics.Backends.Devices;
+using Sci.NET.Mathematics.Memory;
 
 namespace Sci.NET.Mathematics.Tensors;
 
@@ -18,8 +18,6 @@ namespace Sci.NET.Mathematics.Tensors;
 public sealed class Vector<TNumber> : ITensor<TNumber>
     where TNumber : unmanaged, INumber<TNumber>
 {
-    private readonly Guid _id = Guid.NewGuid();
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Vector{TNumber}"/> class.
     /// </summary>
@@ -32,7 +30,6 @@ public sealed class Vector<TNumber> : ITensor<TNumber>
         Backend = backend ?? Tensor.DefaultBackend;
         Memory = Backend.Storage.Allocate<TNumber>(Shape);
         IsMemoryOwner = true;
-        Memory.Rent(_id);
         RequiresGradient = requiresGradient;
         Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) { IsGradient = true } : null;
     }
@@ -50,7 +47,6 @@ public sealed class Vector<TNumber> : ITensor<TNumber>
         Backend = backend;
         Memory = handle;
         IsMemoryOwner = false;
-        Memory.Rent(_id);
         RequiresGradient = requiresGradient;
         Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) { IsGradient = true } : null;
     }
@@ -303,7 +299,6 @@ public sealed class Vector<TNumber> : ITensor<TNumber>
     /// <inheritdoc />
     public void ForceDispose()
     {
-        Memory.Release(_id);
         Memory.Dispose();
     }
 
@@ -361,7 +356,6 @@ public sealed class Vector<TNumber> : ITensor<TNumber>
     {
         if (disposing && IsMemoryOwner && !IsGradient)
         {
-            Memory.Release(_id);
             Memory.Dispose();
             Gradient?.ForceDispose();
         }

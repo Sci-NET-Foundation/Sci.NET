@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
-using Sci.NET.Common.Performance;
+using Sci.NET.Mathematics.Performance;
 
 namespace Sci.NET.Mathematics.Backends.Managed.MicroKernels.Exponential;
 

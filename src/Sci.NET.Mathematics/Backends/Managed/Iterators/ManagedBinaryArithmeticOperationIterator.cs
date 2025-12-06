@@ -6,10 +6,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
-using Sci.NET.Common.Concurrency;
 using Sci.NET.Mathematics.Backends.Iterators;
 using Sci.NET.Mathematics.Backends.Managed.Buffers;
 using Sci.NET.Mathematics.Backends.Managed.MicroKernels;
+using Sci.NET.Mathematics.Concurrency;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends.Managed.Iterators;

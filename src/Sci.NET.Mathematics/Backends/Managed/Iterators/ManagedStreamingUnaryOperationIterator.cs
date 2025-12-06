@@ -5,9 +5,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics.X86;
-using Sci.NET.Common.Performance;
 using Sci.NET.Mathematics.Backends.Managed.Buffers;
 using Sci.NET.Mathematics.Backends.Managed.MicroKernels;
+using Sci.NET.Mathematics.Performance;
 
 namespace Sci.NET.Mathematics.Backends.Managed.Iterators;
 

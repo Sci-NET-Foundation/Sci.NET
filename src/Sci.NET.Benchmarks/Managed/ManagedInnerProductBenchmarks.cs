@@ -4,9 +4,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using BenchmarkDotNet.Attributes;
-using Sci.NET.Common.Numerics;
 using Sci.NET.Mathematics.Backends;
 using Sci.NET.Mathematics.Backends.Managed;
+using Sci.NET.Mathematics.Numerics;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Benchmarks.Managed;

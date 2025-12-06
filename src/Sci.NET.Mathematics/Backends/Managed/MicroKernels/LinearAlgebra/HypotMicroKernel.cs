@@ -6,8 +6,8 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
-using Sci.NET.Common.Intrinsics;
-using Sci.NET.Common.Performance;
+using Sci.NET.Mathematics.Intrinsics;
+using Sci.NET.Mathematics.Performance;
 
 namespace Sci.NET.Mathematics.Backends.Managed.MicroKernels.LinearAlgebra;
 

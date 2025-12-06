@@ -6,15 +6,24 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
-using Sci.NET.Common.Intrinsics;
-using Sci.NET.Common.Performance;
+using Sci.NET.Mathematics.Intrinsics;
+using Sci.NET.Mathematics.Performance;
 
 namespace Sci.NET.Mathematics.Backends.Managed.MicroKernels.Arithmetic;
 
 [SuppressMessage("Roslynator", "RCS1158:Static member in generic type should use a type parameter", Justification = "By design")]
-internal class DivideByScalarMicroKernel<TNumber> : IUnaryOperationWithScalar<TNumber>, IUnaryOperationWithScalarAvx, IUnaryOperationWithScalarAvxFma
+internal class DivideByScalarMicroKernel<TNumber> : IUnaryParameterizedOperation<DivideByScalarMicroKernel<TNumber>, TNumber>,
+    IUnaryParameterizedOperationAvx<DivideByScalarMicroKernel<TNumber>>,
+    IUnaryParameterizedOperationAvxFma<DivideByScalarMicroKernel<TNumber>>
     where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
 {
+    private readonly MicroKernelParameter<TNumber> _divisor;
+
+    public DivideByScalarMicroKernel(MicroKernelParameter<TNumber> divisor)
+    {
+        _divisor = divisor;
+    }
+
     [MethodImpl(ImplementationOptions.HotPath)]
     public static bool IsAvxSupported()
     {
@@ -28,43 +37,43 @@ internal class DivideByScalarMicroKernel<TNumber> : IUnaryOperationWithScalar<TN
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static TNumber ApplyScalar(TNumber input, TNumber scalar)
+    public static TNumber ApplyScalar(TNumber input, DivideByScalarMicroKernel<TNumber> instance)
     {
-        return input / scalar;
+        return input / instance._divisor.ScalarValue;
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static float ApplyTailFp32(float input, float scalar)
+    public static float ApplyTailFp32(float input, DivideByScalarMicroKernel<TNumber> instance)
     {
-        return input / scalar;
+        return input / instance._divisor.ScalarFp32Value;
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static double ApplyTailFp64(double input, double scalar)
+    public static double ApplyTailFp64(double input, DivideByScalarMicroKernel<TNumber> instance)
     {
-        return input / scalar;
+        return input / instance._divisor.ScalarFp64Value;
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> ApplyAvxFp32(Vector256<float> input, Vector256<float> scalar)
+    public static Vector256<float> ApplyAvxFp32(Vector256<float> input, DivideByScalarMicroKernel<TNumber> instance)
     {
-        return Avx.Divide(input, scalar);
+        return Avx.Divide(input, instance._divisor.Vector256ValueFp32);
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> ApplyAvxFp64(Vector256<double> input, Vector256<double> scalar)
+    public static Vector256<double> ApplyAvxFp64(Vector256<double> input, DivideByScalarMicroKernel<TNumber> instance)
     {
-        return Avx.Divide(input, scalar);
+        return Avx.Divide(input, instance._divisor.Vector256ValueFp64);
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> ApplyAvxFmaFp32(Vector256<float> input, Vector256<float> scalar)
+    public static Vector256<float> ApplyAvxFmaFp32(Vector256<float> input, DivideByScalarMicroKernel<TNumber> instance)
     {
         throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> ApplyAvxFmaFp64(Vector256<double> input, Vector256<double> scalar)
+    public static Vector256<double> ApplyAvxFmaFp64(Vector256<double> input, DivideByScalarMicroKernel<TNumber> instance)
     {
         throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
     }

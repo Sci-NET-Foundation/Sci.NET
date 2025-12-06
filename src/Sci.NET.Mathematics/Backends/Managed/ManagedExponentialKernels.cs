@@ -13,20 +13,20 @@ internal class ManagedExponentialKernels : IExponentialKernels
     public unsafe void Pow<TNumber>(ITensor<TNumber> value, Scalar<TNumber> power, ITensor<TNumber> result)
         where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>
     {
-        ManagedUnaryOperationWithScalarIterator.For<PowMicroKernel<TNumber>, TNumber>(
+        ManagedParameterizedUnaryOperation.For<PowMicroKernel<TNumber>, TNumber>(
             value.Memory.ToPointer(),
             result.Memory.ToPointer(),
-            power.Value,
+            new PowMicroKernel<TNumber>(power.Value),
             value.Memory.Length);
     }
 
     public unsafe void PowBackwards<TNumber>(ITensor<TNumber> value, Scalar<TNumber> power, ITensor<TNumber> result)
         where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>
     {
-        ManagedUnaryOperationWithScalarIterator.For<PowBackwardMicroKernel<TNumber>, TNumber>(
+        ManagedParameterizedUnaryOperation.For<PowBackwardMicroKernel<TNumber>, TNumber>(
             value.Memory.ToPointer(),
             result.Memory.ToPointer(),
-            power.Value,
+            new PowBackwardMicroKernel<TNumber>(power.Value),
             value.Memory.Length);
     }
 

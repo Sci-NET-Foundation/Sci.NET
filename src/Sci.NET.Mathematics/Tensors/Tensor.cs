@@ -4,7 +4,7 @@
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Sci.NET.Common.Attributes;
+using Sci.NET.Mathematics.Attributes;
 using Sci.NET.Mathematics.Backends;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Backends.Managed;
