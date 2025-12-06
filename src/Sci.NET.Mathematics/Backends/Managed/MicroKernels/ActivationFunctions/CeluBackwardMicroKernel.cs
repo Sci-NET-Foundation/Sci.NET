@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
+using Sci.NET.Mathematics.Exceptions;
 using Sci.NET.Mathematics.Performance;
 
 namespace Sci.NET.Mathematics.Backends.Managed.MicroKernels.ActivationFunctions;
@@ -43,36 +44,36 @@ internal class CeluBackwardMicroKernel<TNumber> : IUnaryParameterizedOperation<C
     [MethodImpl(ImplementationOptions.HotPath)]
     public static float ApplyTailFp32(float input, CeluBackwardMicroKernel<TNumber> instance)
     {
-        throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
+        throw new IntrinsicTypeNotImplementedException();
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
     public static double ApplyTailFp64(double input, CeluBackwardMicroKernel<TNumber> instance)
     {
-        throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
+        throw new IntrinsicTypeNotImplementedException();
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
     public static Vector256<float> ApplyAvxFp32(Vector256<float> input, CeluBackwardMicroKernel<TNumber> instance)
     {
-        throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
+        throw new IntrinsicTypeNotImplementedException();
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
     public static Vector256<double> ApplyAvxFp64(Vector256<double> input, CeluBackwardMicroKernel<TNumber> instance)
     {
-        throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
+        throw new IntrinsicTypeNotImplementedException();
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
     public static Vector256<float> ApplyAvxFmaFp32(Vector256<float> input, CeluBackwardMicroKernel<TNumber> instance)
     {
-        throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
+        throw new IntrinsicTypeNotImplementedException();
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
     public static Vector256<double> ApplyAvxFmaFp64(Vector256<double> input, CeluBackwardMicroKernel<TNumber> instance)
     {
-        throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
+        throw new IntrinsicTypeNotImplementedException();
     }
 }

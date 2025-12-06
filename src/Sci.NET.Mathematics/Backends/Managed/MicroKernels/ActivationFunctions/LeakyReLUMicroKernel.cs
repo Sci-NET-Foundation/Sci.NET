@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
+using Sci.NET.Mathematics.Exceptions;
 using Sci.NET.Mathematics.Intrinsics;
 using Sci.NET.Mathematics.Performance;
 
@@ -77,12 +78,12 @@ internal class LeakyReLUMicroKernel<TNumber> : IUnaryParameterizedOperation<Leak
     [MethodImpl(ImplementationOptions.HotPath)]
     public static Vector256<float> ApplyAvxFmaFp32(Vector256<float> input, LeakyReLUMicroKernel<TNumber> instance)
     {
-        throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
+        throw new IntrinsicTypeNotImplementedException();
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
     public static Vector256<double> ApplyAvxFmaFp64(Vector256<double> input, LeakyReLUMicroKernel<TNumber> instance)
     {
-        throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
+        throw new IntrinsicTypeNotImplementedException();
     }
 }

@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
+using Sci.NET.Mathematics.Exceptions;
 using Sci.NET.Mathematics.Intrinsics;
 
 namespace Sci.NET.Mathematics.Backends.Managed.MicroKernels.ActivationFunctions;
@@ -88,11 +89,11 @@ internal class HardSigmoidBackwardMicroKernel<TNumber> : IUnaryOperation<TNumber
 
     public static Vector256<float> ApplyAvxFmaFp32(Vector256<float> input)
     {
-        throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
+        throw new IntrinsicTypeNotImplementedException();
     }
 
     public static Vector256<double> ApplyAvxFmaFp64(Vector256<double> input)
     {
-        throw new NotSupportedException("FMA instruction set is not applicable for this operation.");
+        throw new IntrinsicTypeNotImplementedException();
     }
 }
