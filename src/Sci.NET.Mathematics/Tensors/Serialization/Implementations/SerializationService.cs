@@ -351,7 +351,7 @@ internal class SerializationService : ISerializationService
             sbyte => "I8",
             byte => "U8",
             bool => "BOOL",
-            _ => throw new NotSupportedException()
+            _ => throw new NotSupportedException("The specified SafeTensors data type is not supported.")
         };
     }
 
@@ -371,7 +371,7 @@ internal class SerializationService : ISerializationService
             long => "<i8"u8,
             float => "<f4"u8,
             double => "<f8"u8,
-            _ => throw new NotSupportedException()
+            _ => throw new NotSupportedException("The specified NumPy data type is not supported.")
         };
     }
 
