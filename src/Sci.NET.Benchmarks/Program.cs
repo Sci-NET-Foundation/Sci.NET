@@ -12,6 +12,10 @@ BenchmarkRunner.Run<ManagedInnerProductBenchmarks<double>>();
 BenchmarkRunner.Run<ManagedContractionBenchmarks<float>>();
 BenchmarkRunner.Run<ManagedContractionBenchmarks<double>>();
 
+// Reduction benchmarks
+BenchmarkRunner.Run<ManagedReductionBenchmarks<float>>();
+BenchmarkRunner.Run<ManagedReductionBenchmarks<double>>();
+
 // Arithmetic benchmarks
 BenchmarkRunner.Run<ManagedBinaryArithmeticBenchmarks<float>>();
 BenchmarkRunner.Run<ManagedBinaryArithmeticBenchmarks<double>>();
