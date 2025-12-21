@@ -56,7 +56,7 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             result.Memory.ToPointer(),
             value.Memory.Length);
 
-        sumBuffer.Backend.Reduction.ReduceAddAll(result, sumBuffer);
+        sumBuffer.Backend.Reduction.ReduceAdd(result, Enumerable.Range(0, value.Shape.Rank).ToArray(), sumBuffer);
 
         ManagedParameterizedUnaryOperation.For(
             result.Memory.ToPointer(),

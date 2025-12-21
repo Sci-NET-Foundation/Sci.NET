@@ -105,7 +105,7 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
         var rightDimsPadded = PadShape(right.Shape.Dimensions, outRank);
         var rightStridesPadded = PadStrides(right.Shape.Strides, outRank);
         var outDimsPadded = PadShape(result.Shape.Dimensions, outRank);
-        var outStridesPadded = PadStrides(result.Shape.Strides, outRank);
+        var outputStridesPadded = PadStrides(result.Shape.Strides, outRank);
 
         var merged = new List<DimRange>();
 
@@ -115,9 +115,9 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
         {
             var size = outDimsPadded[dim];
 
-            var sLeft = leftDimsPadded[dim] == 1 ? 0 : leftStridesPadded[dim];
-            var sRight = rightDimsPadded[dim] == 1 ? 0 : rightStridesPadded[dim];
-            var sOut = outStridesPadded[dim];
+            var leftStride = leftDimsPadded[dim] == 1 ? 0 : leftStridesPadded[dim];
+            var rightStride = rightDimsPadded[dim] == 1 ? 0 : rightStridesPadded[dim];
+            var outputStride = outputStridesPadded[dim];
 
             var mergedSize = size;
             var moveDim = dim - 1;
@@ -130,11 +130,11 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
 
                 var nextLeftStride = nextLeftDim == 1 ? 0 : leftStridesPadded[moveDim];
                 var nextRightStride = nextRightDim == 1 ? 0 : rightStridesPadded[moveDim];
-                var nextOutStride = outStridesPadded[moveDim];
+                var nextOutStride = outputStridesPadded[moveDim];
 
-                var aOk = sLeft == nextLeftStride * nextSize || sLeft == 0 || nextLeftStride == 0;
-                var bOk = sRight == nextRightStride * nextSize || sRight == 0 || nextRightStride == 0;
-                var outOk = sOut == nextOutStride * nextSize;
+                var aOk = leftStride == nextLeftStride * nextSize || leftStride == 0 || nextLeftStride == 0;
+                var bOk = rightStride == nextRightStride * nextSize || rightStride == 0 || nextRightStride == 0;
+                var outOk = outputStride == nextOutStride * nextSize;
 
                 if (!aOk || !bOk || !outOk)
                 {
@@ -142,8 +142,8 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
                 }
 
                 mergedSize *= nextSize;
-                sLeft = sLeft != 0 ? sLeft : nextLeftStride;
-                sRight = sRight != 0 ? sRight : nextRightStride;
+                leftStride = leftStride != 0 ? leftStride : nextLeftStride;
+                rightStride = rightStride != 0 ? rightStride : nextRightStride;
 
                 moveDim--;
             }
@@ -152,9 +152,9 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
                 new DimRange
                 {
                     Extent = mergedSize,
-                    StrideLeft = sLeft,
-                    StrideRight = sRight,
-                    StrideResult = sOut
+                    StrideLeft = leftStride,
+                    StrideRight = rightStride,
+                    StrideResult = outputStride
                 });
 
             dim = moveDim;

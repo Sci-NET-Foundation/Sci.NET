@@ -80,7 +80,17 @@ public class MinShould : IntegrationTestBase
     {
         // Arrange
         var shape = new int[] { 100, 100, 50 };
-        using var tensor = Tensor.FromArray<int>(Enumerable.Range(1, shape.Product()).ToArray()).Reshape(shape).ToTensor();
+        using var tensor = Tensor.FromArray<int>(Enumerable.Range(0, shape.Product()).ToArray()).Reshape(shape).ToTensor();
+        var expected = new int[100, 50];
+
+        for (var i = 0; i < 100; i++)
+        {
+            for (var j = 0; j < 50; j++)
+            {
+                expected[i, j] = (i * 100 * 50) + j;
+            }
+        }
+
         tensor.To(computeDevice);
 
         // Act
@@ -88,7 +98,7 @@ public class MinShould : IntegrationTestBase
 
         result.To<CpuComputeDevice>();
 
-        var expectedTensor = Tensor.FromArray<int>(Enumerable.Range(1, 5000).ToArray()).Reshape(100, 50).ToTensor();
+        var expectedTensor = Tensor.FromArray<int>(expected).ToTensor();
 
         // Assert
         result.IsMatrix().Should().BeTrue();
@@ -96,6 +106,39 @@ public class MinShould : IntegrationTestBase
             .ToMatrix()
             .Should()
             .HaveShape(100, 50)
+            .And
+            .HaveEquivalentElements(expectedTensor.ToArray());
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnMinValues_GivenSmallIntTensorAndAxis1(IDevice computeDevice)
+    {
+        // Arrange
+        var shape = new int[] { 5, 3, 2 };
+        using var tensor = Tensor.FromArray<int>(Enumerable.Range(0, shape.Product()).ToArray()).Reshape(shape).ToTensor();
+        tensor.To(computeDevice);
+
+        // Act
+        using var result = tensor.Min([1]);
+
+        result.To<CpuComputeDevice>();
+
+        var expectedTensor = Tensor.FromArray<int>(new int[,]
+        {
+            { 0, 1 },
+            { 6, 7 },
+            { 12, 13 },
+            { 18, 19 },
+            { 24, 25 }
+        }).ToTensor();
+
+        // Assert
+        result.IsMatrix().Should().BeTrue();
+        result
+            .ToMatrix()
+            .Should()
+            .HaveShape(5, 2)
             .And
             .HaveEquivalentElements(expectedTensor.ToArray());
     }
