@@ -61,25 +61,25 @@ public class ManagedUnaryArithmeticBenchmarks<TNumber>
     [Benchmark]
     public void Abs()
     {
-        _arithmeticKernels.Abs(_tensor.Memory, _result.Memory, _tensor.Shape.ElementCount);
+        _arithmeticKernels.Abs(_tensor, _result);
     }
 
     [Benchmark]
     public void AbsBackwards()
     {
-        _arithmeticKernels.AbsGradient(_tensor.Memory, _gradient.Memory, _result.Memory, _tensor.Shape.ElementCount);
+        _arithmeticKernels.AbsGradient(_tensor, _gradient, _result);
     }
 
     [Benchmark]
     public void Sqrt()
     {
-        _arithmeticKernels.Sqrt(_tensor.Memory, _result.Memory, _tensor.Shape.ElementCount);
+        _arithmeticKernels.Sqrt(_tensor, _result);
     }
 
     [Benchmark]
     public void Negate()
     {
-        _arithmeticKernels.Negate(_tensor.Memory, _result.Memory, _tensor.Shape.ElementCount);
+        _arithmeticKernels.Negate(_tensor, _result);
     }
 
     [GlobalCleanup]

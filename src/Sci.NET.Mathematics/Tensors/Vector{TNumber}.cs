@@ -335,6 +335,23 @@ public sealed class Vector<TNumber> : ITensor<TNumber>
         oldHandle.Dispose();
     }
 
+    /// <summary>
+    /// Clones the <see cref="Scalar{TNumber}"/>.
+    /// </summary>
+    /// <returns>A clone of the <see cref="Scalar{TNumber}"/>.</returns>
+    public Vector<TNumber> Clone()
+    {
+        var clone = new Vector<TNumber>(Length, Backend, RequiresGradient);
+        clone.Memory.BlockCopyFrom(Memory, 0, 0, Memory.Length);
+
+        if (RequiresGradient && Gradient is not null && clone.Gradient is not null)
+        {
+            clone.Gradient.Memory.BlockCopyFrom(Gradient.Memory, 0, 0, Gradient.Memory.Length);
+        }
+
+        return clone;
+    }
+
     /// <inheritdoc />
     public override string ToString()
     {

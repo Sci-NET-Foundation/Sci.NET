@@ -29,5 +29,16 @@ public static class SciDotNetConfiguration
         {
             AutoGradEnabled = true;
         }
+
+        /// <summary>
+        /// Names of preview features.
+        /// </summary>
+        public static class Names
+        {
+            /// <summary>
+            /// The name of the auto-grad preview feature.
+            /// </summary>
+            public const string AutoGrad = "AutoGrad";
+        }
     }
 }

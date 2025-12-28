@@ -87,7 +87,8 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
     public bool IsGradient { get; init; }
 
     /// <inheritdoc />
-    ICollection<(string Name, ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)> ITensor<TNumber>.Parents { get; } = new List<(string Name, ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)>();
+    ICollection<(string Name, ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)> ITensor<TNumber>.Parents { get; } =
+        new List<(string Name, ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)>();
 
     /// <summary>
     /// Gets the number of rows in the <see cref="Matrix{TNumber}"/>.
@@ -350,6 +351,23 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
         oldHandle.Dispose();
 
         Gradient?.To(device);
+    }
+
+    /// <summary>
+    /// Clones the <see cref="Matrix{TNumber}"/>.
+    /// </summary>
+    /// <returns>A clone of the <see cref="Matrix{TNumber}"/>.</returns>
+    public Matrix<TNumber> Clone()
+    {
+        var clone = new Matrix<TNumber>(Rows, Columns, Backend, RequiresGradient);
+        clone.Memory.BlockCopyFrom(Memory, 0, 0, Memory.Length);
+
+        if (RequiresGradient && Gradient is not null && clone.Gradient is not null)
+        {
+            clone.Gradient.Memory.BlockCopyFrom(Gradient.Memory, 0, 0, Gradient.Memory.Length);
+        }
+
+        return clone;
     }
 
     /// <inheritdoc />

@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
+using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Backends.Managed.Iterators;
 using Sci.NET.Mathematics.Backends.Managed.MicroKernels.Exponential;
 using Sci.NET.Mathematics.Tensors;
@@ -17,7 +18,8 @@ internal class ManagedExponentialKernels : IExponentialKernels
             value.Memory.ToPointer(),
             result.Memory.ToPointer(),
             new PowMicroKernel<TNumber>(power.Value),
-            value.Memory.Length);
+            value.Shape.ElementCount,
+            (CpuComputeDevice)value.Device);
     }
 
     public unsafe void PowBackwards<TNumber>(ITensor<TNumber> value, Scalar<TNumber> power, ITensor<TNumber> result)
@@ -27,7 +29,8 @@ internal class ManagedExponentialKernels : IExponentialKernels
             value.Memory.ToPointer(),
             result.Memory.ToPointer(),
             new PowBackwardMicroKernel<TNumber>(power.Value),
-            value.Memory.Length);
+            value.Shape.ElementCount,
+            (CpuComputeDevice)value.Device);
     }
 
     public unsafe void Square<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
@@ -36,7 +39,8 @@ internal class ManagedExponentialKernels : IExponentialKernels
         ManagedUnaryOperationIterator.For<SquareMicroKernel<TNumber>, TNumber>(
             value.Memory.ToPointer(),
             result.Memory.ToPointer(),
-            value.Memory.Length);
+            value.Shape.ElementCount,
+            (CpuComputeDevice)value.Device);
     }
 
     public unsafe void Exp<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
@@ -45,7 +49,8 @@ internal class ManagedExponentialKernels : IExponentialKernels
         ManagedUnaryOperationIterator.For<ExpMicroKernel<TNumber>, TNumber>(
             value.Memory.ToPointer(),
             result.Memory.ToPointer(),
-            value.Memory.Length);
+            value.Shape.ElementCount,
+            (CpuComputeDevice)value.Device);
     }
 
     public unsafe void Log<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
@@ -54,7 +59,8 @@ internal class ManagedExponentialKernels : IExponentialKernels
         ManagedUnaryOperationIterator.For<LogMicroKernel<TNumber>, TNumber>(
             value.Memory.ToPointer(),
             result.Memory.ToPointer(),
-            value.Memory.Length);
+            value.Shape.ElementCount,
+            (CpuComputeDevice)value.Device);
     }
 
     public unsafe void LogBackwards<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
@@ -63,6 +69,7 @@ internal class ManagedExponentialKernels : IExponentialKernels
         ManagedUnaryOperationIterator.For<LogBackwardMicroKernel<TNumber>, TNumber>(
             value.Memory.ToPointer(),
             result.Memory.ToPointer(),
-            value.Memory.Length);
+            value.Shape.ElementCount,
+            (CpuComputeDevice)value.Device);
     }
 }

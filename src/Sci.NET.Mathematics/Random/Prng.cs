@@ -116,6 +116,7 @@ public class Prng
     public void SetSeed(ulong seed)
     {
         _seed = seed;
+        _stream = 0;
     }
 
     /// <summary>

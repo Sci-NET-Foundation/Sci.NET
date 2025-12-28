@@ -2,9 +2,9 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
+using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Backends.Managed.Iterators;
 using Sci.NET.Mathematics.Backends.Managed.MicroKernels.Arithmetic;
-using Sci.NET.Mathematics.Memory;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends.Managed;
@@ -39,59 +39,57 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
         iterator.Apply();
     }
 
-    public unsafe void Negate<TNumber>(
-        IMemoryBlock<TNumber> tensor,
-        IMemoryBlock<TNumber> result,
-        long n)
+    public unsafe void Negate<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
         ManagedUnaryOperationIterator.For<NegateMicroKernel<TNumber>, TNumber>(
-            tensor.ToPointer(),
-            result.ToPointer(),
-            n);
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (CpuComputeDevice)tensor.Device);
     }
 
-    public unsafe void Abs<TNumber>(
-        IMemoryBlock<TNumber> tensor,
-        IMemoryBlock<TNumber> result,
-        long n)
+    public unsafe void Abs<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
         ManagedUnaryOperationIterator.For<AbsMicroKernel<TNumber>, TNumber>(
-            tensor.ToPointer(),
-            result.ToPointer(),
-            n);
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (CpuComputeDevice)tensor.Device);
     }
 
-    public unsafe void AbsGradient<TNumber>(IMemoryBlock<TNumber> tensor, IMemoryBlock<TNumber> gradient, IMemoryBlock<TNumber> result, long n)
+    public unsafe void AbsGradient<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
         ManagedBinaryOperationIterator.For<AbsBackwardMicroKernel<TNumber>, TNumber>(
-            tensor.ToPointer(),
-            gradient.ToPointer(),
-            result.ToPointer(),
-            n);
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (CpuComputeDevice)tensor.Device);
     }
 
-    public unsafe void AbsoluteDifference<TNumber>(IMemoryBlock<TNumber> left, IMemoryBlock<TNumber> right, IMemoryBlock<TNumber> result)
+    public unsafe void AbsoluteDifference<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
         ManagedBinaryOperationIterator.For<AbsoluteDifferenceMicroKernel<TNumber>, TNumber>(
-            left.ToPointer(),
-            right.ToPointer(),
-            result.ToPointer(),
-            left.Length);
+            left.Memory.ToPointer(),
+            right.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            left.Shape.ElementCount,
+            (CpuComputeDevice)left.Device);
     }
 
     public unsafe void Sqrt<TNumber>(
-        IMemoryBlock<TNumber> tensor,
-        IMemoryBlock<TNumber> result,
-        long n)
+        ITensor<TNumber> tensor,
+        ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
         ManagedUnaryOperationIterator.For<SqrtMicroKernel<TNumber>, TNumber>(
-            tensor.ToPointer(),
-            result.ToPointer(),
-            n);
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (CpuComputeDevice)tensor.Device);
     }
 }

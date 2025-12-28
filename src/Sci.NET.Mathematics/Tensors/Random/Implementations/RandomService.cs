@@ -89,4 +89,19 @@ internal class RandomService : IRandomService
                 inputUnits,
                 seed);
     }
+
+    public void Seed(ulong seed, IDevice? device = null)
+    {
+        if (device is not null)
+        {
+            device
+                .GetTensorBackend()
+                .Random.Seed(seed);
+        }
+        else
+        {
+            Tensor.DefaultBackend
+                .Random.Seed(seed);
+        }
+    }
 }

@@ -26,7 +26,7 @@ internal class TensorEqualityOperationService : ITensorEqualityOperationService
 
         var result = new Tensor<TNumber>(left.Shape, backend);
 
-        backend.EqualityOperations.PointwiseEqual(left.Memory, right.Memory, result.Memory, left.Shape.ElementCount);
+        backend.EqualityOperations.PointwiseEqual(left, right, result);
 
         _gradientAppenderService.AddGradientIfRequired(
             ref result,
@@ -47,7 +47,7 @@ internal class TensorEqualityOperationService : ITensorEqualityOperationService
 
         var result = new Tensor<TNumber>(left.Shape, backend);
 
-        backend.EqualityOperations.PointwiseNotEqual(left.Memory, right.Memory, result.Memory, left.Shape.ElementCount);
+        backend.EqualityOperations.PointwiseNotEqual(left, right, result);
 
         _gradientAppenderService.AddGradientIfRequired(
             ref result,
@@ -68,7 +68,7 @@ internal class TensorEqualityOperationService : ITensorEqualityOperationService
 
         var result = new Tensor<TNumber>(left.Shape, backend);
 
-        backend.EqualityOperations.PointwiseGreaterThan(left.Memory, right.Memory, result.Memory, left.Shape.ElementCount);
+        backend.EqualityOperations.PointwiseGreaterThan(left, right, result);
 
         _gradientAppenderService.AddGradientIfRequired(
             ref result,
@@ -89,7 +89,7 @@ internal class TensorEqualityOperationService : ITensorEqualityOperationService
 
         var result = new Tensor<TNumber>(left.Shape, backend);
 
-        backend.EqualityOperations.PointwiseGreaterThanOrEqual(left.Memory, right.Memory, result.Memory, left.Shape.ElementCount);
+        backend.EqualityOperations.PointwiseGreaterThanOrEqual(left, right, result);
 
         _gradientAppenderService.AddGradientIfRequired(
             ref result,
@@ -110,7 +110,7 @@ internal class TensorEqualityOperationService : ITensorEqualityOperationService
 
         var result = new Tensor<TNumber>(left.Shape, backend);
 
-        backend.EqualityOperations.PointwiseLessThan(left.Memory, right.Memory, result.Memory, left.Shape.ElementCount);
+        backend.EqualityOperations.PointwiseLessThan(left, right, result);
 
         _gradientAppenderService.AddGradientIfRequired(
             ref result,
@@ -131,7 +131,7 @@ internal class TensorEqualityOperationService : ITensorEqualityOperationService
 
         var result = new Tensor<TNumber>(left.Shape, backend);
 
-        backend.EqualityOperations.PointwiseLessThanOrEqual(left.Memory, right.Memory, result.Memory, left.Shape.ElementCount);
+        backend.EqualityOperations.PointwiseLessThanOrEqual(left, right, result);
 
         _gradientAppenderService.AddGradientIfRequired(
             ref result,

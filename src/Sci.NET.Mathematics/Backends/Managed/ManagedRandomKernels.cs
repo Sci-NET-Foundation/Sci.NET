@@ -12,17 +12,19 @@ namespace Sci.NET.Mathematics.Backends.Managed;
 
 internal class ManagedRandomKernels : IRandomKernels
 {
+    private readonly Prng _prng = Prng.Instance;
+
+    public void Seed(ulong value)
+    {
+        _prng.SetSeed(value);
+    }
+
     public ITensor<TNumber> Uniform<TNumber>(Shape shape, TNumber min, TNumber max, ulong? seed = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var tensor = new Tensor<TNumber>(shape, ManagedTensorBackend.Instance);
-        var prng = seed is null ? Prng.Instance : new Prng();
+        var prng = seed is null ? _prng : new Prng(seed.Value);
         var memoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
-
-        if (seed is not null)
-        {
-            prng.SetSeed(seed.Value);
-        }
 
         if (typeof(TNumber) == typeof(BFloat16))
         {
@@ -121,7 +123,7 @@ internal class ManagedRandomKernels : IRandomKernels
         where TNumber : unmanaged, IFloatingPoint<TNumber>
     {
         var tensor = new Tensor<TNumber>(shape, ManagedTensorBackend.Instance);
-        var prng = seed is null ? Prng.Instance : new Prng();
+        var prng = seed is null ? _prng : new Prng(seed.Value);
         var memoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
 
         if (typeof(TNumber) == typeof(Half))
@@ -165,7 +167,7 @@ internal class ManagedRandomKernels : IRandomKernels
         where TNumber : unmanaged, IFloatingPoint<TNumber>
     {
         var tensor = new Tensor<TNumber>(shape, ManagedTensorBackend.Instance);
-        var prng = seed is null ? Prng.Instance : new Prng();
+        var prng = seed is null ? _prng : new Prng(seed.Value);
         var memoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
 
         if (typeof(TNumber) == typeof(Half))
@@ -209,7 +211,7 @@ internal class ManagedRandomKernels : IRandomKernels
         where TNumber : unmanaged, IFloatingPoint<TNumber>
     {
         var tensor = new Tensor<TNumber>(shape, ManagedTensorBackend.Instance);
-        var prng = seed is null ? Prng.Instance : new Prng();
+        var prng = seed is null ? _prng : new Prng(seed.Value);
         var memoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
 
         if (typeof(TNumber) == typeof(BFloat16))
@@ -253,7 +255,7 @@ internal class ManagedRandomKernels : IRandomKernels
         where TNumber : unmanaged, IFloatingPoint<TNumber>
     {
         var tensor = new Tensor<TNumber>(shape, ManagedTensorBackend.Instance);
-        var prng = seed is null ? Prng.Instance : new Prng();
+        var prng = seed is null ? _prng : new Prng(seed.Value);
         var memoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
 
         if (typeof(TNumber) == typeof(BFloat16))
@@ -293,7 +295,7 @@ internal class ManagedRandomKernels : IRandomKernels
         where TNumber : unmanaged, IFloatingPoint<TNumber>
     {
         var tensor = new Tensor<TNumber>(shape, ManagedTensorBackend.Instance);
-        var prng = seed is null ? Prng.Instance : new Prng();
+        var prng = seed is null ? _prng : new Prng(seed.Value);
         var memoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
 
         if (typeof(TNumber) == typeof(BFloat16))

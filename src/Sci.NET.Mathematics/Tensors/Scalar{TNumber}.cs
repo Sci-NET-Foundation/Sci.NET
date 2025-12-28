@@ -368,6 +368,23 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
         Gradient?.To(device);
     }
 
+    /// <summary>
+    /// Clones the <see cref="Scalar{TNumber}"/>.
+    /// </summary>
+    /// <returns>A clone of the <see cref="Scalar{TNumber}"/>.</returns>
+    public Scalar<TNumber> Clone()
+    {
+        var clone = new Scalar<TNumber>(Backend, RequiresGradient);
+        clone.Memory.BlockCopyFrom(Memory, 0, 0, Memory.Length);
+
+        if (RequiresGradient && Gradient is not null && clone.Gradient is not null)
+        {
+            clone.Gradient.Memory.BlockCopyFrom(Gradient.Memory, 0, 0, Gradient.Memory.Length);
+        }
+
+        return clone;
+    }
+
     /// <inheritdoc />
     public void Dispose()
     {

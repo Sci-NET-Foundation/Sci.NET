@@ -3,7 +3,6 @@
 
 using System.Numerics;
 using Sci.NET.Mathematics.Attributes;
-using Sci.NET.Mathematics.Memory;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends;
@@ -46,10 +45,10 @@ public interface ILinearAlgebraKernels
     /// <summary>
     /// Computes the hypotenuse of two broadcasted memory blocks.
     /// </summary>
-    /// <param name="left">The left memory block.</param>
-    /// <param name="right">The right memory block.</param>
-    /// <param name="result">The result memory block.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>s.</typeparam>
-    public void Hypot<TNumber>(IMemoryBlock<TNumber> left, IMemoryBlock<TNumber> right, IMemoryBlock<TNumber> result)
+    /// <param name="left">The left tensor.</param>
+    /// <param name="right">The right tensor.</param>
+    /// <param name="result">The result tensor.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>s.</typeparam>
+    public void Hypot<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
         where TNumber : unmanaged, IFloatingPointIeee754<TNumber>, IRootFunctions<TNumber>;
 }

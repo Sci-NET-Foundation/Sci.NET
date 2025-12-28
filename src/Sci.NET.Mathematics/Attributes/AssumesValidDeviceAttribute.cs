@@ -11,7 +11,7 @@ namespace Sci.NET.Mathematics.Attributes;
 /// </summary>
 [PublicAPI]
 [ExcludeFromCodeCoverage]
-[AttributeUsage(AttributeTargets.Method | AttributeTargets.Parameter)]
+[AttributeUsage(AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Constructor)]
 public sealed class AssumesValidDeviceAttribute : Attribute
 {
 }

@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
+using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Backends.Managed.Buffers;
 using Sci.NET.Mathematics.Backends.Managed.Iterators;
 using Sci.NET.Mathematics.Backends.Managed.MicroKernels.LinearAlgebra;
@@ -30,19 +31,15 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
     private const int MatrixMultiplyKcFp64 = 128;
     private const int MatrixMultiplyNcFp64 = 128;
 
-    public unsafe void Hypot<TNumber>(IMemoryBlock<TNumber> left, IMemoryBlock<TNumber> right, IMemoryBlock<TNumber> result)
+    public unsafe void Hypot<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
         where TNumber : unmanaged, IFloatingPointIeee754<TNumber>, IRootFunctions<TNumber>
     {
-        var leftMemoryBlock = (SystemMemoryBlock<TNumber>)left;
-        var rightMemoryBlock = (SystemMemoryBlock<TNumber>)right;
-        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result;
-        var n = leftMemoryBlock.Length;
-
         ManagedStreamingBinaryOperationIterator.For<HypotMicroKernel<TNumber>, TNumber>(
-            leftMemoryBlock.Pointer,
-            rightMemoryBlock.Pointer,
-            resultMemoryBlock.Pointer,
-            n);
+            left.Memory.ToPointer(),
+            right.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            left.Shape.ElementCount,
+            (CpuComputeDevice)left.Device);
     }
 
     public unsafe void MatrixMultiply<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right, Matrix<TNumber> result)

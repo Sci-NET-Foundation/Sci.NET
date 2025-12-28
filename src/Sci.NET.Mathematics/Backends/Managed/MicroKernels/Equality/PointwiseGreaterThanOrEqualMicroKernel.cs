@@ -49,15 +49,17 @@ internal class PointwiseGreaterThanOrEqualMicroKernel<TNumber> : IBinaryOperatio
     [MethodImpl(ImplementationOptions.HotPath)]
     public static Vector256<float> ApplyAvxFp32(Vector256<float> left, Vector256<float> right)
     {
-        var greaterThanOrEqualMask = Avx.CompareGreaterThanOrEqual(left, right);
-        return Avx.BlendVariable(Vector256<float>.Zero, Vector256<float>.One, greaterThanOrEqualMask);
+        var mask = Avx.CompareGreaterThanOrEqual(left, right);
+        var ones = Vector256<float>.One;
+        return Avx.And(mask, ones);
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
     public static Vector256<double> ApplyAvxFp64(Vector256<double> left, Vector256<double> right)
     {
-        var greaterThanOrEqualMask = Avx.CompareGreaterThanOrEqual(left, right);
-        return Avx.BlendVariable(Vector256<double>.Zero, Vector256<double>.One, greaterThanOrEqualMask);
+        var mask = Avx.CompareGreaterThanOrEqual(left, right);
+        var ones = Vector256<double>.One;
+        return Avx.And(mask, ones);
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]

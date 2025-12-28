@@ -49,19 +49,17 @@ internal class PointwiseEqualMicroKernel<TNumber> : IBinaryOperation<TNumber>, I
     [MethodImpl(ImplementationOptions.HotPath)]
     public static Vector256<float> ApplyAvxFp32(Vector256<float> left, Vector256<float> right)
     {
-        var zero = Vector256<float>.Zero;
-        var one = Vector256.Create(1.0f);
-        var equalsMask = Avx.CompareEqual(left, right);
-        return Avx.BlendVariable(zero, one, equalsMask);
+        var mask = Avx.CompareEqual(left, right);
+        var ones = Vector256<float>.One;
+        return Avx.And(mask, ones);
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
     public static Vector256<double> ApplyAvxFp64(Vector256<double> left, Vector256<double> right)
     {
-        var zero = Vector256<double>.Zero;
-        var one = Vector256.Create(1.0d);
-        var equalsMask = Avx.CompareEqual(left, right);
-        return Avx.BlendVariable(zero, one, equalsMask);
+        var mask = Avx.CompareEqual(left, right);
+        var ones = Vector256<double>.One;
+        return Avx.And(mask, ones);
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]

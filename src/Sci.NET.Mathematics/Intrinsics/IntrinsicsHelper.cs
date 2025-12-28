@@ -56,7 +56,7 @@ public static class IntrinsicsHelper
     /// </summary>
     public static void DisableSimd()
     {
-        AvailableInstructionSets = SimdInstructionSet.None;
+        AvailableInstructionSets = GetAvailableInstructionSets();
     }
 
     /// <summary>
@@ -65,46 +65,6 @@ public static class IntrinsicsHelper
     public static void EnableSimd()
     {
         AvailableInstructionSets = SimdInstructionSet.None;
-
-        if (Sse.IsSupported)
-        {
-            AvailableInstructionSets |= SimdInstructionSet.Sse;
-        }
-
-        if (Sse2.IsSupported)
-        {
-            AvailableInstructionSets |= SimdInstructionSet.Sse2;
-        }
-
-        if (Sse3.IsSupported)
-        {
-            AvailableInstructionSets |= SimdInstructionSet.Sse3;
-        }
-
-        if (Sse41.IsSupported)
-        {
-            AvailableInstructionSets |= SimdInstructionSet.Sse41;
-        }
-
-        if (Avx.IsSupported)
-        {
-            AvailableInstructionSets |= SimdInstructionSet.Avx;
-        }
-
-        if (Avx2.IsSupported)
-        {
-            AvailableInstructionSets |= SimdInstructionSet.Avx2;
-        }
-
-        if (Avx512F.IsSupported)
-        {
-            AvailableInstructionSets |= SimdInstructionSet.Avx512F;
-        }
-
-        if (Fma.IsSupported)
-        {
-            AvailableInstructionSets |= SimdInstructionSet.Fma;
-        }
     }
 
     /// <summary>
@@ -124,5 +84,52 @@ public static class IntrinsicsHelper
     public static bool IsAvxSupported()
     {
         return (AvailableInstructionSets & SimdInstructionSet.Avx2) != 0;
+    }
+
+    private static SimdInstructionSet GetAvailableInstructionSets()
+    {
+        var instructionSets = SimdInstructionSet.None;
+
+        if (Sse.IsSupported)
+        {
+            instructionSets |= SimdInstructionSet.Sse;
+        }
+
+        if (Sse2.IsSupported)
+        {
+            instructionSets |= SimdInstructionSet.Sse2;
+        }
+
+        if (Sse3.IsSupported)
+        {
+            instructionSets |= SimdInstructionSet.Sse3;
+        }
+
+        if (Sse41.IsSupported)
+        {
+            instructionSets |= SimdInstructionSet.Sse41;
+        }
+
+        if (Avx.IsSupported)
+        {
+            instructionSets |= SimdInstructionSet.Avx;
+        }
+
+        if (Avx2.IsSupported)
+        {
+            instructionSets |= SimdInstructionSet.Avx2;
+        }
+
+        if (Avx512F.IsSupported)
+        {
+            instructionSets |= SimdInstructionSet.Avx512F;
+        }
+
+        if (Fma.IsSupported)
+        {
+            instructionSets |= SimdInstructionSet.Fma;
+        }
+
+        return instructionSets;
     }
 }

@@ -6,6 +6,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
+using Sci.NET.Mathematics.Attributes;
+using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Backends.Iterators;
 using Sci.NET.Mathematics.Backends.Managed.Buffers;
 using Sci.NET.Mathematics.Backends.Managed.MicroKernels;
@@ -22,9 +24,12 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
     private readonly unsafe TNumber* _leftPtr;
     private readonly unsafe TNumber* _rightPtr;
     private readonly unsafe TNumber* _resultPtr;
+    private readonly CpuComputeDevice _device;
 
+    [AssumesValidDevice]
     public unsafe ManagedBinaryArithmeticOperationIterator(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
     {
+        _device = (CpuComputeDevice)result.Device;
         _dimRanges = BuildDimRanges(left, right, result);
         _leftPtr = left.Memory.ToPointer();
         _rightPtr = right.Memory.ToPointer();
@@ -45,7 +50,7 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
         }
         else if (rank == 1)
         {
-            if (TOp.IsAvxSupported())
+            if (_device.IsAvxSupported() && TOp.IsAvxSupported())
             {
                 switch (TNumber.Zero)
                 {
@@ -62,7 +67,7 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
         }
         else if (rank == 2)
         {
-            if (TOp.IsAvxSupported())
+            if (_device.IsAvxSupported() && TOp.IsAvxSupported())
             {
                 switch (TNumber.Zero)
                 {
@@ -79,7 +84,7 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
         }
         else
         {
-            if (TOp.IsAvxSupported())
+            if (_device.IsAvxSupported() && TOp.IsAvxSupported())
             {
                 switch (TNumber.Zero)
                 {

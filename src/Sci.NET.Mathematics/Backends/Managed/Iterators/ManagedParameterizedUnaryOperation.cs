@@ -3,6 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Backends.Managed.MicroKernels;
 
 namespace Sci.NET.Mathematics.Backends.Managed.Iterators;
@@ -10,17 +11,17 @@ namespace Sci.NET.Mathematics.Backends.Managed.Iterators;
 internal static class ManagedParameterizedUnaryOperation
 {
     [SuppressMessage("Style", "IDE0010:Add missing cases", Justification = "Reviewed")]
-    public static unsafe void For<TOp, TNumber>(TNumber* inputPtr, TNumber* resultPtr, TOp instance, long n)
+    public static unsafe void For<TOp, TNumber>(TNumber* inputPtr, TNumber* resultPtr, TOp instance, long n, CpuComputeDevice device)
         where TOp : IUnaryParameterizedOperation<TOp, TNumber>, IUnaryParameterizedOperationAvx<TOp>, IUnaryParameterizedOperationAvxFma<TOp>
         where TNumber : unmanaged, INumber<TNumber>
     {
         if (ManagedTensorBackend.ShouldStream(n))
         {
-            ManagedStreamingUnaryParameterizedIterator.For(inputPtr, resultPtr, instance, n);
+            ManagedStreamingUnaryParameterizedIterator.For(inputPtr, resultPtr, instance, n, device);
         }
         else
         {
-            ManagedBlockedUnaryParameterizedIterator.For(inputPtr, resultPtr, instance, n);
+            ManagedBlockedUnaryParameterizedIterator.For(inputPtr, resultPtr, instance, n, device);
         }
     }
 }

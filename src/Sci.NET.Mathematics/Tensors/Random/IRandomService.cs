@@ -88,4 +88,11 @@ public interface IRandomService
     /// <returns>A new <see cref="ITensor{TNumber}"/> filled with random data.</returns>
     public ITensor<TNumber> HeNormal<TNumber>(Shape shape, int inputUnits, ulong? seed = null, IDevice? device = null)
         where TNumber : unmanaged, IFloatingPoint<TNumber>;
+
+    /// <summary>
+    /// Seeds the random number generator to the specified value. If no device is specified, the default device is used.
+    /// </summary>
+    /// <param name="seed">The seed to use.</param>
+    /// <param name="device">The device to seed the random number generator on.</param>
+    public void Seed(ulong seed, IDevice? device = null);
 }

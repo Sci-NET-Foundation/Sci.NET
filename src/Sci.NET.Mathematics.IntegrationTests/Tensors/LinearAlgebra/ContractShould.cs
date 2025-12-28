@@ -11,31 +11,11 @@ namespace Sci.NET.Mathematics.IntegrationTests.Tensors.LinearAlgebra;
 
 public class ContractShould : IntegrationTestBase
 {
-    private static void PyTorchTest<TNumber>(string safetensorsName, IDevice device, int[] leftIndices, int[] rightIndices)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        // Arrange
-        var loadPath = Path.Join(Path.GetDirectoryName(typeof(ContractShould).Assembly.Location) ?? string.Empty, "Tensors", "LinearAlgebra", "Examples", $"{safetensorsName}.safetensors");
-        var tensors = Tensor.LoadSafeTensors<TNumber>(loadPath);
-        var left = tensors["left"];
-        var right = tensors["right"];
-        var expectedResult = tensors["result"];
-
-        left.To(device);
-        right.To(device);
-        expectedResult.To(device);
-
-        // Act
-        var result = left.Contract(right, leftIndices, rightIndices);
-
-        // Assert
-        result.Should().HaveApproximatelyEquivalentElements(expectedResult.ToArray(), TNumber.CreateChecked(1e-7f));
-    }
-
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void ReturnsCorrectResult_GivenTwoTensorsWithSameShape(IDevice device)
     {
+        // Arrange
         var left = Tensor.FromArray<float>(Enumerable.Range(0, 4 * 3 * 2).Select(x => (float)x).ToArray()).Reshape(4, 3, 2);
         var right = Tensor.FromArray<float>(Enumerable.Range(0, 4 * 3 * 2).Select(x => (float)x).ToArray()).Reshape(4, 3, 2);
 
@@ -191,5 +171,26 @@ public class ContractShould : IntegrationTestBase
     public void ReturnsCorrectResult_GivenPyTorchExample2(IDevice device)
     {
         PyTorchTest<int>("Contract_[[1]_[0]]_2", device, new int[] { 1 }, new int[] { 0 });
+    }
+
+    private static void PyTorchTest<TNumber>(string safetensorsName, IDevice device, int[] leftIndices, int[] rightIndices)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        // Arrange
+        var loadPath = Path.Join(Path.GetDirectoryName(typeof(ContractShould).Assembly.Location) ?? string.Empty, "Tensors", "LinearAlgebra", "Examples", $"{safetensorsName}.safetensors");
+        var tensors = Tensor.LoadSafeTensors<TNumber>(loadPath);
+        var left = tensors["left"];
+        var right = tensors["right"];
+        var expectedResult = tensors["result"];
+
+        left.To(device);
+        right.To(device);
+        expectedResult.To(device);
+
+        // Act
+        var result = left.Contract(right, leftIndices, rightIndices);
+
+        // Assert
+        result.Should().HaveApproximatelyEquivalentElements(expectedResult.ToArray(), TNumber.CreateChecked(1e-7f));
     }
 }

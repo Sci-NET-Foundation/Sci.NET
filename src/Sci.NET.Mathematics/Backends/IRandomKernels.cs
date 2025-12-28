@@ -13,6 +13,12 @@ namespace Sci.NET.Mathematics.Backends;
 public interface IRandomKernels
 {
     /// <summary>
+    /// Seeds the random number generator with the specified value.
+    /// </summary>
+    /// <param name="value">The seed value.</param>
+    public void Seed(ulong value);
+
+    /// <summary>
     /// Creates an <see cref="ITensor{TNumber}"/> filled with random values from
     /// the specified generator.
     /// </summary>

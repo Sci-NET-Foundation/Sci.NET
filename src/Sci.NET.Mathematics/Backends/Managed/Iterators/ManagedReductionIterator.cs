@@ -80,59 +80,17 @@ internal static class ManagedReductionIterator<TNumber, TReduction>
         var numThreads = ManagedTensorBackend.GetNumThreadsByElementCount<float>(n);
         var partials = new float[numThreads];
 
-        const int unrollFactor = 4;
-        const int elementsPerIteration = NativeBufferHelpers.AvxVectorSizeFp32 * unrollFactor;
-        const int prefetchDistance = 64;
-
-        _ = Parallel.For(
-            0,
-            numThreads,
-            tid =>
-            {
-                var start = tid * n / numThreads;
-                var end = (tid + 1) * n / numThreads;
-                var count = end - start;
-                var basePtr = input + start;
-
-                var acc0 = TReduction.Avx256Fp32Identity;
-                var acc1 = TReduction.Avx256Fp32Identity;
-                var acc2 = TReduction.Avx256Fp32Identity;
-                var acc3 = TReduction.Avx256Fp32Identity;
-
-                long i = 0;
-                var unrollLimit = count - elementsPerIteration;
-
-                for (; i <= unrollLimit; i += elementsPerIteration)
-                {
-                    Sse.Prefetch0(basePtr + i + prefetchDistance);
-
-                    acc0 = TReduction.AccumulateAvx256Fp32(acc0, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp32 * 0)));
-                    acc1 = TReduction.AccumulateAvx256Fp32(acc1, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp32 * 1)));
-                    acc2 = TReduction.AccumulateAvx256Fp32(acc2, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp32 * 2)));
-                    acc3 = TReduction.AccumulateAvx256Fp32(acc3, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp32 * 3)));
-                }
-
-                acc0 = TReduction.AccumulateAvx256Fp32(acc0, acc1);
-                acc2 = TReduction.AccumulateAvx256Fp32(acc2, acc3);
-                acc0 = TReduction.AccumulateAvx256Fp32(acc0, acc2);
-
-                for (; i <= count - NativeBufferHelpers.AvxVectorSizeFp32; i += NativeBufferHelpers.AvxVectorSizeFp32)
-                {
-                    acc0 = TReduction.AccumulateAvx256Fp32(acc0, Avx.LoadVector256(basePtr + i));
-                }
-
-                var scalar = TReduction.HorizontalReduceAvx256Fp32(acc0);
-
-                for (; i < count; i++)
-                {
-                    var scalarGeneric = TReduction.Accumulate(
-                        Unsafe.As<float, TNumber>(ref scalar),
-                        Unsafe.As<float, TNumber>(ref basePtr[i]));
-                    scalar = Unsafe.As<TNumber, float>(ref scalarGeneric);
-                }
-
-                partials[tid] = scalar;
-            });
+        if (numThreads == 1)
+        {
+            ApplyFullReductionAvx256Fp32InnerLoop(0, 1, n, input, partials);
+        }
+        else
+        {
+            _ = Parallel.For(
+                0,
+                numThreads,
+                tid => ApplyFullReductionAvx256Fp32InnerLoop(tid, numThreads, n, input, partials));
+        }
 
         var result = TReduction.Identity;
         foreach (var partial in partials)
@@ -145,6 +103,57 @@ internal static class ManagedReductionIterator<TNumber, TReduction>
         output[0] = Unsafe.As<TNumber, float>(ref final);
     }
 
+    private static unsafe void ApplyFullReductionAvx256Fp32InnerLoop(int tid, int numThreads, long n, float* input, float[] partials)
+    {
+        const int unrollFactor = 4;
+        const int elementsPerIteration = NativeBufferHelpers.AvxVectorSizeFp32 * unrollFactor;
+        const int prefetchDistance = 64;
+
+        var start = tid * n / numThreads;
+        var end = (tid + 1) * n / numThreads;
+        var count = end - start;
+        var basePtr = input + start;
+
+        var acc0 = TReduction.Avx256Fp32Identity;
+        var acc1 = TReduction.Avx256Fp32Identity;
+        var acc2 = TReduction.Avx256Fp32Identity;
+        var acc3 = TReduction.Avx256Fp32Identity;
+
+        long i = 0;
+        var unrollLimit = count - elementsPerIteration;
+
+        for (; i <= unrollLimit; i += elementsPerIteration)
+        {
+            Sse.Prefetch0(basePtr + i + prefetchDistance);
+
+            acc0 = TReduction.AccumulateAvx256Fp32(acc0, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp32 * 0)));
+            acc1 = TReduction.AccumulateAvx256Fp32(acc1, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp32 * 1)));
+            acc2 = TReduction.AccumulateAvx256Fp32(acc2, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp32 * 2)));
+            acc3 = TReduction.AccumulateAvx256Fp32(acc3, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp32 * 3)));
+        }
+
+        acc0 = TReduction.AccumulateAvx256Fp32(acc0, acc1);
+        acc2 = TReduction.AccumulateAvx256Fp32(acc2, acc3);
+        acc0 = TReduction.AccumulateAvx256Fp32(acc0, acc2);
+
+        for (; i <= count - NativeBufferHelpers.AvxVectorSizeFp32; i += NativeBufferHelpers.AvxVectorSizeFp32)
+        {
+            acc0 = TReduction.AccumulateAvx256Fp32(acc0, Avx.LoadVector256(basePtr + i));
+        }
+
+        var scalar = TReduction.HorizontalReduceAvx256Fp32(acc0);
+
+        for (; i < count; i++)
+        {
+            var scalarGeneric = TReduction.Accumulate(
+                Unsafe.As<float, TNumber>(ref scalar),
+                Unsafe.As<float, TNumber>(ref basePtr[i]));
+            scalar = Unsafe.As<TNumber, float>(ref scalarGeneric);
+        }
+
+        partials[tid] = scalar;
+    }
+
     private static unsafe void ApplyFullReductionAvx256Fp64(
         double* input,
         double* output,
@@ -153,59 +162,17 @@ internal static class ManagedReductionIterator<TNumber, TReduction>
         var numThreads = ManagedTensorBackend.GetNumThreadsByElementCount<double>(n);
         var partials = new double[numThreads];
 
-        const int unrollFactor = 4;
-        const int elementsPerIteration = NativeBufferHelpers.AvxVectorSizeFp64 * unrollFactor;
-        const int prefetchDistance = 64;
-
-        _ = Parallel.For(
-            0,
-            numThreads,
-            tid =>
-            {
-                var start = tid * n / numThreads;
-                var end = (tid + 1) * n / numThreads;
-                var count = end - start;
-                var basePtr = input + start;
-
-                var acc0 = TReduction.Avx256Fp64Identity;
-                var acc1 = TReduction.Avx256Fp64Identity;
-                var acc2 = TReduction.Avx256Fp64Identity;
-                var acc3 = TReduction.Avx256Fp64Identity;
-
-                long i = 0;
-                var unrollLimit = count - elementsPerIteration;
-
-                for (; i <= unrollLimit; i += elementsPerIteration)
-                {
-                    Sse.Prefetch0(basePtr + i + prefetchDistance);
-
-                    acc0 = TReduction.AccumulateAvx256Fp64(acc0, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp64 * 0)));
-                    acc1 = TReduction.AccumulateAvx256Fp64(acc1, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp64 * 1)));
-                    acc2 = TReduction.AccumulateAvx256Fp64(acc2, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp64 * 2)));
-                    acc3 = TReduction.AccumulateAvx256Fp64(acc3, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp64 * 3)));
-                }
-
-                acc0 = TReduction.AccumulateAvx256Fp64(acc0, acc1);
-                acc2 = TReduction.AccumulateAvx256Fp64(acc2, acc3);
-                acc0 = TReduction.AccumulateAvx256Fp64(acc0, acc2);
-
-                for (; i <= count - NativeBufferHelpers.AvxVectorSizeFp64; i += NativeBufferHelpers.AvxVectorSizeFp64)
-                {
-                    acc0 = TReduction.AccumulateAvx256Fp64(acc0, Avx.LoadVector256(basePtr + i));
-                }
-
-                var scalar = TReduction.HorizontalReduceAvx256Fp64(acc0);
-
-                for (; i < count; i++)
-                {
-                    var scalarGeneric = TReduction.Accumulate(
-                        Unsafe.As<double, TNumber>(ref scalar),
-                        Unsafe.As<double, TNumber>(ref basePtr[i]));
-                    scalar = Unsafe.As<TNumber, double>(ref scalarGeneric);
-                }
-
-                partials[tid] = scalar;
-            });
+        if (numThreads == 1)
+        {
+            ApplyFullReductionAvx256Fp64InnerLoop(0, 1, n, input, partials);
+        }
+        else
+        {
+            _ = Parallel.For(
+                0,
+                numThreads,
+                tid => ApplyFullReductionAvx256Fp64InnerLoop(tid, numThreads, n, input, partials));
+        }
 
         var result = TReduction.Identity;
         foreach (var partial in partials)
@@ -218,6 +185,57 @@ internal static class ManagedReductionIterator<TNumber, TReduction>
         output[0] = Unsafe.As<TNumber, double>(ref final);
     }
 
+    private static unsafe void ApplyFullReductionAvx256Fp64InnerLoop(int tid, int numThreads, long n, double* input, double[] partials)
+    {
+        const int unrollFactor = 4;
+        const int elementsPerIteration = NativeBufferHelpers.AvxVectorSizeFp64 * unrollFactor;
+        const int prefetchDistance = 64;
+
+        var start = tid * n / numThreads;
+        var end = (tid + 1) * n / numThreads;
+        var count = end - start;
+        var basePtr = input + start;
+
+        var acc0 = TReduction.Avx256Fp64Identity;
+        var acc1 = TReduction.Avx256Fp64Identity;
+        var acc2 = TReduction.Avx256Fp64Identity;
+        var acc3 = TReduction.Avx256Fp64Identity;
+
+        long i = 0;
+        var unrollLimit = count - elementsPerIteration;
+
+        for (; i <= unrollLimit; i += elementsPerIteration)
+        {
+            Sse.Prefetch0(basePtr + i + prefetchDistance);
+
+            acc0 = TReduction.AccumulateAvx256Fp64(acc0, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp64 * 0)));
+            acc1 = TReduction.AccumulateAvx256Fp64(acc1, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp64 * 1)));
+            acc2 = TReduction.AccumulateAvx256Fp64(acc2, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp64 * 2)));
+            acc3 = TReduction.AccumulateAvx256Fp64(acc3, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp64 * 3)));
+        }
+
+        acc0 = TReduction.AccumulateAvx256Fp64(acc0, acc1);
+        acc2 = TReduction.AccumulateAvx256Fp64(acc2, acc3);
+        acc0 = TReduction.AccumulateAvx256Fp64(acc0, acc2);
+
+        for (; i <= count - NativeBufferHelpers.AvxVectorSizeFp64; i += NativeBufferHelpers.AvxVectorSizeFp64)
+        {
+            acc0 = TReduction.AccumulateAvx256Fp64(acc0, Avx.LoadVector256(basePtr + i));
+        }
+
+        var scalar = TReduction.HorizontalReduceAvx256Fp64(acc0);
+
+        for (; i < count; i++)
+        {
+            var scalarGeneric = TReduction.Accumulate(
+                Unsafe.As<double, TNumber>(ref scalar),
+                Unsafe.As<double, TNumber>(ref basePtr[i]));
+            scalar = Unsafe.As<TNumber, double>(ref scalarGeneric);
+        }
+
+        partials[tid] = scalar;
+    }
+
     private static unsafe void ApplyFullReductionScalar(
         TNumber* input,
         TNumber* output,
@@ -226,24 +244,17 @@ internal static class ManagedReductionIterator<TNumber, TReduction>
         var numThreads = ManagedTensorBackend.GetNumThreadsByElementCount<double>(n);
         var partials = new TNumber[numThreads];
 
+        if (numThreads == 1)
+        {
+            ApplyFullReductionScalarInnerLoop(0, 1, n, input, partials);
+            output[0] = TReduction.Finalize(partials[0], n);
+            return;
+        }
+
         _ = Parallel.For(
             0,
             numThreads,
-            tid =>
-            {
-                var start = tid * n / numThreads;
-                var end = (tid + 1) * n / numThreads;
-                var count = end - start;
-                var basePtr = input + start;
-                var partial = TReduction.Identity;
-
-                for (var i = 0; i < count; i++)
-                {
-                    partial = TReduction.Accumulate(partial, *(basePtr + i));
-                }
-
-                partials[tid] = partial;
-            });
+            tid => ApplyFullReductionScalarInnerLoop(tid, numThreads, n, input, partials));
 
         var result = TReduction.Identity;
         foreach (var partial in partials)
@@ -252,6 +263,22 @@ internal static class ManagedReductionIterator<TNumber, TReduction>
         }
 
         output[0] = TReduction.Finalize(result, n);
+    }
+
+    private static unsafe void ApplyFullReductionScalarInnerLoop(int tid, int numThreads, long n, TNumber* input, TNumber[] partials)
+    {
+        var start = tid * n / numThreads;
+        var end = (tid + 1) * n / numThreads;
+        var count = end - start;
+        var basePtr = input + start;
+        var partial = TReduction.Identity;
+
+        for (var i = 0; i < count; i++)
+        {
+            partial = TReduction.Accumulate(partial, *(basePtr + i));
+        }
+
+        partials[tid] = partial;
     }
 
     private static unsafe void ApplyContiguousInner(
@@ -275,7 +302,7 @@ internal static class ManagedReductionIterator<TNumber, TReduction>
             }
         }
 
-        ApplyContiguousInnerScalar(input, output, outerCount, innerCount);
+        ApplyContiguousInnerScalar(input.ToPointer(), output.ToPointer(), outerCount, innerCount);
     }
 
     private static unsafe void ApplyContiguousInnerAvx256Fp32(
@@ -284,51 +311,58 @@ internal static class ManagedReductionIterator<TNumber, TReduction>
         long outerCount,
         long innerCount)
     {
-        var vectorSize = Vector256<float>.Count;
+        if (outerCount == 1)
+        {
+            ApplyContiguousInnerAvx256Fp32InnerLoop(0, innerCount, input, output);
+        }
+        else
+        {
+            _ = Parallel.For(
+                0,
+                outerCount,
+                outer => ApplyContiguousInnerAvx256Fp32InnerLoop(outer, innerCount, input, output));
+        }
+    }
 
-        _ = Parallel.For(
-            0,
-            outerCount,
-            outer =>
-            {
-                var basePtr = input + (outer * innerCount);
+    private static unsafe void ApplyContiguousInnerAvx256Fp32InnerLoop(long outer, long innerCount, float* input, float* output)
+    {
+        var basePtr = input + (outer * innerCount);
 
-                var acc0 = TReduction.Avx256Fp32Identity;
-                var acc1 = TReduction.Avx256Fp32Identity;
-                var acc2 = TReduction.Avx256Fp32Identity;
-                var acc3 = TReduction.Avx256Fp32Identity;
+        var acc0 = TReduction.Avx256Fp32Identity;
+        var acc1 = TReduction.Avx256Fp32Identity;
+        var acc2 = TReduction.Avx256Fp32Identity;
+        var acc3 = TReduction.Avx256Fp32Identity;
 
-                var j = 0;
-                var unrollLimit = innerCount - (vectorSize * 4);
+        var j = 0;
+        var unrollLimit = innerCount - (NativeBufferHelpers.AvxVectorSizeFp32 * 4);
 
-                for (; j <= unrollLimit; j += vectorSize * 4)
-                {
-                    acc0 = TReduction.AccumulateAvx256Fp32(acc0, Vector256.Load(basePtr + j + (vectorSize * 0)));
-                    acc1 = TReduction.AccumulateAvx256Fp32(acc1, Vector256.Load(basePtr + j + (vectorSize * 1)));
-                    acc2 = TReduction.AccumulateAvx256Fp32(acc2, Vector256.Load(basePtr + j + (vectorSize * 2)));
-                    acc3 = TReduction.AccumulateAvx256Fp32(acc3, Vector256.Load(basePtr + j + (vectorSize * 3)));
-                }
+        for (; j <= unrollLimit; j += NativeBufferHelpers.AvxVectorSizeFp32 * 4)
+        {
+            acc0 = TReduction.AccumulateAvx256Fp32(acc0, Vector256.Load(basePtr + j + (NativeBufferHelpers.AvxVectorSizeFp32 * 0)));
+            acc1 = TReduction.AccumulateAvx256Fp32(acc1, Vector256.Load(basePtr + j + (NativeBufferHelpers.AvxVectorSizeFp32 * 1)));
+            acc2 = TReduction.AccumulateAvx256Fp32(acc2, Vector256.Load(basePtr + j + (NativeBufferHelpers.AvxVectorSizeFp32 * 2)));
+            acc3 = TReduction.AccumulateAvx256Fp32(acc3, Vector256.Load(basePtr + j + (NativeBufferHelpers.AvxVectorSizeFp32 * 3)));
+        }
 
-                acc0 = TReduction.AccumulateAvx256Fp32(acc0, acc1);
-                acc2 = TReduction.AccumulateAvx256Fp32(acc2, acc3);
-                acc0 = TReduction.AccumulateAvx256Fp32(acc0, acc2);
+        acc0 = TReduction.AccumulateAvx256Fp32(acc0, acc1);
+        acc2 = TReduction.AccumulateAvx256Fp32(acc2, acc3);
+        acc0 = TReduction.AccumulateAvx256Fp32(acc0, acc2);
 
-                for (; j <= innerCount - vectorSize; j += vectorSize)
-                {
-                    acc0 = TReduction.AccumulateAvx256Fp32(acc0, Vector256.Load(basePtr + j));
-                }
+        for (; j <= innerCount - NativeBufferHelpers.AvxVectorSizeFp32; j += NativeBufferHelpers.AvxVectorSizeFp32)
+        {
+            acc0 = TReduction.AccumulateAvx256Fp32(acc0, Vector256.Load(basePtr + j));
+        }
 
-                var scalarAcc = TReduction.HorizontalReduceAvx256Fp32(acc0);
+        var scalarAcc = TReduction.HorizontalReduceAvx256Fp32(acc0);
 
-                for (; j < innerCount; j++)
-                {
-                    var untypedAcc = TReduction.Accumulate(Unsafe.As<float, TNumber>(ref scalarAcc), Unsafe.As<float, TNumber>(ref basePtr[j]));
-                    scalarAcc = Unsafe.As<TNumber, float>(ref untypedAcc);
-                }
+        for (; j < innerCount; j++)
+        {
+            var untypedAcc = TReduction.Accumulate(Unsafe.As<float, TNumber>(ref scalarAcc), Unsafe.As<float, TNumber>(ref basePtr[j]));
+            scalarAcc = Unsafe.As<TNumber, float>(ref untypedAcc);
+        }
 
-                TNumber finalize = TReduction.Finalize(Unsafe.As<float, TNumber>(ref scalarAcc), innerCount);
-                output[outer] = Unsafe.As<TNumber, float>(ref finalize);
-            });
+        TNumber finalize = TReduction.Finalize(Unsafe.As<float, TNumber>(ref scalarAcc), innerCount);
+        output[outer] = Unsafe.As<TNumber, float>(ref finalize);
     }
 
     private static unsafe void ApplyContiguousInnerAvx256Fp64(
@@ -337,74 +371,90 @@ internal static class ManagedReductionIterator<TNumber, TReduction>
         long outerCount,
         long innerCount)
     {
-        var vectorSize = Vector256<double>.Count;
-
-        _ = Parallel.For(
-            0,
-            outerCount,
-            outer =>
-            {
-                var basePtr = input + (outer * innerCount);
-
-                var acc0 = TReduction.Avx256Fp64Identity;
-                var acc1 = TReduction.Avx256Fp64Identity;
-                var acc2 = TReduction.Avx256Fp64Identity;
-                var acc3 = TReduction.Avx256Fp64Identity;
-
-                var j = 0;
-                var unrollLimit = innerCount - (vectorSize * 4);
-
-                for (; j <= unrollLimit; j += vectorSize * 4)
-                {
-                    acc0 = TReduction.AccumulateAvx256Fp64(acc0, Vector256.Load(basePtr + j + (vectorSize * 0)));
-                    acc1 = TReduction.AccumulateAvx256Fp64(acc1, Vector256.Load(basePtr + j + (vectorSize * 1)));
-                    acc2 = TReduction.AccumulateAvx256Fp64(acc2, Vector256.Load(basePtr + j + (vectorSize * 2)));
-                    acc3 = TReduction.AccumulateAvx256Fp64(acc3, Vector256.Load(basePtr + j + (vectorSize * 3)));
-                }
-
-                acc0 = TReduction.AccumulateAvx256Fp64(acc0, acc1);
-                acc2 = TReduction.AccumulateAvx256Fp64(acc2, acc3);
-                acc0 = TReduction.AccumulateAvx256Fp64(acc0, acc2);
-
-                for (; j <= innerCount - vectorSize; j += vectorSize)
-                {
-                    acc0 = TReduction.AccumulateAvx256Fp64(acc0, Vector256.Load(basePtr + j));
-                }
-
-                var scalarAcc = TReduction.HorizontalReduceAvx256Fp64(acc0);
-
-                for (; j < innerCount; j++)
-                {
-                    var untypedAcc = TReduction.Accumulate(Unsafe.As<double, TNumber>(ref scalarAcc), Unsafe.As<double, TNumber>(ref basePtr[j]));
-                    scalarAcc = Unsafe.As<TNumber, double>(ref untypedAcc);
-                }
-
-                TNumber finalize = TReduction.Finalize(Unsafe.As<double, TNumber>(ref scalarAcc), innerCount);
-                output[outer] = Unsafe.As<TNumber, double>(ref finalize);
-            });
+        if (outerCount == 1)
+        {
+            ApplyContiguousInnerAvx256Fp64InnerLoop(0, innerCount, input, output);
+        }
+        else
+        {
+            _ = Parallel.For(
+                0,
+                outerCount,
+                outer => ApplyContiguousInnerAvx256Fp64InnerLoop(outer, innerCount, input, output));
+        }
     }
 
-    private static void ApplyContiguousInnerScalar(
-        SystemMemoryBlock<TNumber> input,
-        SystemMemoryBlock<TNumber> output,
+    private static unsafe void ApplyContiguousInnerAvx256Fp64InnerLoop(long outer, long innerCount, double* input, double* output)
+    {
+        var basePtr = input + (outer * innerCount);
+
+        var acc0 = TReduction.Avx256Fp64Identity;
+        var acc1 = TReduction.Avx256Fp64Identity;
+        var acc2 = TReduction.Avx256Fp64Identity;
+        var acc3 = TReduction.Avx256Fp64Identity;
+
+        var j = 0;
+        var unrollLimit = innerCount - (NativeBufferHelpers.AvxVectorSizeFp64 * 4);
+
+        for (; j <= unrollLimit; j += NativeBufferHelpers.AvxVectorSizeFp64 * 4)
+        {
+            acc0 = TReduction.AccumulateAvx256Fp64(acc0, Vector256.Load(basePtr + j + (NativeBufferHelpers.AvxVectorSizeFp64 * 0)));
+            acc1 = TReduction.AccumulateAvx256Fp64(acc1, Vector256.Load(basePtr + j + (NativeBufferHelpers.AvxVectorSizeFp64 * 1)));
+            acc2 = TReduction.AccumulateAvx256Fp64(acc2, Vector256.Load(basePtr + j + (NativeBufferHelpers.AvxVectorSizeFp64 * 2)));
+            acc3 = TReduction.AccumulateAvx256Fp64(acc3, Vector256.Load(basePtr + j + (NativeBufferHelpers.AvxVectorSizeFp64 * 3)));
+        }
+
+        acc0 = TReduction.AccumulateAvx256Fp64(acc0, acc1);
+        acc2 = TReduction.AccumulateAvx256Fp64(acc2, acc3);
+        acc0 = TReduction.AccumulateAvx256Fp64(acc0, acc2);
+
+        for (; j <= innerCount - NativeBufferHelpers.AvxVectorSizeFp64; j += NativeBufferHelpers.AvxVectorSizeFp64)
+        {
+            acc0 = TReduction.AccumulateAvx256Fp64(acc0, Vector256.Load(basePtr + j));
+        }
+
+        var scalarAcc = TReduction.HorizontalReduceAvx256Fp64(acc0);
+
+        for (; j < innerCount; j++)
+        {
+            var untypedAcc = TReduction.Accumulate(Unsafe.As<double, TNumber>(ref scalarAcc), Unsafe.As<double, TNumber>(ref basePtr[j]));
+            scalarAcc = Unsafe.As<TNumber, double>(ref untypedAcc);
+        }
+
+        TNumber finalize = TReduction.Finalize(Unsafe.As<double, TNumber>(ref scalarAcc), innerCount);
+        output[outer] = Unsafe.As<TNumber, double>(ref finalize);
+    }
+
+    private static unsafe void ApplyContiguousInnerScalar(
+        TNumber* input,
+        TNumber* output,
         long outerCount,
         long innerCount)
     {
-        _ = Parallel.For(
-            0,
-            outerCount,
-            outer =>
-            {
-                var baseIdx = outer * innerCount;
-                var acc = TReduction.Identity;
+        if (outerCount == 1)
+        {
+            ApplyContiguousInnerScalarInnerLoop(0, innerCount, input, output);
+        }
+        else
+        {
+            _ = Parallel.For(
+                0,
+                outerCount,
+                outer => ApplyContiguousInnerScalarInnerLoop(outer, innerCount, input, output));
+        }
+    }
 
-                for (var j = 0; j < innerCount; j++)
-                {
-                    acc = TReduction.Accumulate(acc, input[baseIdx + j]);
-                }
+    private static unsafe void ApplyContiguousInnerScalarInnerLoop(long outer, long innerCount, TNumber* input, TNumber* output)
+    {
+        var baseIdx = outer * innerCount;
+        var acc = TReduction.Identity;
 
-                output[outer] = TReduction.Finalize(acc, innerCount);
-            });
+        for (var j = 0; j < innerCount; j++)
+        {
+            acc = TReduction.Accumulate(acc, input[baseIdx + j]);
+        }
+
+        output[outer] = TReduction.Finalize(acc, innerCount);
     }
 
     private static unsafe void ApplyContiguousOuter(

@@ -12,55 +12,6 @@ namespace Sci.NET.Mathematics.IntegrationTests.Tensors.LinearAlgebra;
 
 public class MatrixMultiplyShould : IntegrationTestBase
 {
-    private static Array MatrixMatrixTest<TNumber>(TNumber[,] left, TNumber[,] right, IDevice device)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var leftTensor = Tensor.FromArray<TNumber>(left).WithGradient().ToMatrix();
-        var rightTensor = Tensor.FromArray<TNumber>(right).WithGradient().ToMatrix();
-        leftTensor.To(device);
-        rightTensor.To(device);
-
-        var result = leftTensor.MatrixMultiply(rightTensor);
-
-        result.To<CpuComputeDevice>();
-        return result.ToArray();
-    }
-
-    private static void MatrixMultiplyTestWithGrad<TNumber>(string safetensorsName, IDevice device)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        // Arrange
-        var loadPath = Path.Join(Path.GetDirectoryName(typeof(ContractShould).Assembly.Location) ?? string.Empty, "Tensors", "LinearAlgebra", "Examples", $"{safetensorsName}.safetensors");
-        var tensors = Tensor.LoadSafeTensors<TNumber>(loadPath);
-        var left = tensors["left"].ToMatrix(requiresGradient: true);
-        var right = tensors["right"].ToMatrix(requiresGradient: true);
-        var expectedResult = tensors["result"].ToMatrix(requiresGradient: true);
-        var expectedLeftGradient = tensors["left_grad"];
-        var expectedRightGradient = tensors["right_grad"];
-        using var resultGradient = Tensor.Ones<TNumber>(expectedResult.Shape);
-
-        left.To(device);
-        right.To(device);
-        expectedResult.To(device);
-        resultGradient.To(device);
-        expectedResult.To(device);
-        expectedLeftGradient.To(device);
-        expectedRightGradient.To(device);
-
-        // Act
-        var result = left.MatrixMultiply(right);
-        result.Backward();
-
-        // Assert
-        result.Should().HaveApproximatelyEquivalentElements(expectedResult.ToArray(), TNumber.CreateChecked(1e-4f));
-        result.Gradient!.Should().NotBeNull();
-        result.Gradient!.Should().HaveApproximatelyEquivalentElements(resultGradient.ToArray(), TNumber.CreateChecked(1e-4f));
-        left.Gradient!.Should().NotBeNull();
-        left.Gradient!.Should().HaveApproximatelyEquivalentElements(expectedLeftGradient.ToArray(), TNumber.CreateChecked(1e-4f));
-        right.Gradient!.Should().NotBeNull();
-        right.Gradient!.Should().HaveApproximatelyEquivalentElements(expectedRightGradient.ToArray(), TNumber.CreateChecked(1e-4f));
-    }
-
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenFloatMatrixAndMatrix(IDevice device)
@@ -219,7 +170,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
 
     [Theory]
     [MemberData(nameof(ComputeDevices))]
-    public void ReturnExpectedResult_GivenFloat32(IDevice device)
+    public void ReturnExpectedResult_GivenLargerFloat32(IDevice device)
     {
         // Arrange
         const int m = 13;
@@ -280,5 +231,54 @@ public class MatrixMultiplyShould : IntegrationTestBase
     public void ReturnExpectedResult_GivenPyTorchExample4(IDevice device)
     {
         MatrixMultiplyTestWithGrad<double>("MatrixMultiply_4", device);
+    }
+
+    private static Array MatrixMatrixTest<TNumber>(TNumber[,] left, TNumber[,] right, IDevice device)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var leftTensor = Tensor.FromArray<TNumber>(left).WithGradient().ToMatrix();
+        var rightTensor = Tensor.FromArray<TNumber>(right).WithGradient().ToMatrix();
+        leftTensor.To(device);
+        rightTensor.To(device);
+
+        var result = leftTensor.MatrixMultiply(rightTensor);
+
+        result.To<CpuComputeDevice>();
+        return result.ToArray();
+    }
+
+    private static void MatrixMultiplyTestWithGrad<TNumber>(string safetensorsName, IDevice device)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        // Arrange
+        var loadPath = Path.Join(Path.GetDirectoryName(typeof(ContractShould).Assembly.Location) ?? string.Empty, "Tensors", "LinearAlgebra", "Examples", $"{safetensorsName}.safetensors");
+        var tensors = Tensor.LoadSafeTensors<TNumber>(loadPath);
+        var left = tensors["left"].ToMatrix(requiresGradient: true);
+        var right = tensors["right"].ToMatrix(requiresGradient: true);
+        var expectedResult = tensors["result"].ToMatrix(requiresGradient: true);
+        var expectedLeftGradient = tensors["left_grad"];
+        var expectedRightGradient = tensors["right_grad"];
+        using var resultGradient = Tensor.Ones<TNumber>(expectedResult.Shape);
+
+        left.To(device);
+        right.To(device);
+        expectedResult.To(device);
+        resultGradient.To(device);
+        expectedResult.To(device);
+        expectedLeftGradient.To(device);
+        expectedRightGradient.To(device);
+
+        // Act
+        var result = left.MatrixMultiply(right);
+        result.Backward();
+
+        // Assert
+        result.Should().HaveApproximatelyEquivalentElements(expectedResult.ToArray(), TNumber.CreateChecked(1e-4f));
+        result.Gradient!.Should().NotBeNull();
+        result.Gradient!.Should().HaveApproximatelyEquivalentElements(resultGradient.ToArray(), TNumber.CreateChecked(1e-4f));
+        left.Gradient!.Should().NotBeNull();
+        left.Gradient!.Should().HaveApproximatelyEquivalentElements(expectedLeftGradient.ToArray(), TNumber.CreateChecked(1e-4f));
+        right.Gradient!.Should().NotBeNull();
+        right.Gradient!.Should().HaveApproximatelyEquivalentElements(expectedRightGradient.ToArray(), TNumber.CreateChecked(1e-4f));
     }
 }

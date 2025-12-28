@@ -13,7 +13,10 @@ namespace Sci.NET.Mathematics.Backends.Managed;
 [PublicAPI]
 public class ManagedTensorBackend : ITensorBackend
 {
-    internal const int ParallelizationThreshold = 10_000;
+    static ManagedTensorBackend()
+    {
+        ResetToDefaults();
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ManagedTensorBackend"/> class.
@@ -24,7 +27,7 @@ public class ManagedTensorBackend : ITensorBackend
         LinearAlgebra = new ManagedLinearAlgebraKernels();
         Arithmetic = new ManagedArithmeticKernels();
         Exponential = new ManagedExponentialKernels();
-        Device = new CpuComputeDevice();
+        Device = CpuComputeDevice.GetSupportedDevice();
         Reduction = new ManagedReductionKernels();
         Trigonometry = new ManagedTrigonometryKernels();
         Random = new ManagedRandomKernels();
@@ -37,9 +40,72 @@ public class ManagedTensorBackend : ITensorBackend
     }
 
     /// <summary>
-    /// Gets the maximum degree of parallelism for operations in the managed backend.
+    /// Gets or sets the maximum degree of parallelism for operations in the managed backend.
     /// </summary>
-    public static int MaxDegreeOfParallelism { get; private set; } = Environment.ProcessorCount;
+    public static int MaxDegreeOfParallelism
+    {
+        get;
+        set
+        {
+            ArgumentOutOfRangeException.ThrowIfLessThan(value, 1);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(value, Environment.ProcessorCount);
+
+            field = value;
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the minimum number of bytes processed per thread in parallel operations.
+    /// </summary>
+    public static int MinBytesPerThread
+    {
+        get;
+        set
+        {
+            ArgumentOutOfRangeException.ThrowIfLessThan(value, 1);
+
+            field = value;
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the threshold for parallelization in terms of number of elements.
+    /// </summary>
+    public static int StreamingThreshold
+    {
+        get;
+        set
+        {
+            ArgumentOutOfRangeException.ThrowIfLessThan(value, 1);
+            field = value;
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the threshold for parallelization in terms of number of elements.
+    /// </summary>
+    public static int ParallelizationThreshold
+    {
+        get;
+        set
+        {
+            ArgumentOutOfRangeException.ThrowIfLessThan(value, 1);
+            field = value;
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the threshold for parallelization in terms of number of tiles.
+    /// </summary>
+    public static int ParallelizationTileThreshold
+    {
+        get;
+        set
+        {
+            ArgumentOutOfRangeException.ThrowIfLessThan(value, 1);
+            field = value;
+        }
+    }
 
     /// <summary>
     /// Gets the singleton instance of the <see cref="ManagedTensorBackend"/>.
@@ -89,15 +155,15 @@ public class ManagedTensorBackend : ITensorBackend
     public IEqualityOperationKernels EqualityOperations { get; }
 
     /// <summary>
-    /// Sets the maximum degree of parallelism for operations in the managed backend.
+    /// Resets the parallelization settings to their default values.
     /// </summary>
-    /// <param name="degreeOfParallelism">The maximum degree of parallelism to set.</param>
-    public static void SetMaxDegreeOfParallelism(int degreeOfParallelism)
+    public static void ResetToDefaults()
     {
-        ArgumentOutOfRangeException.ThrowIfLessThan(degreeOfParallelism, 1);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(degreeOfParallelism, Environment.ProcessorCount);
-
-        MaxDegreeOfParallelism = degreeOfParallelism;
+        MaxDegreeOfParallelism = Environment.ProcessorCount;
+        MinBytesPerThread = 256 * 1024; // 256 KiB per thread
+        StreamingThreshold = 100_000;
+        ParallelizationThreshold = 100_000;
+        ParallelizationTileThreshold = 2;
     }
 
     internal static int GetMaxDegreeOfParallelism(long tileCount)
@@ -112,23 +178,25 @@ public class ManagedTensorBackend : ITensorBackend
 
     internal static bool ShouldParallelizeForTiles(long tileCount)
     {
-        // Arbitrary threshold of 2 tiles to decide whether to parallelize
-        return tileCount > 2;
+        return tileCount > ParallelizationTileThreshold;
     }
 
     internal static int GetNumThreadsByElementCount<TNumber>(long elementCount)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        const long minBytesPerThread = 256 * 1024; // 256 KB per thread
-        var maxUsefulThreads = Math.Max(1, elementCount * Unsafe.SizeOf<TNumber>() / minBytesPerThread);
+        var maxUsefulThreads = Math.Max(1, elementCount * Unsafe.SizeOf<TNumber>() / MinBytesPerThread);
 
         return (int)Math.Min(maxUsefulThreads, MaxDegreeOfParallelism);
     }
 
     internal static bool ShouldStream(long elementCount)
     {
-        const long streamThreshold = 10_000; // Arbitrary threshold for streaming
+        // Always use streaming for small tensors to avoid blocking overhead
+        if (elementCount < 128)
+        {
+            return true;
+        }
 
-        return elementCount >= streamThreshold;
+        return elementCount >= StreamingThreshold;
     }
 }

@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
+using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Backends.Managed.Buffers;
 using Sci.NET.Mathematics.Backends.Managed.MicroKernels;
 using Sci.NET.Mathematics.Performance;
@@ -15,11 +16,11 @@ namespace Sci.NET.Mathematics.Backends.Managed.Iterators;
 internal static class ManagedBlockedBinaryOperationIterator
 {
     [SuppressMessage("Style", "IDE0010:Add missing cases", Justification = "Reviewed")]
-    public static unsafe void For<TOp, TNumber>(TNumber* leftPtr, TNumber* rightPtr, TNumber* resultPtr, long n)
+    public static unsafe void For<TOp, TNumber>(TNumber* leftPtr, TNumber* rightPtr, TNumber* resultPtr, long n, CpuComputeDevice device)
         where TOp : IBinaryOperation<TNumber>, IBinaryOperationAvx, IBinaryOperationAvxFma
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (TOp.IsAvxFmaSupported())
+        if (device.IsAvxFmaSupported() && TOp.IsAvxFmaSupported())
         {
             switch (TNumber.Zero)
             {
@@ -40,7 +41,7 @@ internal static class ManagedBlockedBinaryOperationIterator
             }
         }
 
-        if (TOp.IsAvxSupported())
+        if (device.IsAvxSupported() && TOp.IsAvxSupported())
         {
             switch (TNumber.Zero)
             {

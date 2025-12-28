@@ -61,37 +61,37 @@ public class ManagedEqualityBenchmarks<TNumber>
     [Benchmark]
     public void Equals()
     {
-        _equalitiyOperationKernels.PointwiseEqual(_leftTensor.Memory, _rightTensor.Memory, _result.Memory, _leftTensor.Shape.ElementCount);
+        _equalitiyOperationKernels.PointwiseEqual(_leftTensor, _rightTensor, _result);
     }
 
     [Benchmark]
     public void NotEquals()
     {
-        _equalitiyOperationKernels.PointwiseNotEqual(_leftTensor.Memory, _rightTensor.Memory, _result.Memory, _leftTensor.Shape.ElementCount);
+        _equalitiyOperationKernels.PointwiseNotEqual(_leftTensor, _rightTensor, _result);
     }
 
     [Benchmark]
     public void GreaterThan()
     {
-        _equalitiyOperationKernels.PointwiseGreaterThan(_leftTensor.Memory, _rightTensor.Memory, _result.Memory, _leftTensor.Shape.ElementCount);
+        _equalitiyOperationKernels.PointwiseGreaterThan(_leftTensor, _rightTensor, _result);
     }
 
     [Benchmark]
     public void GreaterThanOrEquals()
     {
-        _equalitiyOperationKernels.PointwiseGreaterThanOrEqual(_leftTensor.Memory, _rightTensor.Memory, _result.Memory, _leftTensor.Shape.ElementCount);
+        _equalitiyOperationKernels.PointwiseGreaterThanOrEqual(_leftTensor, _rightTensor, _result);
     }
 
     [Benchmark]
     public void LessThan()
     {
-        _equalitiyOperationKernels.PointwiseLessThan(_leftTensor.Memory, _rightTensor.Memory, _result.Memory, _leftTensor.Shape.ElementCount);
+        _equalitiyOperationKernels.PointwiseLessThan(_leftTensor, _rightTensor, _result);
     }
 
     [Benchmark]
     public void LessThanOrEquals()
     {
-        _equalitiyOperationKernels.PointwiseLessThanOrEqual(_leftTensor.Memory, _rightTensor.Memory, _result.Memory, _leftTensor.Shape.ElementCount);
+        _equalitiyOperationKernels.PointwiseLessThanOrEqual(_leftTensor, _rightTensor, _result);
     }
 
     [GlobalCleanup]

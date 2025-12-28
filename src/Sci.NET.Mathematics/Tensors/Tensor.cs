@@ -435,14 +435,13 @@ public static class Tensor
     {
         if (tensor.Shape.ElementCount > 500)
         {
-            var prefix = tensor switch
+            return tensor switch
             {
-                Vector<TNumber> => "Vector",
-                Matrix<TNumber> => "Matrix",
-                _ => "Tensor"
+                Scalar<TNumber> => "Scalar",
+                Vector<TNumber> vec => $"Vector[{vec.Length}]",
+                Matrix<TNumber> mat => $"Matrix[{mat.Rows}, {mat.Columns}]",
+                _ => $"Tensor[{string.Join(", ", tensor.Shape.Dimensions)}]"
             };
-
-            return $"{prefix} with shape {tensor.Shape}";
         }
 
         return ConvertToString(tensor, 0, 0).TrimStart('\n');
@@ -452,7 +451,9 @@ public static class Tensor
     internal static void Backward<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        PreviewFeatureNotEnabledException.ThrowIfNotEnabled(SciDotNetConfiguration.PreviewFeatures.AutoGradEnabled, "AutoGrad");
+        PreviewFeatureNotEnabledException.ThrowIfNotEnabled(
+            SciDotNetConfiguration.PreviewFeatures.AutoGradEnabled,
+            SciDotNetConfiguration.PreviewFeatures.Names.AutoGrad);
 
         if (tensor.RequiresGradient)
         {

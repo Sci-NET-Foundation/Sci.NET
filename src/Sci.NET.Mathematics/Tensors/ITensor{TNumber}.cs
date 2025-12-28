@@ -253,6 +253,23 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
     public void ForceDispose();
 
     /// <summary>
+    /// Clones the <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <returns>The cloned <see cref="ITensor{TNumber}"/>.</returns>
+    public ITensor<TNumber> Clone()
+    {
+        var clone = new Tensor<TNumber>(Shape, Backend, RequiresGradient);
+        clone.Memory.BlockCopyFrom(Memory, 0, 0, Memory.Length);
+
+        if (RequiresGradient && Gradient is not null && clone.Gradient is not null)
+        {
+            clone.Gradient.Memory.BlockCopyFrom(Gradient.Memory, 0, 0, Gradient.Memory.Length);
+        }
+
+        return clone;
+    }
+
+    /// <summary>
     /// Detaches the memory from the <see cref="ITensor{TNumber}"/>.
     /// </summary>
     protected internal void DetachMemory();

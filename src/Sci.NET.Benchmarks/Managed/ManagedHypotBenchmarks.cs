@@ -61,7 +61,7 @@ public class ManagedHypotBenchmarks<TNumber>
     [Benchmark]
     public void Hypot()
     {
-        _linearAlgebraKernels.Hypot(_leftTensor.Memory, _rightTensor.Memory, _result.Memory);
+        _linearAlgebraKernels.Hypot(_leftTensor, _rightTensor, _result);
     }
 
     [GlobalCleanup]

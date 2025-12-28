@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using Sci.NET.Mathematics.Backends.Managed;
+using Sci.NET.Mathematics.Intrinsics;
 using Sci.NET.Mathematics.Runtime;
 
 namespace Sci.NET.Mathematics.Backends.Devices;
@@ -48,6 +49,25 @@ public class CpuComputeDevice : IDevice
     /// <inheritdoc />
     public DeviceCategory Category => DeviceCategory.Cpu;
 
+    /// <summary>
+    /// Gets the supported CPU compute device.
+    /// </summary>
+    /// <returns>The supported <see cref="CpuComputeDevice"/>.</returns>
+    public static CpuComputeDevice GetSupportedDevice()
+    {
+        if (IntrinsicsHelper.IsAvxFmaSupported())
+        {
+            return new AvxFmaCpuComputeDevice();
+        }
+
+        if (IntrinsicsHelper.IsAvxSupported())
+        {
+            return new AvxCpuComputeDevice();
+        }
+
+        return new CpuComputeDevice();
+    }
+
     /// <inheritdoc />
     public ITensorBackend GetTensorBackend()
     {
@@ -58,5 +78,23 @@ public class CpuComputeDevice : IDevice
     public bool Equals(IDevice? other)
     {
         return other is not null && Id == other.Id;
+    }
+
+    /// <summary>
+    /// Checks if AVX is supported on the current CPU.
+    /// </summary>
+    /// <returns>True if AVX is supported; otherwise, false.</returns>
+    public virtual bool IsAvxSupported()
+    {
+        return false;
+    }
+
+    /// <summary>
+    /// Checks if AVX FMA is supported on the current CPU.
+    /// </summary>
+    /// <returns>True if AVX FMA is supported; otherwise, false.</returns>
+    public virtual bool IsAvxFmaSupported()
+    {
+        return false;
     }
 }
