@@ -37,8 +37,8 @@ public class PowShould : IntegrationTestBase
     public void ReturnExpectedResult_GivenVector(IDevice device)
     {
         // Pow([1, 2, 3], 2) = [1, 4, 9]
-        PowVectorTest<float>(new float[] { 1, 2, 3 }, 2, device).Should().BeEquivalentTo(new float[] { 1, 4, 9 });
-        PowVectorTest<double>(new double[] { 1, 2, 3 }, 2, device).Should().BeEquivalentTo(new double[] { 1, 4, 9 });
+        PowVectorTest(new float[] { 1, 2, 3 }, 2, device).Should().BeEquivalentTo(new float[] { 1, 4, 9 });
+        PowVectorTest(new double[] { 1, 2, 3 }, 2, device).Should().BeEquivalentTo(new double[] { 1, 4, 9 });
     }
 
     private static Array PowVectorTest<TNumber>(TNumber[] values, TNumber exponent, IDevice device)
@@ -58,10 +58,10 @@ public class PowShould : IntegrationTestBase
     public void ReturnExpectedResult_GivenMatrix(IDevice device)
     {
         // Pow([[1, 2, 3], [4, 5, 6]], 2) = [[1, 4, 9], [16, 25, 36]]
-        PowMatrixTest<float>(new float[,] { { 1, 2, 3 }, { 4, 5, 6 } }, 2, device)
+        PowMatrixTest(new float[,] { { 1, 2, 3 }, { 4, 5, 6 } }, 2, device)
             .Should()
             .BeEquivalentTo(new float[,] { { 1, 4, 9 }, { 16, 25, 36 } });
-        PowMatrixTest<double>(new double[,] { { 1, 2, 3 }, { 4, 5, 6 } }, 2, device)
+        PowMatrixTest(new double[,] { { 1, 2, 3 }, { 4, 5, 6 } }, 2, device)
             .Should()
             .BeEquivalentTo(new double[,] { { 1, 4, 9 }, { 16, 25, 36 } });
     }
@@ -83,10 +83,10 @@ public class PowShould : IntegrationTestBase
     public void ReturnExpectedResult_GivenTensor(IDevice device)
     {
         // Pow([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]], 2) = [[[1, 4, 9], [16, 25, 36]], [[49, 64, 81], [100, 121, 144]]]
-        PowTensorTest<float>(new float[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, 2, device)
+        PowTensorTest(new float[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, 2, device)
             .Should()
             .BeEquivalentTo(new float[,,] { { { 1, 4, 9 }, { 16, 25, 36 } }, { { 49, 64, 81 }, { 100, 121, 144 } } });
-        PowTensorTest<double>(new double[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, 2, device)
+        PowTensorTest(new double[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, 2, device)
             .Should()
             .BeEquivalentTo(new double[,,] { { { 1, 4, 9 }, { 16, 25, 36 } }, { { 49, 64, 81 }, { 100, 121, 144 } } });
     }

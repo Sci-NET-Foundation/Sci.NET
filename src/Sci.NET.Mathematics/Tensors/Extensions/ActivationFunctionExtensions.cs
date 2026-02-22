@@ -3,7 +3,7 @@
 
 using System.Diagnostics;
 using System.Numerics;
-using Sci.NET.Common.Attributes;
+using Sci.NET.Mathematics.Attributes;
 
 #pragma warning disable IDE0130
 

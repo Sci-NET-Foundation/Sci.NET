@@ -4,7 +4,7 @@
 using System.Numerics;
 using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
-using Sci.NET.Common.Numerics;
+using Sci.NET.Mathematics.Numerics;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Tests.Framework.Assertions;
@@ -107,6 +107,19 @@ public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber
         }
 
         return new AndConstraint<TensorAssertions<TNumber>>(this);
+    }
+
+    /// <summary>
+    /// Asserts that the tensor has the given shape.
+    /// </summary>
+    /// <param name="values">The expected shape.</param>
+    /// <param name="tolerance">The tolerance for the comparison.</param>
+    /// <returns>A <see cref="AndConstraint{TAssertions}" /> object.</returns>
+    public AndConstraint<TensorAssertions<TNumber>> HaveApproximatelyEquivalentElements(Array values, float tolerance)
+    {
+        var floatTolerance = TNumber.CreateChecked(tolerance);
+
+        return HaveApproximatelyEquivalentElements(values, floatTolerance);
     }
 
     /// <summary>

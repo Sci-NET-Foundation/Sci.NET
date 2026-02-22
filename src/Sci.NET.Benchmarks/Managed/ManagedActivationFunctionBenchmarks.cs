@@ -3,7 +3,9 @@
 
 using System.Numerics;
 using BenchmarkDotNet.Attributes;
-using Sci.NET.Common.Numerics;
+using Sci.NET.Mathematics.Backends;
+using Sci.NET.Mathematics.Backends.Managed;
+using Sci.NET.Mathematics.Numerics;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Benchmarks.Managed;
@@ -22,6 +24,7 @@ public class ManagedActivationFunctionBenchmarks<TNumber>
         new Shape(400, 200, 100, 50),
     ];
 
+    private IActivationFunctionKernels _activationFunctionKernels = default!;
     private Tensor<TNumber> _tensor = default!;
     private ITensor<TNumber> _result = default!;
     private TNumber _alpha;
@@ -33,6 +36,8 @@ public class ManagedActivationFunctionBenchmarks<TNumber>
     {
         TNumber min;
         TNumber max;
+
+        Tensor.SetDefaultBackend<ManagedTensorBackend>();
 
         if (GenericMath.IsFloatingPoint<TNumber>())
         {
@@ -59,67 +64,69 @@ public class ManagedActivationFunctionBenchmarks<TNumber>
             _max = TNumber.CreateChecked(10); // Hard Tanh max
         }
 
-        _tensor = Tensor.Random.Uniform<TNumber>(Shape, min, max, seed: 123456).ToTensor();
+        _tensor = Tensor.Random.Uniform(Shape, min, max, seed: 123456).ToTensor();
+        _result = Tensor.Zeros<TNumber>(Shape);
+        _activationFunctionKernels = ManagedTensorBackend.Instance.ActivationFunctions;
     }
 
     [Benchmark]
     public void ReLU()
     {
-        _result = _tensor.ReLU();
+        _activationFunctionKernels.ReLU(_tensor, _result);
     }
 
     [Benchmark]
     public void ReLUBackward()
     {
-        _result = _tensor.ReLUBackward();
+        _activationFunctionKernels.ReLUBackward(_tensor, _result);
     }
 
     [Benchmark]
     public void LeakyReLU()
     {
-        _result = _tensor.LeakyReLU(_alpha);
+        _activationFunctionKernels.LeakyReLU(_tensor, _result, _alpha);
     }
 
     [Benchmark]
     public void LeakyReLUBackward()
     {
-        _result = _tensor.LeakyReLUBackward(_alpha);
+        _activationFunctionKernels.LeakyReLUBackward(_tensor, _result, _alpha);
     }
 
     [Benchmark]
     public void SoftSign()
     {
-        _result = _tensor.SoftSign();
+        _activationFunctionKernels.SoftSign(_tensor, _result);
     }
 
     [Benchmark]
     public void SoftSignBackward()
     {
-        _result = _tensor.SoftSignBackward();
+        _activationFunctionKernels.SoftSignBackward(_tensor, _result);
     }
 
     [Benchmark]
     public void HardSigmoid()
     {
-        _result = _tensor.HardSigmoid();
+        _activationFunctionKernels.HardSigmoid(_tensor, _result);
     }
 
     [Benchmark]
     public void HardSigmoidBackward()
     {
-        _result = _tensor.HardSigmoidBackward();
+        _activationFunctionKernels.HardSigmoidBackward(_tensor, _result);
     }
 
     [Benchmark]
     public void HardTanh()
     {
-        _result = _tensor.HardTanh(_min, _max);
+        _activationFunctionKernels.HardTanh(_tensor, _result, _min, _max);
     }
 
     [Benchmark]
     public void HardTanhBackward()
     {
-        _result = _tensor.HardTanhBackward(_min, _max);
+        _activationFunctionKernels.HardTanhBackward(_tensor, _result, _min, _max);
     }
 
     [GlobalCleanup]

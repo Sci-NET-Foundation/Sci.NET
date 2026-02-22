@@ -1,8 +1,9 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
-using Sci.NET.Common.Runtime;
 using Sci.NET.Mathematics.Backends.Managed;
+using Sci.NET.Mathematics.Intrinsics;
+using Sci.NET.Mathematics.Runtime;
 
 namespace Sci.NET.Mathematics.Backends.Devices;
 
@@ -10,7 +11,7 @@ namespace Sci.NET.Mathematics.Backends.Devices;
 /// A CPU compute device.
 /// </summary>
 [PublicAPI]
-public class CpuComputeDevice : IDevice
+public class CpuComputeDevice : ICpuComputeDevice
 {
     private static readonly CpuComputeDevice Instance = new(Guid.NewGuid(), CpuInfo.GetInfoString());
 
@@ -58,5 +59,14 @@ public class CpuComputeDevice : IDevice
     public bool Equals(IDevice? other)
     {
         return other is not null && Id == other.Id;
+    }
+
+    /// <summary>
+    /// Checks if AVX2 (with FMA) is supported on the current CPU.
+    /// </summary>
+    /// <returns>True if AVX2/FMA is supported; otherwise, false.</returns>
+    public virtual bool IsAvx2Supported()
+    {
+        return IntrinsicsHelper.IsAvx2Supported();
     }
 }

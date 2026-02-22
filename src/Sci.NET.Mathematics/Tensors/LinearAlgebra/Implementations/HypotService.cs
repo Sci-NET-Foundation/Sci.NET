@@ -47,9 +47,9 @@ internal class HypotService : IHypotService
             });
 
         backend.LinearAlgebra.Hypot(
-            leftBroadcasted.Memory,
-            rightBroadcasted.Memory,
-            result.Memory);
+            leftBroadcasted,
+            rightBroadcasted,
+            result);
 
         return result;
     }

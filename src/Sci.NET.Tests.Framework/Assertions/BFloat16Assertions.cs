@@ -3,7 +3,7 @@
 
 using FluentAssertions.Execution;
 using FluentAssertions.Numeric;
-using Sci.NET.Common.Numerics;
+using Sci.NET.Mathematics.Numerics;
 
 namespace Sci.NET.Tests.Framework.Assertions;
 

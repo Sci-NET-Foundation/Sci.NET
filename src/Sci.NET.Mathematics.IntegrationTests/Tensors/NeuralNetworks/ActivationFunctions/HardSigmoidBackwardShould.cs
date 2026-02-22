@@ -15,7 +15,7 @@ public class HardSigmoidBackwardShould : IntegrationTestBase
     public void ReturnCorrectValues_GivenFloat(IDevice device)
     {
         // Arrange
-        var value = Tensor.FromArray<float>(new float[] { -2, -1, -0.5f, 0, 0.5f, 1, 2 });
+        var value = Tensor.FromArray<float>(new float[] { -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 });
 
         value.To(device);
 
@@ -25,8 +25,28 @@ public class HardSigmoidBackwardShould : IntegrationTestBase
         // Assert
         result
             .Should()
-            .HaveShape(7)
+            .HaveShape(10)
             .And
-            .HaveEquivalentElements(new float[] { 0, 0, 0.5f, 0.5f, 0.5f, 0, 0 });
+            .HaveEquivalentElements(new float[] { 0F, 0.16666667F, 0.16666667F, 0.16666667F, 0.16666667F, 0.16666667F, 0.16666667F, 0.16666667F, 0F, 0F });
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnCorrectValues_GivenDouble(IDevice device)
+    {
+        // Arrange
+        var value = Tensor.FromArray<double>(new double[] { -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 });
+
+        value.To(device);
+
+        // Act
+        var result = value.HardSigmoidBackward();
+
+        // Assert
+        result
+            .Should()
+            .HaveShape(10)
+            .And
+            .HaveEquivalentElements(new double[] { 0.0, 0.16666666666666666, 0.16666666666666666, 0.16666666666666666, 0.16666666666666666, 0.16666666666666666, 0.16666666666666666, 0.16666666666666666, 0.0, 0.0 });
     }
 }

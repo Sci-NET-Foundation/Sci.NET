@@ -16,12 +16,12 @@ public class SigmoidShould : IntegrationTestBase
     public void ReturnExpectedResult_GivenTensor(IDevice device)
     {
         // Sig(0.5) = 0.622459331201854564638
-        ScalarSigmoidTest<float>(0.5f, device).Should().BeApproximately(0.622459331201854564638f, 1e-6f);
-        ScalarSigmoidTest<double>(0.5, device).Should().BeApproximately(0.622459331201854564638, 1e-6);
+        ScalarSigmoidTest(0.5f, device).Should().BeApproximately(0.622459331201854564638f, 1e-6f);
+        ScalarSigmoidTest(0.5, device).Should().BeApproximately(0.622459331201854564638, 1e-6);
 
         // Sig(0.0) = 0.5
-        ScalarSigmoidTest<float>(0.0f, device).Should().BeApproximately(0.5f, 1e-6f);
-        ScalarSigmoidTest<double>(0.0, device).Should().BeApproximately(0.5, 1e-6);
+        ScalarSigmoidTest(0.0f, device).Should().BeApproximately(0.5f, 1e-6f);
+        ScalarSigmoidTest(0.0, device).Should().BeApproximately(0.5, 1e-6);
     }
 
     [Theory]

@@ -3,7 +3,8 @@
 
 using System.Numerics;
 using BenchmarkDotNet.Attributes;
-using Sci.NET.Common.Numerics;
+using Sci.NET.Mathematics.Backends.Managed;
+using Sci.NET.Mathematics.Numerics;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Benchmarks.Managed;
@@ -32,6 +33,8 @@ public class ManagedContractionBenchmarks<TNumber>
         TNumber min;
         TNumber max;
 
+        Tensor.SetDefaultBackend<ManagedTensorBackend>();
+
         if (GenericMath.IsFloatingPoint<TNumber>())
         {
             min = TNumber.CreateChecked(-1f);
@@ -48,8 +51,8 @@ public class ManagedContractionBenchmarks<TNumber>
             max = TNumber.CreateChecked(10);
         }
 
-        _leftTensor = Tensor.Random.Uniform<TNumber>(Shapes.LeftShape, min, max, seed: 123456).ToTensor();
-        _rightTensor = Tensor.Random.Uniform<TNumber>(Shapes.RightShape, min, max, seed: 654321).ToTensor();
+        _leftTensor = Tensor.Random.Uniform(Shapes.LeftShape, min, max, seed: 123456).ToTensor();
+        _rightTensor = Tensor.Random.Uniform(Shapes.RightShape, min, max, seed: 654321).ToTensor();
     }
 
     [Benchmark]

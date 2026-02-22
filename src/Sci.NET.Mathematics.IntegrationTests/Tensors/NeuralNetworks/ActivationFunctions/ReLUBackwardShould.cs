@@ -15,8 +15,8 @@ public class ReLUBackwardShould : IntegrationTestBase
     public void ReturnExpectedResult_GivenHalf(IDevice device)
     {
         // ReLU'(0.5) = 1.0
-        ScalarReLUBackwardTest<float>(0.5f, device).Should().BeApproximately(1.0f, 1e-6f);
-        ScalarReLUBackwardTest<double>(0.5, device).Should().BeApproximately(1.0, 1e-6);
+        ScalarReLUBackwardTest(0.5f, device).Should().BeApproximately(1.0f, 1e-6f);
+        ScalarReLUBackwardTest(0.5, device).Should().BeApproximately(1.0, 1e-6);
     }
 
     [Theory]
@@ -24,8 +24,8 @@ public class ReLUBackwardShould : IntegrationTestBase
     public void ReturnExpectedResult_GivenZero(IDevice device)
     {
         // ReLU'(0.0) = 0.0
-        ScalarReLUBackwardTest<float>(0.0f, device).Should().BeApproximately(0.0f, 1e-6f);
-        ScalarReLUBackwardTest<double>(0.0, device).Should().BeApproximately(0.0, 1e-6);
+        ScalarReLUBackwardTest(0.0f, device).Should().BeApproximately(0.0f, 1e-6f);
+        ScalarReLUBackwardTest(0.0, device).Should().BeApproximately(0.0, 1e-6);
     }
 
     [Theory]
@@ -33,8 +33,8 @@ public class ReLUBackwardShould : IntegrationTestBase
     public void ReturnExpectedResult_GivenNegativeHalf(IDevice device)
     {
         // ReLU'(-0.5) = 0.0
-        ScalarReLUBackwardTest<float>(-0.5f, device).Should().BeApproximately(0.0f, 1e-6f);
-        ScalarReLUBackwardTest<double>(-0.5, device).Should().BeApproximately(0.0, 1e-6);
+        ScalarReLUBackwardTest(-0.5f, device).Should().BeApproximately(0.0f, 1e-6f);
+        ScalarReLUBackwardTest(-0.5, device).Should().BeApproximately(0.0, 1e-6);
     }
 
     private static TNumber ScalarReLUBackwardTest<TNumber>(TNumber value, IDevice device)

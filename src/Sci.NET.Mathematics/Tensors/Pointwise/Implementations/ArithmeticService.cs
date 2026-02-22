@@ -3,7 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
-using Sci.NET.Common.Numerics;
+using Sci.NET.Mathematics.Numerics;
 using Sci.NET.Mathematics.Tensors.Common;
 using Sci.NET.Mathematics.Tensors.Exceptions;
 using Sci.NET.Mathematics.Tensors.Manipulation;
@@ -130,7 +130,6 @@ internal class ArithmeticService : IArithmeticService
         if (!GenericMath.IsSigned<TNumber>())
         {
             var newMemoryBlock = value.Memory.Copy();
-
             var resultShortcut = new Tensor<TNumber>(newMemoryBlock, value.Shape, backend, value.RequiresGradient);
 
             _gradientAppenderService.AddGradientIfRequired(
@@ -144,10 +143,7 @@ internal class ArithmeticService : IArithmeticService
 
         var result = new Tensor<TNumber>(backend, value.RequiresGradient, value.Shape.Dimensions);
 
-        backend.Arithmetic.Negate(
-            value.Memory,
-            result.Memory,
-            value.Shape.ElementCount);
+        backend.Arithmetic.Negate(value, result);
 
         _gradientAppenderService.AddGradientIfRequired(
             ref result,
@@ -180,10 +176,7 @@ internal class ArithmeticService : IArithmeticService
 
         var result = new Tensor<TNumber>(backend, value.RequiresGradient, value.Shape.Dimensions);
 
-        backend.Arithmetic.Abs(
-            value.Memory,
-            result.Memory,
-            value.Shape.ElementCount);
+        backend.Arithmetic.Abs(value, result);
 
         _gradientAppenderService.AddGradientIfRequired(
             ref result,
@@ -192,7 +185,7 @@ internal class ArithmeticService : IArithmeticService
             grad =>
             {
                 var gradResult = new Tensor<TNumber>(value.Shape, value.Backend);
-                value.Backend.Arithmetic.AbsGradient(value.Memory, grad.Memory, gradResult.Memory, value.Shape.ElementCount);
+                value.Backend.Arithmetic.AbsGradient(value, grad, gradResult);
 
                 return gradResult;
             });
@@ -206,10 +199,7 @@ internal class ArithmeticService : IArithmeticService
         var backend = tensor.Backend;
         var result = new Tensor<TNumber>(backend, tensor.RequiresGradient, tensor.Shape.Dimensions);
 
-        backend.Arithmetic.Sqrt(
-            tensor.Memory,
-            result.Memory,
-            tensor.Shape.ElementCount);
+        backend.Arithmetic.Sqrt(tensor, result);
 
         _gradientAppenderService.AddGradientIfRequired(
             ref result,

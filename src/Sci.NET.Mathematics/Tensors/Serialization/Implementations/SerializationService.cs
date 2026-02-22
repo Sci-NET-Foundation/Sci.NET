@@ -7,11 +7,10 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Newtonsoft.Json;
-using Sci.NET.Common.Attributes;
-using Sci.NET.Common.Exceptions;
-using Sci.NET.Common.Numerics;
-using Sci.NET.Common.Performance;
-using Sci.NET.Common.Streams;
+using Sci.NET.Mathematics.Attributes;
+using Sci.NET.Mathematics.Exceptions;
+using Sci.NET.Mathematics.Numerics;
+using Sci.NET.Mathematics.Streams;
 using Sci.NET.Mathematics.Tensors.Serialization.Implementations.Safetensors;
 
 namespace Sci.NET.Mathematics.Tensors.Serialization.Implementations;
@@ -21,7 +20,6 @@ internal class SerializationService : ISerializationService
     private const string SerializerVersion = "Sci.NET v0.2";
 
     [PreviewFeature]
-    [MethodImpl(ImplementationOptions.AggressiveOptimization)]
     public unsafe void SaveNpy<TNumber>(ITensor<TNumber> tensor, string path)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -351,7 +349,7 @@ internal class SerializationService : ISerializationService
             sbyte => "I8",
             byte => "U8",
             bool => "BOOL",
-            _ => throw new NotSupportedException()
+            _ => throw new NotSupportedException("The specified SafeTensors data type is not supported.")
         };
     }
 
@@ -371,7 +369,7 @@ internal class SerializationService : ISerializationService
             long => "<i8"u8,
             float => "<f4"u8,
             double => "<f8"u8,
-            _ => throw new NotSupportedException()
+            _ => throw new NotSupportedException("The specified NumPy data type is not supported.")
         };
     }
 

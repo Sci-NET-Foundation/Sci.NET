@@ -347,7 +347,7 @@ internal class TrigonometryService : ITrigonometryService
         return result;
     }
 
-    public ITensor<TNumber> ASinh<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Asinh<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
@@ -369,7 +369,7 @@ internal class TrigonometryService : ITrigonometryService
         return result;
     }
 
-    public ITensor<TNumber> ACosh<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Acosh<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
@@ -391,7 +391,7 @@ internal class TrigonometryService : ITrigonometryService
         return result;
     }
 
-    public ITensor<TNumber> ATanh<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Atanh<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
@@ -479,7 +479,7 @@ internal class TrigonometryService : ITrigonometryService
         return result;
     }
 
-    public ITensor<TNumber> ASinh2<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Asinh2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
@@ -501,7 +501,7 @@ internal class TrigonometryService : ITrigonometryService
         return result;
     }
 
-    public ITensor<TNumber> ACosh2<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Acosh2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
@@ -523,7 +523,7 @@ internal class TrigonometryService : ITrigonometryService
         return result;
     }
 
-    public ITensor<TNumber> ATanh2<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Atanh2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
@@ -875,7 +875,7 @@ internal class TrigonometryService : ITrigonometryService
         return result;
     }
 
-    public ITensor<TNumber> ACsc2<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Acsc2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
@@ -897,7 +897,7 @@ internal class TrigonometryService : ITrigonometryService
         return result;
     }
 
-    public ITensor<TNumber> ASec2<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Asec2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
@@ -919,7 +919,7 @@ internal class TrigonometryService : ITrigonometryService
         return result;
     }
 
-    public ITensor<TNumber> ACot2<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Acot2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
@@ -941,7 +941,7 @@ internal class TrigonometryService : ITrigonometryService
         return result;
     }
 
-    public ITensor<TNumber> ACsch<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Acsch<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
@@ -963,7 +963,7 @@ internal class TrigonometryService : ITrigonometryService
         return result;
     }
 
-    public ITensor<TNumber> ASech<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Asech<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
@@ -985,7 +985,7 @@ internal class TrigonometryService : ITrigonometryService
         return result;
     }
 
-    public ITensor<TNumber> ACoth<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Acoth<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
@@ -1007,7 +1007,7 @@ internal class TrigonometryService : ITrigonometryService
         return result;
     }
 
-    public ITensor<TNumber> ACsch2<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Acsch2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
@@ -1029,7 +1029,7 @@ internal class TrigonometryService : ITrigonometryService
         return result;
     }
 
-    public ITensor<TNumber> ASech2<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Asech2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
@@ -1051,7 +1051,7 @@ internal class TrigonometryService : ITrigonometryService
         return result;
     }
 
-    public ITensor<TNumber> ACoth2<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Acoth2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);

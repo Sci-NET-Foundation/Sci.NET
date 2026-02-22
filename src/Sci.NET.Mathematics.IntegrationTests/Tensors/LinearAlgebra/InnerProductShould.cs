@@ -14,16 +14,19 @@ public class InnerProductShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ComputeInnerProduct(IDevice device)
     {
+        // Arrange
         using var left = Tensor.FromArray<float>(new float[] { 1, 2, 3, 4, 5, 6, 7, 8 }).WithGradient().ToVector();
         using var right = Tensor.FromArray<float>(new float[] { 8, 7, 6, 5, 4, 3, 2, 1 }).WithGradient().ToVector();
 
         left.To(device);
         right.To(device);
 
+        // Act
         using var result = left.Inner(right);
 
         result.Backward();
 
+        // Assert
         result.Value.Should().Be(120);
 
         left.Gradient!.Should().NotBeNull();
@@ -76,8 +79,8 @@ public class InnerProductShould : IntegrationTestBase
     public void ReturnCorrectResult_GivenLargeFp32(IDevice device)
     {
         // Arrange
-        var left = Tensor.Random.Uniform<float>(new Shape(50000), -1.0f, 1.0f).ToVector();
-        var right = Tensor.Random.Uniform<float>(new Shape(50000), -1.0f, 1.0f).ToVector();
+        var left = Tensor.Random.Uniform(new Shape(50000), -1.0f, 1.0f).ToVector();
+        var right = Tensor.Random.Uniform(new Shape(50000), -1.0f, 1.0f).ToVector();
 
         var expected = 0.0f;
 

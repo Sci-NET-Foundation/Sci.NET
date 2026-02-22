@@ -23,6 +23,7 @@ public static class ReductionExtensions
     /// <param name="targetShape">The shape to reduce the <see cref="ITensor{TNumber}"/> to.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The reduced <see cref="ITensor{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
     public static ITensor<TNumber> ReduceToShape<TNumber>(this ITensor<TNumber> tensor, Shape targetShape)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -39,6 +40,7 @@ public static class ReductionExtensions
     /// <param name="shape">The shape to reduce the <see cref="ITensor{TNumber}"/> to.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>A value indicating whether the <see cref="ITensor{TNumber}"/> can be reduced to the given shape.</returns>
+    [DebuggerStepThrough]
     public static bool CanReduceToShape<TNumber>(this ITensor<TNumber> tensor, Shape shape)
         where TNumber : unmanaged, INumber<TNumber>
     {

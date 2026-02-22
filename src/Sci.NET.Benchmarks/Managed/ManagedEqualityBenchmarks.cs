@@ -3,7 +3,9 @@
 
 using System.Numerics;
 using BenchmarkDotNet.Attributes;
-using Sci.NET.Common.Numerics;
+using Sci.NET.Mathematics.Backends;
+using Sci.NET.Mathematics.Backends.Managed;
+using Sci.NET.Mathematics.Numerics;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Benchmarks.Managed;
@@ -21,6 +23,7 @@ public class ManagedEqualityBenchmarks<TNumber>
         new Shape(400, 200, 100, 50)
     ];
 
+    private IEqualityOperationKernels _equalitiyOperationKernels = default!;
     private Tensor<TNumber> _leftTensor = default!;
     private Tensor<TNumber> _rightTensor = default!;
     private Tensor<TNumber> _result = default!;
@@ -30,6 +33,8 @@ public class ManagedEqualityBenchmarks<TNumber>
     {
         TNumber min;
         TNumber max;
+
+        Tensor.SetDefaultBackend<ManagedTensorBackend>();
 
         if (GenericMath.IsFloatingPoint<TNumber>())
         {
@@ -47,44 +52,46 @@ public class ManagedEqualityBenchmarks<TNumber>
             max = TNumber.CreateChecked(10);
         }
 
-        _leftTensor = Tensor.Random.Uniform<TNumber>(Shape, min, max, seed: 123456).ToTensor();
-        _rightTensor = Tensor.Random.Uniform<TNumber>(Shape, min, max, seed: 654321).ToTensor();
+        _equalitiyOperationKernels = ManagedTensorBackend.Instance.EqualityOperations;
+        _leftTensor = Tensor.Random.Uniform(Shape, min, max, seed: 123456).ToTensor();
+        _rightTensor = Tensor.Random.Uniform(Shape, min, max, seed: 654321).ToTensor();
+        _result = Tensor.Zeros<TNumber>(_leftTensor.Shape).ToTensor();
     }
 
     [Benchmark]
     public void Equals()
     {
-        _result = _leftTensor.PointwiseEquals(_rightTensor);
+        _equalitiyOperationKernels.PointwiseEqual(_leftTensor, _rightTensor, _result);
     }
 
     [Benchmark]
     public void NotEquals()
     {
-        _result = _leftTensor.PointwiseNotEquals(_rightTensor);
+        _equalitiyOperationKernels.PointwiseNotEqual(_leftTensor, _rightTensor, _result);
     }
 
     [Benchmark]
     public void GreaterThan()
     {
-        _result = _leftTensor.PointwiseGreaterThan(_rightTensor);
+        _equalitiyOperationKernels.PointwiseGreaterThan(_leftTensor, _rightTensor, _result);
     }
 
     [Benchmark]
     public void GreaterThanOrEquals()
     {
-        _result = _leftTensor.PointwiseGreaterThanOrEqual(_rightTensor);
+        _equalitiyOperationKernels.PointwiseGreaterThanOrEqual(_leftTensor, _rightTensor, _result);
     }
 
     [Benchmark]
     public void LessThan()
     {
-        _result = _leftTensor.PointwiseLessThan(_rightTensor);
+        _equalitiyOperationKernels.PointwiseLessThan(_leftTensor, _rightTensor, _result);
     }
 
     [Benchmark]
     public void LessThanOrEquals()
     {
-        _result = _leftTensor.PointwiseLessThanOrEqual(_rightTensor);
+        _equalitiyOperationKernels.PointwiseLessThanOrEqual(_leftTensor, _rightTensor, _result);
     }
 
     [GlobalCleanup]

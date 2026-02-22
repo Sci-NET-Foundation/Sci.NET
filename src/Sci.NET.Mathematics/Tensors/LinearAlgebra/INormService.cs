@@ -17,7 +17,7 @@ public interface INormService
     /// <param name="vector">The <see cref="Vector{TNumber}"/> to compute the norm of.</param>
     /// <param name="order">The order of the norm. If null, the default (2-norm) is used.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
-    /// <returns>>The norm of the <see cref="Vector{TNumber}"/>.</returns>
+    /// <returns>The norm of the <see cref="Vector{TNumber}"/>.</returns>
     public Scalar<TNumber> VectorNorm<TNumber>(Vector<TNumber> vector, Scalar<TNumber>? order = null)
         where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>;
 }

@@ -4,9 +4,9 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
-using Sci.NET.Common.Memory;
 using Sci.NET.Mathematics.Backends;
 using Sci.NET.Mathematics.Backends.Devices;
+using Sci.NET.Mathematics.Memory;
 
 namespace Sci.NET.Mathematics.Tensors;
 
@@ -18,8 +18,6 @@ namespace Sci.NET.Mathematics.Tensors;
 public sealed class Tensor<TNumber> : ITensor<TNumber>
     where TNumber : unmanaged, INumber<TNumber>
 {
-    private readonly Guid _id = Guid.NewGuid();
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Tensor{TNumber}"/> class.
     /// </summary>
@@ -32,7 +30,6 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
         Backend = backend ?? Tensor.DefaultBackend;
         Memory = Backend.Storage.Allocate<TNumber>(Shape);
         IsMemoryOwner = true;
-        Memory.Rent(_id);
         RequiresGradient = requiresGradient;
         Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) { IsGradient = true } : null;
     }
@@ -65,7 +62,6 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
         Backend = previousTensor.Backend;
         Shape = newShape;
         IsMemoryOwner = false;
-        Memory.Rent(_id);
         RequiresGradient = previousTensor.RequiresGradient;
         Gradient = overrideRequiresGradient ?? RequiresGradient ? new Tensor<TNumber>(Shape, Backend, requiresGradient: false) { IsGradient = true } : null;
     }
@@ -83,7 +79,6 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
         Shape = shape;
         Backend = backend;
         IsMemoryOwner = false;
-        Memory.Rent(_id);
         RequiresGradient = requiresGradient;
         Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) { IsGradient = true } : null;
     }
@@ -326,7 +321,6 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
     /// <inheritdoc />
     public void ForceDispose()
     {
-        Memory.Release(_id);
         Memory.Dispose();
     }
 
@@ -347,7 +341,7 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
     /// <inheritdoc />
     public void To(IDevice device)
     {
-        if (device.Name == Device.Name)
+        if (device.Equals(Device))
         {
             return;
         }
@@ -363,6 +357,23 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
         oldHandle.Dispose();
 
         Gradient?.To(device);
+    }
+
+    /// <summary>
+    /// Clones the <see cref="Scalar{TNumber}"/>.
+    /// </summary>
+    /// <returns>A clone of the <see cref="Scalar{TNumber}"/>.</returns>
+    public Tensor<TNumber> Clone()
+    {
+        var clone = new Tensor<TNumber>(Shape, Backend, RequiresGradient);
+        clone.Memory.BlockCopyFrom(Memory, 0, 0, Memory.Length);
+
+        if (RequiresGradient && Gradient is not null && clone.Gradient is not null)
+        {
+            clone.Gradient.Memory.BlockCopyFrom(Gradient.Memory, 0, 0, Gradient.Memory.Length);
+        }
+
+        return clone;
     }
 
     /// <inheritdoc />
@@ -386,7 +397,6 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
     {
         if (disposing && IsMemoryOwner && !IsGradient)
         {
-            Memory.Release(_id);
             Memory.Dispose();
             Gradient?.ForceDispose();
         }

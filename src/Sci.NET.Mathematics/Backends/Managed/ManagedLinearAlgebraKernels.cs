@@ -1,4 +1,4 @@
-﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
@@ -6,27 +6,41 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
-using Sci.NET.Common.Concurrency;
-using Sci.NET.Common.Intrinsics;
-using Sci.NET.Common.Memory;
-using Sci.NET.Common.Performance;
+using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Backends.Managed.Buffers;
+using Sci.NET.Mathematics.Backends.Managed.Iterators;
+using Sci.NET.Mathematics.Backends.Managed.MicroKernels.LinearAlgebra;
+using Sci.NET.Mathematics.Concurrency;
+using Sci.NET.Mathematics.Intrinsics;
+using Sci.NET.Mathematics.Memory;
+using Sci.NET.Mathematics.Performance;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends.Managed;
 
 internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
 {
-    private const int GemmMrFp32 = 8;
-    private const int GemmNrFp32 = 8;
-    private const int GemmMrFp64 = 4;
-    private const int GemmNrFp64 = 4;
-    private const int GemmMcFp32 = 256;
-    private const int GemmKcFp32 = 256;
-    private const int GemmNcFp32 = 256;
-    private const int GemmMcFp64 = 128;
-    private const int GemmKcFp64 = 128;
-    private const int GemmNcFp64 = 128;
+    private const int MatrixMultiplyMrFp32 = 8;
+    private const int MatrixMultiplyNrFp32 = 8;
+    private const int MatrixMultiplyMrFp64 = 4;
+    private const int MatrixMultiplyNrFp64 = 4;
+    private const int MatrixMultiplyMcFp32 = 256;
+    private const int MatrixMultiplyKcFp32 = 256;
+    private const int MatrixMultiplyNcFp32 = 256;
+    private const int MatrixMultiplyMcFp64 = 128;
+    private const int MatrixMultiplyKcFp64 = 128;
+    private const int MatrixMultiplyNcFp64 = 128;
+
+    public unsafe void Hypot<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
+        where TNumber : unmanaged, IFloatingPointIeee754<TNumber>, IRootFunctions<TNumber>
+    {
+        ManagedStreamingBinaryOperationIterator.Apply<HypotMicroKernel<TNumber>, TNumber>(
+            left.Memory.ToPointer(),
+            right.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            left.Shape.ElementCount,
+            (ICpuComputeDevice)left.Device);
+    }
 
     public unsafe void MatrixMultiply<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right, Matrix<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
@@ -43,11 +57,13 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         const int iBlock = 128;
         const int jBlock = 16;
 
-        if ((IntrinsicsHelper.AvailableInstructionSets & SimdInstructionSet.Avx) != 0 &&
-            (IntrinsicsHelper.AvailableInstructionSets & SimdInstructionSet.Fma) != 0 &&
+        var cpuDevice = left.Device as ICpuComputeDevice;
+
+        if ((cpuDevice?.IsAvx2Supported() ?? false) &&
+            IntrinsicsHelper.IsAvx2Supported() &&
             typeof(TNumber) == typeof(float))
         {
-            GemmFmaAvxFp32(
+            MatrixMultiplyFmaAvxFp32(
                 (float*)leftMemoryBlockPtr,
                 (float*)rightMemoryBlockPtr,
                 (float*)resultMemoryBlockPtr,
@@ -57,11 +73,11 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
             return;
         }
 
-        if ((IntrinsicsHelper.AvailableInstructionSets & SimdInstructionSet.Avx) != 0 &&
-            (IntrinsicsHelper.AvailableInstructionSets & SimdInstructionSet.Fma) != 0 &&
+        if ((cpuDevice?.IsAvx2Supported() ?? false) &&
+            IntrinsicsHelper.IsAvx2Supported() &&
             typeof(TNumber) == typeof(double))
         {
-            GemmFmaAvxFp64(
+            MatrixMultiplyFmaAvxFp64(
                 (double*)leftMemoryBlockPtr,
                 (double*)rightMemoryBlockPtr,
                 (double*)resultMemoryBlockPtr,
@@ -83,7 +99,7 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
                 var iMax = Math.Min(i0 + iBlock, leftRows);
                 var jMax = Math.Min(j0 + jBlock, rightColumns);
 
-                for (var i = i0; i < iMax; ++i)
+                for (var i = i0; i < iMax; i++)
                 {
                     for (var j = j0; j < jMax; ++j)
                     {
@@ -105,9 +121,10 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         var leftMemoryBlock = (SystemMemoryBlock<TNumber>)left.Memory;
         var rightMemoryBlock = (SystemMemoryBlock<TNumber>)right.Memory;
         var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Memory;
+        var cpuDevice = left.Device as ICpuComputeDevice;
 
-        if ((IntrinsicsHelper.AvailableInstructionSets & SimdInstructionSet.Avx) != 0 &&
-            (IntrinsicsHelper.AvailableInstructionSets & SimdInstructionSet.Fma) != 0 &&
+        if ((cpuDevice?.IsAvx2Supported() ?? false) &&
+            IntrinsicsHelper.IsAvx2Supported() &&
             typeof(TNumber) == typeof(float))
         {
             InnerProductFp32FmaAvx(
@@ -119,8 +136,8 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
             return;
         }
 
-        if ((IntrinsicsHelper.AvailableInstructionSets & SimdInstructionSet.Avx) != 0 &&
-            (IntrinsicsHelper.AvailableInstructionSets & SimdInstructionSet.Fma) != 0 &&
+        if ((cpuDevice?.IsAvx2Supported() ?? false) &&
+            IntrinsicsHelper.IsAvx2Supported() &&
             typeof(TNumber) == typeof(double))
         {
             InnerProductFp64FmaAvx(
@@ -154,160 +171,7 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         resultMemoryBlock[0] = sum;
     }
 
-    public unsafe void Hypot<TNumber>(IMemoryBlock<TNumber> left, IMemoryBlock<TNumber> right, IMemoryBlock<TNumber> result)
-        where TNumber : unmanaged, IFloatingPointIeee754<TNumber>, IRootFunctions<TNumber>
-    {
-        var leftMemoryBlock = (SystemMemoryBlock<TNumber>)left;
-        var rightMemoryBlock = (SystemMemoryBlock<TNumber>)right;
-        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result;
-
-        if ((IntrinsicsHelper.AvailableInstructionSets & SimdInstructionSet.Avx) != 0 &&
-            typeof(TNumber) == typeof(float))
-        {
-            HypotFp32Avx(
-                (float*)leftMemoryBlock.Pointer,
-                (float*)rightMemoryBlock.Pointer,
-                (float*)resultMemoryBlock.Pointer,
-                leftMemoryBlock.Length);
-
-            return;
-        }
-
-        if ((IntrinsicsHelper.AvailableInstructionSets & SimdInstructionSet.Avx) != 0 &&
-            typeof(TNumber) == typeof(double))
-        {
-            HypotFp64Avx(
-                (double*)leftMemoryBlock.Pointer,
-                (double*)rightMemoryBlock.Pointer,
-                (double*)resultMemoryBlock.Pointer,
-                leftMemoryBlock.Length);
-
-            return;
-        }
-
-        _ = LazyParallelExecutor.For(
-            0,
-            leftMemoryBlock.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var leftValue = leftMemoryBlock[i];
-                var rightValue = rightMemoryBlock[i];
-                resultMemoryBlock[i] = TNumber.Hypot(leftValue, rightValue);
-            });
-    }
-
-    private static unsafe void HypotFp32Avx(float* leftMemoryPtr, float* rightMemoryPtr, float* outputMemoryPtr, long n)
-    {
-        var tileCount = (n + NativeBufferHelpers.TileSizeFp32 - 1) / NativeBufferHelpers.TileSizeFp32;
-
-        _ = Parallel.For(
-            0,
-            tileCount,
-            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
-            () =>
-            {
-                var a = (float*)NativeMemory.AlignedAlloc(NativeBufferHelpers.L1Size, 32);
-                var b = (float*)NativeMemory.AlignedAlloc(NativeBufferHelpers.L1Size, 32);
-                return new Panel2dFp32(a, b);
-            },
-            (tileIdx, _, panel) =>
-            {
-                var tileStart = tileIdx * NativeBufferHelpers.TileSizeFp32;
-                var tileEnd = Math.Min(tileStart + NativeBufferHelpers.TileSizeFp32, n);
-                var count = tileEnd - tileStart;
-                var one = Vector256<float>.One;
-                var zero = Vector256<float>.Zero;
-
-                NativeBufferHelpers.Pack1dFp32Avx(leftMemoryPtr + tileStart, panel.A, count);
-                NativeBufferHelpers.Pack1dFp32Avx(rightMemoryPtr + tileStart, panel.B, count);
-
-                var i = 0L;
-                for (; i <= count - NativeBufferHelpers.AvxVectorSizeFp32; i += NativeBufferHelpers.AvxVectorSizeFp32)
-                {
-                    var leftVector = Avx.LoadVector256(panel.A + i);
-                    var rightVector = Avx.LoadVector256(panel.B + i);
-
-                    var leftSquared = Avx.Multiply(leftVector, leftVector);
-                    var rightSquared = Avx.Multiply(rightVector, rightVector);
-                    var sum = Avx.Add(leftSquared, rightSquared);
-                    var result = Avx.Sqrt(sum);
-
-                    Avx.Store(outputMemoryPtr + tileStart + i, result);
-                }
-
-                for (; i < count; ++i)
-                {
-                    var leftValue = panel.A[i];
-                    var rightValue = panel.B[i];
-                    outputMemoryPtr[tileStart + i] = MathF.Sqrt((leftValue * leftValue) + (rightValue * rightValue));
-                }
-
-                return panel;
-            },
-            data =>
-            {
-                NativeMemory.AlignedFree(data.A);
-                NativeMemory.AlignedFree(data.B);
-            });
-    }
-
-    private static unsafe void HypotFp64Avx(double* leftMemoryPtr, double* rightMemoryPtr, double* outputMemoryPtr, long n)
-    {
-        var tileCount = (n + NativeBufferHelpers.TileSizeFp64 - 1) / NativeBufferHelpers.TileSizeFp64;
-
-        _ = Parallel.For(
-            0,
-            tileCount,
-            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
-            () =>
-            {
-                var a = (double*)NativeMemory.AlignedAlloc(NativeBufferHelpers.L1Size, 64);
-                var b = (double*)NativeMemory.AlignedAlloc(NativeBufferHelpers.L1Size, 64);
-                return new Panel2dFp64(a, b);
-            },
-            (tileIdx, _, panel) =>
-            {
-                var tileStart = tileIdx * NativeBufferHelpers.TileSizeFp64;
-                var tileEnd = Math.Min(tileStart + NativeBufferHelpers.TileSizeFp64, n);
-                var count = tileEnd - tileStart;
-                var one = Vector256<float>.One;
-                var zero = Vector256<float>.Zero;
-
-                NativeBufferHelpers.Pack1dFp64Avx(leftMemoryPtr + tileStart, panel.A, count);
-                NativeBufferHelpers.Pack1dFp64Avx(rightMemoryPtr + tileStart, panel.B, count);
-
-                var i = 0L;
-                for (; i <= count - NativeBufferHelpers.AvxVectorSizeFp64; i += NativeBufferHelpers.AvxVectorSizeFp64)
-                {
-                    var leftVector = Avx.LoadVector256(panel.A + i);
-                    var rightVector = Avx.LoadVector256(panel.B + i);
-
-                    var leftSquared = Avx.Multiply(leftVector, leftVector);
-                    var rightSquared = Avx.Multiply(rightVector, rightVector);
-                    var sum = Avx.Add(leftSquared, rightSquared);
-                    var result = Avx.Sqrt(sum);
-
-                    Avx.Store(outputMemoryPtr + tileStart + i, result);
-                }
-
-                for (; i < count; ++i)
-                {
-                    var leftValue = panel.A[i];
-                    var rightValue = panel.B[i];
-                    outputMemoryPtr[tileStart + i] = Math.Sqrt((leftValue * leftValue) + (rightValue * rightValue));
-                }
-
-                return panel;
-            },
-            data =>
-            {
-                NativeMemory.AlignedFree(data.A);
-                NativeMemory.AlignedFree(data.B);
-            });
-    }
-
-    private static unsafe void GemmFmaAvxFp32(
+    private static unsafe void MatrixMultiplyFmaAvxFp32(
         float* a,
         float* b,
         float* c,
@@ -315,86 +179,104 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         int n,
         int k)
     {
-        var numTiles = (m + GemmMcFp32 - 1) / GemmMcFp32;
+        var numTiles = (m + MatrixMultiplyMcFp32 - 1) / MatrixMultiplyMcFp32;
 
-        using var allPanels = new ThreadLocal<Panel2dFp32>(
-            () =>
-            {
-                var aBuffer = (float*)NativeMemory.AlignedAlloc(GemmMcFp32 * GemmKcFp32 * sizeof(float), 32);
-                var bBuffer = (float*)NativeMemory.AlignedAlloc(GemmKcFp32 * GemmNcFp32 * sizeof(float), 32);
-
-                return new Panel2dFp32(aBuffer, bBuffer);
-            },
-            true);
-
-        _ = Parallel.For(
-            0,
-            numTiles,
-            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
-            tileIdx =>
-            {
-                var panels = allPanels.Value;
-
-                var mBase = tileIdx * GemmMcFp32;
-                var mTile = Math.Min(GemmMcFp32, m - mBase);
-                var aPanel = panels.A;
-                var bPanel = panels.B;
-
-                for (var kBase = 0; kBase < k; kBase += GemmKcFp32)
+        if (ManagedTensorBackend.ShouldParallelizeForTiles(numTiles))
+        {
+            using var allPanels = new ThreadLocal<Panel2dFp32>(
+                () =>
                 {
-                    var kTile = Math.Min(GemmKcFp32, k - kBase);
-                    PackAFp32(a + (mBase * k) + kBase, aPanel, k, mTile, kTile);
+                    var aBuffer = (float*)NativeMemory.AlignedAlloc(MatrixMultiplyMcFp32 * MatrixMultiplyKcFp32 * sizeof(float), 32);
+                    var bBuffer = (float*)NativeMemory.AlignedAlloc(MatrixMultiplyKcFp32 * MatrixMultiplyNcFp32 * sizeof(float), 32);
 
-                    for (var nBase = 0; nBase < n; nBase += GemmNcFp32)
+                    return new Panel2dFp32(aBuffer, bBuffer);
+                },
+                true);
+
+            _ = Parallel.For(
+                0,
+                numTiles,
+                new ParallelOptions { MaxDegreeOfParallelism = ManagedTensorBackend.MaxDegreeOfParallelism },
+                tileIdx => InnerLoop(tileIdx, allPanels.Value));
+
+            foreach (var panel in allPanels.Values)
+            {
+                NativeMemory.AlignedFree(panel.A);
+                NativeMemory.AlignedFree(panel.B);
+            }
+        }
+        else
+        {
+            var aBuffer = (float*)NativeMemory.AlignedAlloc(MatrixMultiplyMcFp32 * MatrixMultiplyKcFp32 * sizeof(float), 32);
+            var bBuffer = (float*)NativeMemory.AlignedAlloc(MatrixMultiplyKcFp32 * MatrixMultiplyNcFp32 * sizeof(float), 32);
+            var panels = new Panel2dFp32(aBuffer, bBuffer);
+
+            for (var tileIdx = 0; tileIdx < numTiles; tileIdx++)
+            {
+                InnerLoop(tileIdx, panels);
+            }
+
+            NativeMemory.AlignedFree(panels.A);
+            NativeMemory.AlignedFree(panels.B);
+        }
+
+        void InnerLoop(int tileIdx, Panel2dFp32 panels)
+        {
+            var mBase = tileIdx * MatrixMultiplyMcFp32;
+            var mTile = Math.Min(MatrixMultiplyMcFp32, m - mBase);
+            var aPanel = panels.A;
+            var bPanel = panels.B;
+
+            for (var kBase = 0; kBase < k; kBase += MatrixMultiplyKcFp32)
+            {
+                var kTile = Math.Min(MatrixMultiplyKcFp32, k - kBase);
+                PackAFp32(a + (mBase * k) + kBase, aPanel, k, mTile, kTile);
+
+                for (var nBase = 0; nBase < n; nBase += MatrixMultiplyNcFp32)
+                {
+                    var nc = Math.Min(MatrixMultiplyNcFp32, n - nBase);
+                    PackBFp32(b + (kBase * n) + nBase, bPanel, n, kTile, nc);
+
+                    for (var mReg = 0; mReg < mTile; mReg += MatrixMultiplyMrFp32)
                     {
-                        var nc = Math.Min(GemmNcFp32, n - nBase);
-                        PackBFp32(b + (kBase * n) + nBase, bPanel, n, kTile, nc);
+                        var mr = Math.Min(MatrixMultiplyMrFp32, mTile - mReg);
 
-                        for (var mReg = 0; mReg < mTile; mReg += GemmMrFp32)
+                        for (var nReg = 0; nReg < nc; nReg += MatrixMultiplyNrFp32)
                         {
-                            var mr = Math.Min(GemmMrFp32, mTile - mReg);
+                            var nr = Math.Min(MatrixMultiplyNrFp32, nc - nReg);
+                            var leftPtr = aPanel + (mReg * MatrixMultiplyKcFp32);
+                            var rightPtr = bPanel + nReg;
+                            var resultPtr = c + ((mBase + mReg) * n) + nBase + nReg;
 
-                            for (var nReg = 0; nReg < nc; nReg += GemmNrFp32)
+                            if (mr == MatrixMultiplyMrFp32 && nr == MatrixMultiplyNrFp32)
                             {
-                                var nr = Math.Min(GemmNrFp32, nc - nReg);
-                                var leftPtr = aPanel + (mReg * GemmKcFp32);
-                                var rightPtr = bPanel + nReg;
-                                var resultPtr = c + ((mBase + mReg) * n) + nBase + nReg;
-
-                                if (mr == GemmMrFp32 && nr == GemmNrFp32)
-                                {
-                                    MicroKernel8x8FmaAvxFp32(
-                                        aPanel + (mReg * GemmKcFp32),
-                                        bPanel + nReg,
-                                        c + ((mBase + mReg) * n) + nBase + nReg,
-                                        kTile,
-                                        n);
-                                }
-                                else
-                                {
-                                    MicroKernelScalarFp32(
-                                        leftPtr,
-                                        rightPtr,
-                                        resultPtr,
-                                        kTile,
-                                        n,
-                                        mr,
-                                        nr);
-                                }
+                                MicroKernel8x8FmaAvxFp32(
+                                    aPanel + (mReg * MatrixMultiplyKcFp32),
+                                    bPanel + nReg,
+                                    c + ((mBase + mReg) * n) + nBase + nReg,
+                                    kTile,
+                                    n);
+                            }
+                            else
+                            {
+                                MicroKernelScalarFp32(
+                                    leftPtr,
+                                    rightPtr,
+                                    resultPtr,
+                                    kTile,
+                                    n,
+                                    mr,
+                                    nr);
                             }
                         }
                     }
                 }
-            });
-
-        foreach (var panels in allPanels.Values)
-        {
-            NativeMemory.AlignedFree(panels.A);
-            NativeMemory.AlignedFree(panels.B);
+            }
         }
     }
 
-    private static unsafe void GemmFmaAvxFp64(
+    [MethodImpl(ImplementationOptions.HotPath)]
+    private static unsafe void MatrixMultiplyFmaAvxFp64(
         double* a,
         double* b,
         double* c,
@@ -402,81 +284,104 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         int n,
         int k)
     {
-        var numTiles = (m + GemmMcFp64 - 1) / GemmMcFp64;
+        var numTiles = (m + MatrixMultiplyMcFp64 - 1) / MatrixMultiplyMcFp64;
 
-        _ = Parallel.For(
-            0,
-            numTiles,
-            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
-            () =>
-            {
-                var aBuffer = (double*)NativeMemory.AlignedAlloc(GemmMcFp64 * GemmKcFp64 * sizeof(double), 64);
-                var bBuffer = (double*)NativeMemory.AlignedAlloc(GemmKcFp64 * GemmNcFp64 * sizeof(double), 64);
-                return new Panel2dFp64(aBuffer, bBuffer);
-            },
-            (tileIdx, _, panels) =>
-            {
-                var mBase = tileIdx * GemmMcFp64;
-                var mTile = Math.Min(GemmMcFp64, m - mBase);
-                var aPanel = panels.A;
-                var bPanel = panels.B;
-
-                for (var kBase = 0; kBase < k; kBase += GemmKcFp64)
+        if (ManagedTensorBackend.ShouldParallelizeForTiles(numTiles))
+        {
+            using var allPanels = new ThreadLocal<Panel2dFp64>(
+                () =>
                 {
-                    var kTile = Math.Min(GemmKcFp64, k - kBase);
-                    PackAFp64(a + (mBase * k) + kBase, aPanel, k, mTile, kTile);
+                    var aBuffer = (double*)NativeMemory.AlignedAlloc(MatrixMultiplyMcFp64 * MatrixMultiplyKcFp64 * sizeof(double), 32);
+                    var bBuffer = (double*)NativeMemory.AlignedAlloc(MatrixMultiplyKcFp64 * MatrixMultiplyNcFp64 * sizeof(double), 32);
 
-                    for (var nBase = 0; nBase < n; nBase += GemmNcFp64)
+                    return new Panel2dFp64(aBuffer, bBuffer);
+                },
+                true);
+
+            _ = Parallel.For(
+                0,
+                numTiles,
+                new ParallelOptions { MaxDegreeOfParallelism = ManagedTensorBackend.MaxDegreeOfParallelism },
+                tileIdx => InnerLoop(tileIdx, allPanels.Value));
+
+            foreach (var panel in allPanels.Values)
+            {
+                NativeMemory.AlignedFree(panel.A);
+                NativeMemory.AlignedFree(panel.B);
+            }
+        }
+        else
+        {
+            var aBuffer = (double*)NativeMemory.AlignedAlloc(MatrixMultiplyMcFp64 * MatrixMultiplyKcFp64 * sizeof(double), 32);
+            var bBuffer = (double*)NativeMemory.AlignedAlloc(MatrixMultiplyKcFp64 * MatrixMultiplyNcFp64 * sizeof(double), 32);
+            var panels = new Panel2dFp64(aBuffer, bBuffer);
+
+            for (var tileIdx = 0; tileIdx < numTiles; tileIdx++)
+            {
+                InnerLoop(tileIdx, panels);
+            }
+
+            NativeMemory.AlignedFree(panels.A);
+            NativeMemory.AlignedFree(panels.B);
+        }
+
+        [MethodImpl(ImplementationOptions.HotPath)]
+        void InnerLoop(int tileIdx, Panel2dFp64 panels)
+        {
+            var mBase = tileIdx * MatrixMultiplyMcFp64;
+            var mTile = Math.Min(MatrixMultiplyMcFp64, m - mBase);
+            var aPanel = panels.A;
+            var bPanel = panels.B;
+
+            for (var kBase = 0; kBase < k; kBase += MatrixMultiplyKcFp64)
+            {
+                var kTile = Math.Min(MatrixMultiplyKcFp64, k - kBase);
+                PackAFp64(a + (mBase * k) + kBase, aPanel, k, mTile, kTile);
+
+                for (var nBase = 0; nBase < n; nBase += MatrixMultiplyNcFp64)
+                {
+                    var nc = Math.Min(MatrixMultiplyNcFp64, n - nBase);
+                    PackBFp64(b + (kBase * n) + nBase, bPanel, n, kTile, nc);
+
+                    for (var mReg = 0; mReg < mTile; mReg += MatrixMultiplyMrFp64)
                     {
-                        var nc = Math.Min(GemmNcFp64, n - nBase);
-                        PackBFp64(b + (kBase * n) + nBase, bPanel, n, kTile, nc);
+                        var mr = Math.Min(MatrixMultiplyMrFp64, mTile - mReg);
 
-                        for (var mReg = 0; mReg < mTile; mReg += GemmMrFp64)
+                        for (var nReg = 0; nReg < nc; nReg += MatrixMultiplyNrFp64)
                         {
-                            var mr = Math.Min(GemmMrFp64, mTile - mReg);
+                            var nr = Math.Min(MatrixMultiplyNrFp64, nc - nReg);
+                            var leftPtr = aPanel + (mReg * MatrixMultiplyKcFp64);
+                            var rightPtr = bPanel + nReg;
+                            var resultPtr = c + ((mBase + mReg) * n) + nBase + nReg;
 
-                            for (var nReg = 0; nReg < nc; nReg += GemmNrFp64)
+                            if (mr == MatrixMultiplyMrFp64 && nr == MatrixMultiplyNrFp64)
                             {
-                                var nr = Math.Min(GemmNrFp64, nc - nReg);
-                                var leftPtr = aPanel + (mReg * GemmKcFp64);
-                                var rightPtr = bPanel + nReg;
-                                var resultPtr = c + ((mBase + mReg) * n) + nBase + nReg;
-
-                                if (mr == GemmMrFp64 && nr == GemmNrFp64)
-                                {
-                                    MicroKernel4x4FmaAvxFp64(
-                                        aPanel + (mReg * GemmKcFp64),
-                                        bPanel + nReg,
-                                        c + ((mBase + mReg) * n) + nBase + nReg,
-                                        kTile,
-                                        n);
-                                }
-                                else
-                                {
-                                    MicroKernelScalarFp64(
-                                        leftPtr,
-                                        rightPtr,
-                                        resultPtr,
-                                        kTile,
-                                        n,
-                                        mr,
-                                        nr);
-                                }
+                                MicroKernel4x4FmaAvxFp64(
+                                    aPanel + (mReg * MatrixMultiplyKcFp64),
+                                    bPanel + nReg,
+                                    c + ((mBase + mReg) * n) + nBase + nReg,
+                                    kTile,
+                                    n);
+                            }
+                            else
+                            {
+                                MicroKernelScalarFp64(
+                                    leftPtr,
+                                    rightPtr,
+                                    resultPtr,
+                                    kTile,
+                                    n,
+                                    mr,
+                                    nr);
                             }
                         }
                     }
                 }
-
-                return panels;
-            },
-            panels =>
-            {
-                NativeMemory.AlignedFree(panels.A);
-                NativeMemory.AlignedFree(panels.B);
-            });
+            }
+        }
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    [MethodImpl(ImplementationOptions.HotPath)]
     private static unsafe void MicroKernel8x8FmaAvxFp32(float* aPanel, float* bPanel, float* cTile, int kTile, int ldc)
     {
         var c0 = Avx.LoadVector256(cTile + (0 * ldc));
@@ -488,58 +393,107 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         var c6 = Avx.LoadVector256(cTile + (6 * ldc));
         var c7 = Avx.LoadVector256(cTile + (7 * ldc));
 
-        var a0 = aPanel + (0 * GemmKcFp32);
-        var a1 = aPanel + (1 * GemmKcFp32);
-        var a2 = aPanel + (2 * GemmKcFp32);
-        var a3 = aPanel + (3 * GemmKcFp32);
-        var a4 = aPanel + (4 * GemmKcFp32);
-        var a5 = aPanel + (5 * GemmKcFp32);
-        var a6 = aPanel + (6 * GemmKcFp32);
-        var a7 = aPanel + (7 * GemmKcFp32);
+        int p = 0;
 
-        int k = 0;
-        for (; k < kTile - 1; k += 2)
+        for (; p + 3 < kTile; p += 4)
         {
-            var bVec0 = Avx.LoadVector256(bPanel + (k * GemmNcFp32));
-            var bVec1 = Avx.LoadVector256(bPanel + ((k + 1) * GemmNcFp32));
+            var b0 = Avx.LoadVector256(bPanel + ((p + 0) * MatrixMultiplyNcFp32));
+            var a0 = Avx.BroadcastScalarToVector256(aPanel + (0 * MatrixMultiplyKcFp32) + p + 0);
+            var a1 = Avx.BroadcastScalarToVector256(aPanel + (1 * MatrixMultiplyKcFp32) + p + 0);
+            var a2 = Avx.BroadcastScalarToVector256(aPanel + (2 * MatrixMultiplyKcFp32) + p + 0);
+            var a3 = Avx.BroadcastScalarToVector256(aPanel + (3 * MatrixMultiplyKcFp32) + p + 0);
+            var a4 = Avx.BroadcastScalarToVector256(aPanel + (4 * MatrixMultiplyKcFp32) + p + 0);
+            var a5 = Avx.BroadcastScalarToVector256(aPanel + (5 * MatrixMultiplyKcFp32) + p + 0);
+            var a6 = Avx.BroadcastScalarToVector256(aPanel + (6 * MatrixMultiplyKcFp32) + p + 0);
+            var a7 = Avx.BroadcastScalarToVector256(aPanel + (7 * MatrixMultiplyKcFp32) + p + 0);
 
-            c0 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a0 + k), bVec0, c0);
-            c0 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a0 + k + 1), bVec1, c0);
+            c0 = Fma.MultiplyAdd(a0, b0, c0);
+            c1 = Fma.MultiplyAdd(a1, b0, c1);
+            c2 = Fma.MultiplyAdd(a2, b0, c2);
+            c3 = Fma.MultiplyAdd(a3, b0, c3);
+            c4 = Fma.MultiplyAdd(a4, b0, c4);
+            c5 = Fma.MultiplyAdd(a5, b0, c5);
+            c6 = Fma.MultiplyAdd(a6, b0, c6);
+            c7 = Fma.MultiplyAdd(a7, b0, c7);
 
-            c1 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a1 + k), bVec0, c1);
-            c1 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a1 + k + 1), bVec1, c1);
+            var b1 = Avx.LoadVector256(bPanel + ((p + 1) * MatrixMultiplyNcFp32));
+            a0 = Avx.BroadcastScalarToVector256(aPanel + (0 * MatrixMultiplyKcFp32) + p + 1);
+            a1 = Avx.BroadcastScalarToVector256(aPanel + (1 * MatrixMultiplyKcFp32) + p + 1);
+            a2 = Avx.BroadcastScalarToVector256(aPanel + (2 * MatrixMultiplyKcFp32) + p + 1);
+            a3 = Avx.BroadcastScalarToVector256(aPanel + (3 * MatrixMultiplyKcFp32) + p + 1);
+            a4 = Avx.BroadcastScalarToVector256(aPanel + (4 * MatrixMultiplyKcFp32) + p + 1);
+            a5 = Avx.BroadcastScalarToVector256(aPanel + (5 * MatrixMultiplyKcFp32) + p + 1);
+            a6 = Avx.BroadcastScalarToVector256(aPanel + (6 * MatrixMultiplyKcFp32) + p + 1);
+            a7 = Avx.BroadcastScalarToVector256(aPanel + (7 * MatrixMultiplyKcFp32) + p + 1);
 
-            c2 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a2 + k), bVec0, c2);
-            c2 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a2 + k + 1), bVec1, c2);
+            c0 = Fma.MultiplyAdd(a0, b1, c0);
+            c1 = Fma.MultiplyAdd(a1, b1, c1);
+            c2 = Fma.MultiplyAdd(a2, b1, c2);
+            c3 = Fma.MultiplyAdd(a3, b1, c3);
+            c4 = Fma.MultiplyAdd(a4, b1, c4);
+            c5 = Fma.MultiplyAdd(a5, b1, c5);
+            c6 = Fma.MultiplyAdd(a6, b1, c6);
+            c7 = Fma.MultiplyAdd(a7, b1, c7);
 
-            c3 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a3 + k), bVec0, c3);
-            c3 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a3 + k + 1), bVec1, c3);
+            var b2 = Avx.LoadVector256(bPanel + ((p + 2) * MatrixMultiplyNcFp32));
+            a0 = Avx.BroadcastScalarToVector256(aPanel + (0 * MatrixMultiplyKcFp32) + p + 2);
+            a1 = Avx.BroadcastScalarToVector256(aPanel + (1 * MatrixMultiplyKcFp32) + p + 2);
+            a2 = Avx.BroadcastScalarToVector256(aPanel + (2 * MatrixMultiplyKcFp32) + p + 2);
+            a3 = Avx.BroadcastScalarToVector256(aPanel + (3 * MatrixMultiplyKcFp32) + p + 2);
+            a4 = Avx.BroadcastScalarToVector256(aPanel + (4 * MatrixMultiplyKcFp32) + p + 2);
+            a5 = Avx.BroadcastScalarToVector256(aPanel + (5 * MatrixMultiplyKcFp32) + p + 2);
+            a6 = Avx.BroadcastScalarToVector256(aPanel + (6 * MatrixMultiplyKcFp32) + p + 2);
+            a7 = Avx.BroadcastScalarToVector256(aPanel + (7 * MatrixMultiplyKcFp32) + p + 2);
 
-            c4 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a4 + k), bVec0, c4);
-            c4 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a4 + k + 1), bVec1, c4);
+            c0 = Fma.MultiplyAdd(a0, b2, c0);
+            c1 = Fma.MultiplyAdd(a1, b2, c1);
+            c2 = Fma.MultiplyAdd(a2, b2, c2);
+            c3 = Fma.MultiplyAdd(a3, b2, c3);
+            c4 = Fma.MultiplyAdd(a4, b2, c4);
+            c5 = Fma.MultiplyAdd(a5, b2, c5);
+            c6 = Fma.MultiplyAdd(a6, b2, c6);
+            c7 = Fma.MultiplyAdd(a7, b2, c7);
 
-            c5 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a5 + k), bVec0, c5);
-            c5 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a5 + k + 1), bVec1, c5);
+            var b3 = Avx.LoadVector256(bPanel + ((p + 3) * MatrixMultiplyNcFp32));
+            a0 = Avx.BroadcastScalarToVector256(aPanel + (0 * MatrixMultiplyKcFp32) + p + 3);
+            a1 = Avx.BroadcastScalarToVector256(aPanel + (1 * MatrixMultiplyKcFp32) + p + 3);
+            a2 = Avx.BroadcastScalarToVector256(aPanel + (2 * MatrixMultiplyKcFp32) + p + 3);
+            a3 = Avx.BroadcastScalarToVector256(aPanel + (3 * MatrixMultiplyKcFp32) + p + 3);
+            a4 = Avx.BroadcastScalarToVector256(aPanel + (4 * MatrixMultiplyKcFp32) + p + 3);
+            a5 = Avx.BroadcastScalarToVector256(aPanel + (5 * MatrixMultiplyKcFp32) + p + 3);
+            a6 = Avx.BroadcastScalarToVector256(aPanel + (6 * MatrixMultiplyKcFp32) + p + 3);
+            a7 = Avx.BroadcastScalarToVector256(aPanel + (7 * MatrixMultiplyKcFp32) + p + 3);
 
-            c6 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a6 + k), bVec0, c6);
-            c6 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a6 + k + 1), bVec1, c6);
-
-            c7 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a7 + k), bVec0, c7);
-            c7 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a7 + k + 1), bVec1, c7);
+            c0 = Fma.MultiplyAdd(a0, b3, c0);
+            c1 = Fma.MultiplyAdd(a1, b3, c1);
+            c2 = Fma.MultiplyAdd(a2, b3, c2);
+            c3 = Fma.MultiplyAdd(a3, b3, c3);
+            c4 = Fma.MultiplyAdd(a4, b3, c4);
+            c5 = Fma.MultiplyAdd(a5, b3, c5);
+            c6 = Fma.MultiplyAdd(a6, b3, c6);
+            c7 = Fma.MultiplyAdd(a7, b3, c7);
         }
 
-        // Handle remainder
-        if (k < kTile)
+        for (; p < kTile; p++)
         {
-            var bVec = Avx.LoadVector256(bPanel + (k * GemmNcFp32));
-            c0 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a0 + k), bVec, c0);
-            c1 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a1 + k), bVec, c1);
-            c2 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a2 + k), bVec, c2);
-            c3 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a3 + k), bVec, c3);
-            c4 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a4 + k), bVec, c4);
-            c5 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a5 + k), bVec, c5);
-            c6 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a6 + k), bVec, c6);
-            c7 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a7 + k), bVec, c7);
+            var bCol = Avx.LoadVector256(bPanel + (p * MatrixMultiplyNcFp32));
+            var a0 = Avx.BroadcastScalarToVector256(aPanel + (0 * MatrixMultiplyKcFp32) + p);
+            var a1 = Avx.BroadcastScalarToVector256(aPanel + (1 * MatrixMultiplyKcFp32) + p);
+            var a2 = Avx.BroadcastScalarToVector256(aPanel + (2 * MatrixMultiplyKcFp32) + p);
+            var a3 = Avx.BroadcastScalarToVector256(aPanel + (3 * MatrixMultiplyKcFp32) + p);
+            var a4 = Avx.BroadcastScalarToVector256(aPanel + (4 * MatrixMultiplyKcFp32) + p);
+            var a5 = Avx.BroadcastScalarToVector256(aPanel + (5 * MatrixMultiplyKcFp32) + p);
+            var a6 = Avx.BroadcastScalarToVector256(aPanel + (6 * MatrixMultiplyKcFp32) + p);
+            var a7 = Avx.BroadcastScalarToVector256(aPanel + (7 * MatrixMultiplyKcFp32) + p);
+
+            c0 = Fma.MultiplyAdd(a0, bCol, c0);
+            c1 = Fma.MultiplyAdd(a1, bCol, c1);
+            c2 = Fma.MultiplyAdd(a2, bCol, c2);
+            c3 = Fma.MultiplyAdd(a3, bCol, c3);
+            c4 = Fma.MultiplyAdd(a4, bCol, c4);
+            c5 = Fma.MultiplyAdd(a5, bCol, c5);
+            c6 = Fma.MultiplyAdd(a6, bCol, c6);
+            c7 = Fma.MultiplyAdd(a7, bCol, c7);
         }
 
         Avx.Store(cTile + (0 * ldc), c0);
@@ -552,6 +506,7 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         Avx.Store(cTile + (7 * ldc), c7);
     }
 
+    [MethodImpl(ImplementationOptions.HotPath)]
     private static unsafe void MicroKernel4x4FmaAvxFp64(
         double* aPanel,
         double* bPanel,
@@ -564,38 +519,67 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         var c2 = Avx.LoadVector256(cTile + (2 * ldc));
         var c3 = Avx.LoadVector256(cTile + (3 * ldc));
 
-        var a0 = aPanel + (0 * GemmKcFp64);
-        var a1 = aPanel + (1 * GemmKcFp64);
-        var a2 = aPanel + (2 * GemmKcFp64);
-        var a3 = aPanel + (3 * GemmKcFp64);
+        int p = 0;
 
-        int k = 0;
-        for (; k < kTile - 1; k += 2)
+        for (; p + 3 < kTile; p += 4)
         {
-            var bVec0 = Avx.LoadVector256(bPanel + (k * GemmNcFp64));
-            var bVec1 = Avx.LoadVector256(bPanel + ((k + 1) * GemmNcFp64));
+            var b0 = Avx.LoadVector256(bPanel + ((p + 0) * MatrixMultiplyNcFp64));
+            var a0 = Avx.BroadcastScalarToVector256(aPanel + (0 * MatrixMultiplyKcFp64) + p + 0);
+            var a1 = Avx.BroadcastScalarToVector256(aPanel + (1 * MatrixMultiplyKcFp64) + p + 0);
+            var a2 = Avx.BroadcastScalarToVector256(aPanel + (2 * MatrixMultiplyKcFp64) + p + 0);
+            var a3 = Avx.BroadcastScalarToVector256(aPanel + (3 * MatrixMultiplyKcFp64) + p + 0);
 
-            c0 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a0 + k), bVec0, c0);
-            c0 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a0 + k + 1), bVec1, c0);
+            c0 = Fma.MultiplyAdd(a0, b0, c0);
+            c1 = Fma.MultiplyAdd(a1, b0, c1);
+            c2 = Fma.MultiplyAdd(a2, b0, c2);
+            c3 = Fma.MultiplyAdd(a3, b0, c3);
 
-            c1 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a1 + k), bVec0, c1);
-            c1 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a1 + k + 1), bVec1, c1);
+            var b1 = Avx.LoadVector256(bPanel + ((p + 1) * MatrixMultiplyNcFp64));
+            a0 = Avx.BroadcastScalarToVector256(aPanel + (0 * MatrixMultiplyKcFp64) + p + 1);
+            a1 = Avx.BroadcastScalarToVector256(aPanel + (1 * MatrixMultiplyKcFp64) + p + 1);
+            a2 = Avx.BroadcastScalarToVector256(aPanel + (2 * MatrixMultiplyKcFp64) + p + 1);
+            a3 = Avx.BroadcastScalarToVector256(aPanel + (3 * MatrixMultiplyKcFp64) + p + 1);
 
-            c2 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a2 + k), bVec0, c2);
-            c2 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a2 + k + 1), bVec1, c2);
+            c0 = Fma.MultiplyAdd(a0, b1, c0);
+            c1 = Fma.MultiplyAdd(a1, b1, c1);
+            c2 = Fma.MultiplyAdd(a2, b1, c2);
+            c3 = Fma.MultiplyAdd(a3, b1, c3);
 
-            c3 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a3 + k), bVec0, c3);
-            c3 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a3 + k + 1), bVec1, c3);
+            var b2 = Avx.LoadVector256(bPanel + ((p + 2) * MatrixMultiplyNcFp64));
+            a0 = Avx.BroadcastScalarToVector256(aPanel + (0 * MatrixMultiplyKcFp64) + p + 2);
+            a1 = Avx.BroadcastScalarToVector256(aPanel + (1 * MatrixMultiplyKcFp64) + p + 2);
+            a2 = Avx.BroadcastScalarToVector256(aPanel + (2 * MatrixMultiplyKcFp64) + p + 2);
+            a3 = Avx.BroadcastScalarToVector256(aPanel + (3 * MatrixMultiplyKcFp64) + p + 2);
+
+            c0 = Fma.MultiplyAdd(a0, b2, c0);
+            c1 = Fma.MultiplyAdd(a1, b2, c1);
+            c2 = Fma.MultiplyAdd(a2, b2, c2);
+            c3 = Fma.MultiplyAdd(a3, b2, c3);
+
+            var b3 = Avx.LoadVector256(bPanel + ((p + 3) * MatrixMultiplyNcFp64));
+            a0 = Avx.BroadcastScalarToVector256(aPanel + (0 * MatrixMultiplyKcFp64) + p + 3);
+            a1 = Avx.BroadcastScalarToVector256(aPanel + (1 * MatrixMultiplyKcFp64) + p + 3);
+            a2 = Avx.BroadcastScalarToVector256(aPanel + (2 * MatrixMultiplyKcFp64) + p + 3);
+            a3 = Avx.BroadcastScalarToVector256(aPanel + (3 * MatrixMultiplyKcFp64) + p + 3);
+
+            c0 = Fma.MultiplyAdd(a0, b3, c0);
+            c1 = Fma.MultiplyAdd(a1, b3, c1);
+            c2 = Fma.MultiplyAdd(a2, b3, c2);
+            c3 = Fma.MultiplyAdd(a3, b3, c3);
         }
 
-        // Handle remainder
-        if (k < kTile)
+        for (; p < kTile; p++)
         {
-            var bVec = Avx.LoadVector256(bPanel + (k * GemmNcFp64));
-            c0 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a0 + k), bVec, c0);
-            c1 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a1 + k), bVec, c1);
-            c2 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a2 + k), bVec, c2);
-            c3 = Fma.MultiplyAdd(Avx.BroadcastScalarToVector256(a3 + k), bVec, c3);
+            var bCol = Avx.LoadVector256(bPanel + (p * MatrixMultiplyNcFp64));
+            var a0 = Avx.BroadcastScalarToVector256(aPanel + (0 * MatrixMultiplyKcFp64) + p);
+            var a1 = Avx.BroadcastScalarToVector256(aPanel + (1 * MatrixMultiplyKcFp64) + p);
+            var a2 = Avx.BroadcastScalarToVector256(aPanel + (2 * MatrixMultiplyKcFp64) + p);
+            var a3 = Avx.BroadcastScalarToVector256(aPanel + (3 * MatrixMultiplyKcFp64) + p);
+
+            c0 = Fma.MultiplyAdd(a0, bCol, c0);
+            c1 = Fma.MultiplyAdd(a1, bCol, c1);
+            c2 = Fma.MultiplyAdd(a2, bCol, c2);
+            c3 = Fma.MultiplyAdd(a3, bCol, c3);
         }
 
         Avx.Store(cTile + (0 * ldc), c0);
@@ -604,7 +588,7 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         Avx.Store(cTile + (3 * ldc), c3);
     }
 
-    [MethodImpl(ImplementationOptions.AggressiveOptimization)]
+    [MethodImpl(ImplementationOptions.HotPath)]
     private static unsafe void MicroKernelScalarFp32(
         float* aPanel,
         float* bPanel,
@@ -614,17 +598,35 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         int mr,
         int nr)
     {
+        const int fp32VectorLength = 8;
+        int nrSimd = nr / fp32VectorLength;
+
         for (var i = 0; i < mr; i++)
         {
-            for (var j = 0; j < nr; j++)
+            for (var jSimd = 0; jSimd < nrSimd; jSimd++)
+            {
+                int j = jSimd * fp32VectorLength;
+                var acc = Avx.LoadVector256(cTile + (i * ldc) + j);
+
+                for (var k = 0; k < kTile; k++)
+                {
+                    var aVec = Vector256.Create(*(aPanel + (i * MatrixMultiplyKcFp32) + k));
+                    var bVec = Avx.LoadVector256(bPanel + (k * MatrixMultiplyNcFp32) + j);
+
+                    acc = Fma.MultiplyAdd(aVec, bVec, acc);
+                }
+
+                Avx.Store(cTile + (i * ldc) + j, acc);
+            }
+
+            for (var j = nrSimd * fp32VectorLength; j < nr; j++)
             {
                 var acc = cTile[(i * ldc) + j];
 
                 for (var k = 0; k < kTile; k++)
                 {
-                    var aVal = aPanel[(i * GemmKcFp32) + k];
-                    var bVal = bPanel[(k * GemmNcFp32) + j];
-
+                    var aVal = aPanel[(i * MatrixMultiplyKcFp32) + k];
+                    var bVal = bPanel[(k * MatrixMultiplyNcFp32) + j];
                     acc += aVal * bVal;
                 }
 
@@ -642,21 +644,195 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         int mr,
         int nr)
     {
+        const int fp64VectorLength = 4;
+        int nrSimd = nr / fp64VectorLength;
+
         for (var i = 0; i < mr; i++)
         {
-            for (var j = 0; j < nr; j++)
+            for (var jSimd = 0; jSimd < nrSimd; jSimd++)
+            {
+                int j = jSimd * fp64VectorLength;
+                var acc = Avx.LoadVector256(cTile + (i * ldc) + j);
+
+                for (var k = 0; k < kTile; k++)
+                {
+                    var aVec = Vector256.Create(*(aPanel + (i * MatrixMultiplyKcFp64) + k));
+                    var bVec = Avx.LoadVector256(bPanel + (k * MatrixMultiplyNcFp64) + j);
+
+                    acc = Fma.MultiplyAdd(aVec, bVec, acc);
+                }
+
+                Avx.Store(cTile + (i * ldc) + j, acc);
+            }
+
+            for (var j = nrSimd * fp64VectorLength; j < nr; j++)
             {
                 var acc = cTile[(i * ldc) + j];
 
                 for (var k = 0; k < kTile; k++)
                 {
-                    var aVal = aPanel[(i * GemmKcFp64) + k];
-                    var bVal = bPanel[(k * GemmNcFp64) + j];
-
+                    var aVal = aPanel[(i * MatrixMultiplyKcFp64) + k];
+                    var bVal = bPanel[(k * MatrixMultiplyNcFp64) + j];
                     acc += aVal * bVal;
                 }
 
                 cTile[(i * ldc) + j] = acc;
+            }
+        }
+    }
+
+    [MethodImpl(ImplementationOptions.HotPath)]
+    private static unsafe void PackAFp32(float* src, float* dstPanel, int lda, int mTile, int kTile)
+    {
+        const int vectorSize = 8;
+        var i = 0;
+
+        for (; i < mTile; i++)
+        {
+            var k = 0;
+            for (; k + vectorSize <= kTile; k += vectorSize)
+            {
+                Avx.Store(dstPanel + (i * MatrixMultiplyKcFp32) + k, Avx.LoadVector256(src + (i * lda) + k));
+            }
+
+            for (; k < kTile; k++)
+            {
+                dstPanel[(i * MatrixMultiplyKcFp32) + k] = src[(i * lda) + k];
+            }
+
+            for (; k < MatrixMultiplyKcFp32 - vectorSize; k += vectorSize)
+            {
+                Avx.Store(dstPanel + (i * MatrixMultiplyKcFp32) + k, Vector256<float>.Zero);
+            }
+
+            for (; k < MatrixMultiplyKcFp32; k++)
+            {
+                dstPanel[(i * MatrixMultiplyKcFp32) + k] = 0f;
+            }
+        }
+    }
+
+    [MethodImpl(ImplementationOptions.HotPath)]
+    private static unsafe void PackBFp32(float* src, float* dstPanel, int ldb, int kTile, int nTile)
+    {
+        const int vectorSize = 8;
+        const int vectorizedWidth = MatrixMultiplyNcFp32 / vectorSize * vectorSize;
+
+        for (var k = 0; k < MatrixMultiplyNcFp32; k++)
+        {
+            var srcRow = src + (k * ldb);
+            var dstRow = dstPanel + (k * MatrixMultiplyNcFp32);
+            var j = 0;
+
+            if (k < kTile)
+            {
+                for (; j < vectorizedWidth && j + vectorSize <= nTile; j += vectorSize)
+                {
+                    Avx.Store(dstRow + j, Avx.LoadVector256(srcRow + j));
+                }
+
+                if (j < vectorizedWidth && j < nTile)
+                {
+                    var remaining = nTile - j;
+                    for (var r = 0; r < remaining; r++)
+                    {
+                        dstRow[j + r] = srcRow[j + r];
+                    }
+
+                    j += vectorSize;
+                }
+            }
+
+            for (; j < vectorizedWidth - 1; j += vectorSize)
+            {
+                Avx.Store(dstRow + j, Vector256<float>.Zero);
+            }
+
+            for (; j < MatrixMultiplyNcFp32; j++)
+            {
+                dstRow[j] = k < kTile && j < nTile ? srcRow[j] : 0;
+            }
+        }
+    }
+
+    private static unsafe void PackAFp64(
+        double* src,
+        double* dstPanel,
+        int lda,
+        int mTile,
+        int kTile)
+    {
+        const int vectorSize = 4;
+        var i = 0;
+
+        for (; i < mTile; i++)
+        {
+            var k = 0;
+            for (; k + vectorSize <= kTile; k += vectorSize)
+            {
+                Avx.Store(dstPanel + (i * MatrixMultiplyKcFp64) + k, Avx.LoadVector256(src + (i * lda) + k));
+            }
+
+            for (; k < kTile; k++)
+            {
+                dstPanel[(i * MatrixMultiplyKcFp64) + k] = src[(i * lda) + k];
+            }
+
+            for (; k < MatrixMultiplyKcFp64 - vectorSize; k += vectorSize)
+            {
+                Avx.Store(dstPanel + (i * MatrixMultiplyKcFp64) + k, Vector256<double>.Zero);
+            }
+
+            for (; k < MatrixMultiplyKcFp64; k++)
+            {
+                dstPanel[(i * MatrixMultiplyKcFp64) + k] = 0f;
+            }
+        }
+    }
+
+    private static unsafe void PackBFp64(
+        double* src,
+        double* dstPanel,
+        int ldb,
+        int kTile,
+        int nTile)
+    {
+        const int vectorSize = 4;
+        const int vectorizedWidth = MatrixMultiplyNcFp64 / vectorSize * vectorSize;
+
+        for (var k = 0; k < MatrixMultiplyNcFp64; k++)
+        {
+            var srcRow = src + (k * ldb);
+            var dstRow = dstPanel + (k * MatrixMultiplyNcFp64);
+            var j = 0;
+
+            if (k < kTile)
+            {
+                for (; j < vectorizedWidth && j + vectorSize <= nTile; j += vectorSize)
+                {
+                    Avx.Store(dstRow + j, Avx.LoadVector256(srcRow + j));
+                }
+
+                if (j < vectorizedWidth && j < nTile)
+                {
+                    var remaining = nTile - j;
+                    for (var r = 0; r < remaining; r++)
+                    {
+                        dstRow[j + r] = srcRow[j + r];
+                    }
+
+                    j += vectorSize;
+                }
+            }
+
+            for (; j < vectorizedWidth - 1; j += vectorSize)
+            {
+                Avx.Store(dstRow + j, Vector256<double>.Zero);
+            }
+
+            for (; j < MatrixMultiplyNcFp64; j++)
+            {
+                dstRow[j] = k < kTile && j < nTile ? srcRow[j] : 0;
             }
         }
     }
@@ -669,61 +845,21 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
             return;
         }
 
-        var processes = Environment.ProcessorCount;
+        var processes = ManagedTensorBackend.GetNumThreadsByElementCount<float>(n);
         var partials = new float[processes];
 
-        _ = Parallel.For(
-            0,
-            processes,
-            tid =>
-            {
-                var start = tid * n / processes;
-                var end = (tid + 1) * n / processes;
-
-                var i = start;
-                var acc0 = Vector256<float>.Zero;
-                var acc1 = Vector256<float>.Zero;
-                var acc2 = Vector256<float>.Zero;
-                var acc3 = Vector256<float>.Zero;
-
-                for (; i + 32 <= end; i += 32)
-                {
-                    var vLeft0 = Avx.LoadVector256(leftMemoryPtr + i + 0);
-                    var vRight0 = Avx.LoadVector256(rightMemoryPtr + i + 0);
-                    var vLeft1 = Avx.LoadVector256(leftMemoryPtr + i + 8);
-                    var vRight1 = Avx.LoadVector256(rightMemoryPtr + i + 8);
-                    var vLeft2 = Avx.LoadVector256(leftMemoryPtr + i + 16);
-                    var vRight2 = Avx.LoadVector256(rightMemoryPtr + i + 16);
-                    var vLeft3 = Avx.LoadVector256(leftMemoryPtr + i + 24);
-                    var vRight3 = Avx.LoadVector256(rightMemoryPtr + i + 24);
-
-                    acc0 = Fma.MultiplyAdd(vLeft0, vRight0, acc0);
-                    acc1 = Fma.MultiplyAdd(vLeft1, vRight1, acc1);
-                    acc2 = Fma.MultiplyAdd(vLeft2, vRight2, acc2);
-                    acc3 = Fma.MultiplyAdd(vLeft3, vRight3, acc3);
-                }
-
-                for (; i + 8 <= end; i += 8)
-                {
-                    var va = Avx.LoadVector256(leftMemoryPtr + i);
-                    var vb = Avx.LoadVector256(rightMemoryPtr + i);
-                    acc0 = Fma.MultiplyAdd(va, vb, acc0);
-                }
-
-                var acc = Avx.Add(Avx.Add(acc0, acc1), Avx.Add(acc2, acc3));
-                var tmp = Avx.HorizontalAdd(acc, acc);
-                tmp = Avx.HorizontalAdd(tmp, tmp);
-
-                var sumVec = Avx.Add(tmp, Avx.Permute2x128(tmp, tmp, 0x01));
-                var sum = sumVec.GetElement(0);
-
-                for (; i < end; ++i)
-                {
-                    sum += leftMemoryPtr[i] * rightMemoryPtr[i];
-                }
-
-                partials[tid] = sum;
-            });
+        if (processes == 1)
+        {
+            InnerLoop(0);
+        }
+        else
+        {
+            _ = Parallel.For(
+                0,
+                processes,
+                new ParallelOptions { MaxDegreeOfParallelism = processes },
+                InnerLoop);
+        }
 
         // Neumaier Sum for accuracy
         float s = 0, c = 0;
@@ -735,62 +871,84 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         }
 
         resultPtr[0] = s + c;
+
+        void InnerLoop(int tid)
+        {
+            var start = tid * n / processes;
+            var end = (tid + 1) * n / processes;
+
+            var i = start;
+            var acc0 = Vector256<float>.Zero;
+            var acc1 = Vector256<float>.Zero;
+            var acc2 = Vector256<float>.Zero;
+            var acc3 = Vector256<float>.Zero;
+
+            for (; i + 32 <= end; i += 32)
+            {
+                var leftVector0 = Avx.LoadVector256(leftMemoryPtr + i + 0);
+                var leftVector1 = Avx.LoadVector256(leftMemoryPtr + i + 8);
+                var leftVector2 = Avx.LoadVector256(leftMemoryPtr + i + 16);
+                var leftVector3 = Avx.LoadVector256(leftMemoryPtr + i + 24);
+
+                var rightVector0 = Avx.LoadVector256(rightMemoryPtr + i + 0);
+                var rightVector1 = Avx.LoadVector256(rightMemoryPtr + i + 8);
+                var rightVector2 = Avx.LoadVector256(rightMemoryPtr + i + 16);
+                var rightVector3 = Avx.LoadVector256(rightMemoryPtr + i + 24);
+
+                acc0 = Fma.MultiplyAdd(leftVector0, rightVector0, acc0);
+                acc1 = Fma.MultiplyAdd(leftVector1, rightVector1, acc1);
+                acc2 = Fma.MultiplyAdd(leftVector2, rightVector2, acc2);
+                acc3 = Fma.MultiplyAdd(leftVector3, rightVector3, acc3);
+            }
+
+            for (; i + 8 <= end; i += 8)
+            {
+                var va = Avx.LoadVector256(leftMemoryPtr + i);
+                var vb = Avx.LoadVector256(rightMemoryPtr + i);
+                acc0 = Fma.MultiplyAdd(va, vb, acc0);
+            }
+
+            var acc = Avx.Add(Avx.Add(acc0, acc1), Avx.Add(acc2, acc3));
+            var tmp = Avx.HorizontalAdd(acc, acc);
+            tmp = Avx.HorizontalAdd(tmp, tmp);
+
+            var sumVec = Avx.Add(tmp, Avx.Permute2x128(tmp, tmp, 0x01));
+            var sum = sumVec.GetElement(0);
+
+            for (; i < end; i++)
+            {
+                sum += leftMemoryPtr[i] * rightMemoryPtr[i];
+            }
+
+            partials[tid] = sum;
+        }
     }
 
+    [MethodImpl(ImplementationOptions.HotPath)]
     private static unsafe void InnerProductFp64FmaAvx(double* leftMemoryPtr, double* rightMemoryPtr, double* resultPtr, long n)
     {
         if (n <= 0)
         {
-            resultPtr[0] = 0.0d;
+            resultPtr[0] = 0.0f;
             return;
         }
 
-        var processes = Environment.ProcessorCount;
+        var processes = ManagedTensorBackend.GetNumThreadsByElementCount<double>(n);
         var partials = new double[processes];
 
-        _ = Parallel.For(
-            0,
-            processes,
-            tid =>
-            {
-                var start = tid * n / processes;
-                var end = (tid + 1) * n / processes;
+        if (processes == 1)
+        {
+            InnerLoop(0);
+        }
+        else
+        {
+            _ = Parallel.For(
+                0,
+                processes,
+                new ParallelOptions { MaxDegreeOfParallelism = processes },
+                InnerLoop);
+        }
 
-                var i = start;
-                var acc0 = Vector256<double>.Zero;
-                var acc1 = Vector256<double>.Zero;
-                for (; i + 8 <= end; i += 8)
-                {
-                    var vLeft0 = Avx.LoadVector256(leftMemoryPtr + i + 0);
-                    var vRight0 = Avx.LoadVector256(rightMemoryPtr + i + 0);
-                    var vLeft1 = Avx.LoadVector256(leftMemoryPtr + i + 4);
-                    var vRight1 = Avx.LoadVector256(rightMemoryPtr + i + 4);
-
-                    acc0 = Fma.MultiplyAdd(vLeft0, vRight0, acc0);
-                    acc1 = Fma.MultiplyAdd(vLeft1, vRight1, acc1);
-                }
-
-                for (; i + 4 <= end; i += 4)
-                {
-                    var va = Avx.LoadVector256(leftMemoryPtr + i);
-                    var vb = Avx.LoadVector256(rightMemoryPtr + i);
-                    acc0 = Fma.MultiplyAdd(va, vb, acc0);
-                }
-
-                var buf = stackalloc double[4];
-                var acc = Avx.Add(acc0, acc1);
-                Avx.Store(buf, acc);
-                var sum = buf[0] + buf[1] + buf[2] + buf[3];
-
-                for (; i < end; ++i)
-                {
-                    sum += leftMemoryPtr[i] * rightMemoryPtr[i];
-                }
-
-                partials[tid] = sum;
-            });
-
-        // Neumaier Sum for accuracy
         double s = 0, c = 0;
         for (var i = 0; i < partials.Length; i++)
         {
@@ -800,62 +958,44 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         }
 
         resultPtr[0] = s + c;
-    }
 
-    [MethodImpl(ImplementationOptions.AggressiveOptimization)]
-    private static unsafe void PackAFp32(float* src, float* dstPanel, int lda, int mTile, int kTile)
-    {
-        for (var i = 0; i < GemmMcFp32; i++)
+        void InnerLoop(int tid)
         {
-            for (var k = 0; k < GemmKcFp32; k++)
-            {
-                dstPanel[(i * GemmKcFp32) + k] = i < mTile && k < kTile ? src[(i * lda) + k] : 0f;
-            }
-        }
-    }
+            var start = tid * n / processes;
+            var end = (tid + 1) * n / processes;
 
-    [MethodImpl(ImplementationOptions.AggressiveOptimization)]
-    private static unsafe void PackBFp32(float* src, float* dstPanel, int ldb, int kTile, int nTile)
-    {
-        for (var k = 0; k < GemmKcFp32; k++)
-        {
-            for (var j = 0; j < GemmNcFp32; j++)
+            var i = start;
+            var acc0 = Vector256<double>.Zero;
+            var acc1 = Vector256<double>.Zero;
+            for (; i + 8 <= end; i += 8)
             {
-                dstPanel[(k * GemmNcFp32) + j] =
-                    k < kTile && j < nTile ? src[(k * ldb) + j] : 0f;
-            }
-        }
-    }
+                var leftVector0 = Avx.LoadVector256(leftMemoryPtr + i + 0);
+                var leftVector1 = Avx.LoadVector256(leftMemoryPtr + i + 4);
 
-    private static unsafe void PackAFp64(
-        double* src,
-        double* dstPanel,
-        int lda,
-        int mTile,
-        int kTile)
-    {
-        for (var i = 0; i < GemmMcFp64; i++)
-        {
-            for (var k = 0; k < GemmKcFp64; k++)
-            {
-                dstPanel[(i * GemmKcFp64) + k] = i < mTile && k < kTile ? src[(i * lda) + k] : 0d;
-            }
-        }
-    }
+                var rightVector0 = Avx.LoadVector256(rightMemoryPtr + i + 0);
+                var rightVector1 = Avx.LoadVector256(rightMemoryPtr + i + 4);
 
-    private static unsafe void PackBFp64(
-        double* src,
-        double* dstPanel,
-        int ldb,
-        int kTile,
-        int nTile)
-    {
-        for (var k = 0; k < GemmKcFp64; k++)
-        {
-            for (var j = 0; j < GemmNcFp64; j++)
-            {
-                dstPanel[(k * GemmNcFp64) + j] = k < kTile && j < nTile ? src[(k * ldb) + j] : 0d;
+                acc0 = Fma.MultiplyAdd(leftVector0, rightVector0, acc0);
+                acc1 = Fma.MultiplyAdd(leftVector1, rightVector1, acc1);
             }
+
+            for (; i + 4 <= end; i += 4)
+            {
+                var leftVector = Avx.LoadVector256(leftMemoryPtr + i);
+                var rightVector = Avx.LoadVector256(rightMemoryPtr + i);
+                acc0 = Fma.MultiplyAdd(leftVector, rightVector, acc0);
+            }
+
+            var acc = Avx.Add(acc0, acc1);
+
+            var sum = acc.GetElement(0) + acc.GetElement(1) + acc.GetElement(2) + acc.GetElement(3);
+
+            for (; i < end; i++)
+            {
+                sum += leftMemoryPtr[i] * rightMemoryPtr[i];
+            }
+
+            partials[tid] = sum;
         }
     }
 }

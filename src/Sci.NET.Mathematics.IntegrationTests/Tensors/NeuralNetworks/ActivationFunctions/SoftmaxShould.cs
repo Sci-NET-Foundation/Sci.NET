@@ -15,8 +15,8 @@ public class SoftmaxShould : IntegrationTestBase
     public void ReturnExpectedResult_GivenExample1(IDevice device)
     {
         // Softmax([1, 2, 3]) = [0.090030573170380462f, 0.244728471054797646f, 0.665240955774821878f]
-        var floatResult = SoftmaxTest<float>(new float[] { 1, 2, 3 }, device) as float[];
-        var doubleResult = SoftmaxTest<double>(new double[] { 1, 2, 3 }, device) as double[];
+        var floatResult = SoftmaxTest(new float[] { 1, 2, 3 }, device) as float[];
+        var doubleResult = SoftmaxTest(new double[] { 1, 2, 3 }, device) as double[];
 
         floatResult![0].Should().BeApproximately(0.09003057317038045f, 1e-6f);
         floatResult[1].Should().BeApproximately(0.24472847105479764f, 1e-6f);

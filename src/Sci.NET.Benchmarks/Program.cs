@@ -11,6 +11,8 @@ BenchmarkRunner.Run<ManagedInnerProductBenchmarks<float>>();
 BenchmarkRunner.Run<ManagedInnerProductBenchmarks<double>>();
 BenchmarkRunner.Run<ManagedContractionBenchmarks<float>>();
 BenchmarkRunner.Run<ManagedContractionBenchmarks<double>>();
+BenchmarkRunner.Run<ManagedHypotBenchmarks<float>>();
+BenchmarkRunner.Run<ManagedHypotBenchmarks<double>>();
 
 // Reduction benchmarks
 BenchmarkRunner.Run<ManagedReductionBenchmarks<float>>();

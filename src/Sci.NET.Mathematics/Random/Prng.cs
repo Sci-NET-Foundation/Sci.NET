@@ -3,8 +3,8 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
-using Sci.NET.Common.Memory;
-using Sci.NET.Common.Numerics;
+using Sci.NET.Mathematics.Memory;
+using Sci.NET.Mathematics.Numerics;
 
 namespace Sci.NET.Mathematics.Random;
 
@@ -116,6 +116,7 @@ public class Prng
     public void SetSeed(ulong seed)
     {
         _seed = seed;
+        _stream = 0;
     }
 
     /// <summary>

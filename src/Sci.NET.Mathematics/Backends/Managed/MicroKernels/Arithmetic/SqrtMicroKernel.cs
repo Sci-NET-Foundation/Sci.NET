@@ -1,0 +1,53 @@
+// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
+
+using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
+using System.Runtime.CompilerServices;
+using System.Runtime.Intrinsics;
+using System.Runtime.Intrinsics.X86;
+using Sci.NET.Mathematics.Numerics;
+using Sci.NET.Mathematics.Performance;
+
+namespace Sci.NET.Mathematics.Backends.Managed.MicroKernels.Arithmetic;
+
+[SuppressMessage("Roslynator", "RCS1158:Static member in generic type should use a type parameter", Justification = "By design")]
+internal class SqrtMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUnaryOperationAvx2
+    where TNumber : unmanaged, INumber<TNumber>
+{
+    [MethodImpl(ImplementationOptions.HotPath)]
+    public static bool HasAvx2Implementation()
+    {
+        return true;
+    }
+
+    [MethodImpl(ImplementationOptions.HotPath)]
+    public static TNumber ApplyScalar(TNumber input)
+    {
+        return GenericMath.Sqrt(input);
+    }
+
+    [MethodImpl(ImplementationOptions.HotPath)]
+    public static float ApplyScalarFp32(float input)
+    {
+        return MathF.Sqrt(input);
+    }
+
+    [MethodImpl(ImplementationOptions.HotPath)]
+    public static double ApplyScalarFp64(double input)
+    {
+        return Math.Sqrt(input);
+    }
+
+    [MethodImpl(ImplementationOptions.HotPath)]
+    public static Vector256<float> ApplyAvx2Fp32(Vector256<float> input)
+    {
+        return Avx.Sqrt(input);
+    }
+
+    [MethodImpl(ImplementationOptions.HotPath)]
+    public static Vector256<double> ApplyAvx2Fp64(Vector256<double> input)
+    {
+        return Avx.Sqrt(input);
+    }
+}

@@ -3,8 +3,8 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
-using Sci.NET.Common.Memory;
 using Sci.NET.Mathematics.Backends;
+using Sci.NET.Mathematics.Memory;
 using Sci.NET.Mathematics.Tensors.Exceptions;
 
 namespace Sci.NET.Mathematics.Tensors;
@@ -89,6 +89,23 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
     public ITensor<TNumber> WithGradient()
     {
         return new Tensor<TNumber>(Memory, Shape, Backend, requiresGradient: true);
+    }
+
+    /// <summary>
+    /// Clears the gradient of the <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <returns>The recreated <see cref="ITensor{TNumber}"/> without the gradient.</returns>
+    public ITensor<TNumber> ClearGradient()
+    {
+        var value = new Tensor<TNumber>(Memory, Shape, Backend, requiresGradient: RequiresGradient) { IsGradient = IsGradient };
+
+        if (RequiresGradient)
+        {
+            value.Gradient?.Parents.Clear();
+            value.Gradient?.Dispose();
+        }
+
+        return value;
     }
 
     /// <summary>
@@ -251,6 +268,23 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
     /// Forces the disposal of the <see cref="ITensor{TNumber}"/>.
     /// </summary>
     public void ForceDispose();
+
+    /// <summary>
+    /// Clones the <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <returns>The cloned <see cref="ITensor{TNumber}"/>.</returns>
+    public ITensor<TNumber> Clone()
+    {
+        var clone = new Tensor<TNumber>(Shape, Backend, RequiresGradient);
+        clone.Memory.BlockCopyFrom(Memory, 0, 0, Memory.Length);
+
+        if (RequiresGradient && Gradient is not null && clone.Gradient is not null)
+        {
+            clone.Gradient.Memory.BlockCopyFrom(Gradient.Memory, 0, 0, Gradient.Memory.Length);
+        }
+
+        return clone;
+    }
 
     /// <summary>
     /// Detaches the memory from the <see cref="ITensor{TNumber}"/>.

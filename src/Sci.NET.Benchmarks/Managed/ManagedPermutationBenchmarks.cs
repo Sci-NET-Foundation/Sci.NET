@@ -3,7 +3,8 @@
 
 using System.Numerics;
 using BenchmarkDotNet.Attributes;
-using Sci.NET.Common.Numerics;
+using Sci.NET.Mathematics.Backends.Managed;
+using Sci.NET.Mathematics.Numerics;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Benchmarks.Managed;
@@ -30,6 +31,8 @@ public class ManagedPermutationBenchmarks<TNumber>
         TNumber min;
         TNumber max;
 
+        Tensor.SetDefaultBackend<ManagedTensorBackend>();
+
         if (GenericMath.IsFloatingPoint<TNumber>())
         {
             min = TNumber.CreateChecked(-1f);
@@ -46,7 +49,7 @@ public class ManagedPermutationBenchmarks<TNumber>
             max = TNumber.CreateChecked(10);
         }
 
-        _tensor = Tensor.Random.Uniform<TNumber>(OpShapes.From, min, max, seed: 123456).ToTensor();
+        _tensor = Tensor.Random.Uniform(OpShapes.From, min, max, seed: 123456).ToTensor();
     }
 
     [Benchmark]

@@ -24,7 +24,7 @@ internal class PowerService : IPowerService
         var backend = value.Backend;
         var result = new Tensor<TNumber>(value.Shape, backend, value.RequiresGradient || power.RequiresGradient);
 
-        backend.Power.Pow(value, power, result);
+        backend.Exponential.Pow(value, power, result);
 
         _gradientAppenderService.AddGradientIfRequired(
             ref result,
@@ -43,7 +43,7 @@ internal class PowerService : IPowerService
         var backend = value.Backend;
         var result = new Tensor<TNumber>(value.Shape, backend, requiresGradient: value.RequiresGradient);
 
-        backend.Power.Square(value, result);
+        backend.Exponential.Square(value, result);
 
         _gradientAppenderService.AddGradientIfRequired(
             ref result,
@@ -64,7 +64,7 @@ internal class PowerService : IPowerService
         var backend = value.Backend;
         var result = new Tensor<TNumber>(value.Shape, backend, requiresGradient: value.RequiresGradient);
 
-        backend.Power.Exp(value, result);
+        backend.Exponential.Exp(value, result);
 
         _gradientAppenderService.AddGradientIfRequired(
             ref result,
@@ -81,7 +81,7 @@ internal class PowerService : IPowerService
         var backend = value.Backend;
         var result = new Tensor<TNumber>(value.Shape, backend, requiresGradient: value.RequiresGradient);
 
-        backend.Power.Log(value, result);
+        backend.Exponential.Log(value, result);
 
         _gradientAppenderService.AddGradientIfRequired(
             ref result,
@@ -100,7 +100,7 @@ internal class PowerService : IPowerService
         var backend = value.Backend;
         var result = new Tensor<TNumber>(value.Shape, backend, requiresGradient: false);
 
-        backend.Power.LogDerivative(value, result);
+        backend.Exponential.LogBackwards(value, result);
 
         return result;
     }

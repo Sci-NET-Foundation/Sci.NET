@@ -15,7 +15,7 @@ public class HardSigmoidShould : IntegrationTestBase
     public void ReturnCorrectValues_GivenFloat(IDevice device)
     {
         // Arrange
-        var value = Tensor.FromArray<float>(new float[] { -2, -1, -0.5f, 0, 0.5f, 1, 2 });
+        var value = Tensor.FromArray<float>(new float[] { -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 });
 
         value.To(device);
 
@@ -25,8 +25,8 @@ public class HardSigmoidShould : IntegrationTestBase
         // Assert
         result
             .Should()
-            .HaveShape(7)
+            .HaveShape(10)
             .And
-            .HaveEquivalentElements(new float[] { 0, 0, -0.25f, 0, 0.25f, 1, 1 });
+            .HaveEquivalentElements(new float[] { 0F, 0F, 0.16666666F, 0.3333333F, 0.5F, 0.6666667F, 0.8333334F, 1F, 1F, 1F });
     }
 }

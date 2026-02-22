@@ -3,7 +3,9 @@
 
 using System.Numerics;
 using BenchmarkDotNet.Attributes;
-using Sci.NET.Common.Numerics;
+using Sci.NET.Mathematics.Backends;
+using Sci.NET.Mathematics.Backends.Managed;
+using Sci.NET.Mathematics.Numerics;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Benchmarks.Managed;
@@ -13,17 +15,18 @@ public class ManagedMatrixMultiplyBenchmarks<TNumber> : IDisposable
     where TNumber : unmanaged, INumber<TNumber>
 {
     [ParamsSource(nameof(RowsCols))]
-    public (int Rows, int Columns) SizeParam { get; set; }
+    public ((int Rows, int Columns) Left, (int Rows, int Columns) Right) SizeParam { get; set; }
 
-    public ICollection<(int Rows, int Columns)> RowsCols =>
+    public ICollection<((int Rows, int Columns) Left, (int Rows, int Columns) Right)> RowsCols =>
     [
-        (1024, 1024),
-        (1080, 1920),
-        (2048, 2048),
-        (4096, 4096),
-        (8192, 8192),
+        ((1024, 1024), (1024, 1024)),
+        ((1080, 1920), (1080, 1920)),
+        ((2048, 2048), (2048, 2048)),
+        ((4096, 4096), (4096, 4096)),
+        ((8192, 8192), (8192, 8192)),
     ];
 
+    private ILinearAlgebraKernels _linearAlgebraKernels = default!;
     private Matrix<TNumber> _leftMatrix = default!;
     private Matrix<TNumber> _rightMatrix = default!;
     private Matrix<TNumber> _result = default!;
@@ -33,6 +36,8 @@ public class ManagedMatrixMultiplyBenchmarks<TNumber> : IDisposable
     {
         TNumber min;
         TNumber max;
+
+        Tensor.SetDefaultBackend<ManagedTensorBackend>();
 
         if (GenericMath.IsFloatingPoint<TNumber>())
         {
@@ -50,15 +55,16 @@ public class ManagedMatrixMultiplyBenchmarks<TNumber> : IDisposable
             max = TNumber.CreateChecked(10);
         }
 
-        _leftMatrix = Tensor.Random.Uniform<TNumber>(new Shape(SizeParam.Rows, SizeParam.Columns), min, max, seed: 123456).ToMatrix();
-        _rightMatrix = Tensor.Random.Uniform<TNumber>(new Shape(SizeParam.Columns, SizeParam.Rows), min, max, seed: 654321).ToMatrix();
-        _result = null!;
+        _linearAlgebraKernels = ManagedTensorBackend.Instance.LinearAlgebra;
+        _leftMatrix = Tensor.Random.Uniform(new Shape(SizeParam.Left.Rows, SizeParam.Left.Columns), min, max, seed: 123456).ToMatrix();
+        _rightMatrix = Tensor.Random.Uniform(new Shape(SizeParam.Right.Columns, SizeParam.Right.Rows), min, max, seed: 654321).ToMatrix();
+        _result = Tensor.Zeros<TNumber>(new Shape(SizeParam.Left.Rows, SizeParam.Right.Columns)).ToMatrix();
     }
 
     [Benchmark]
     public void MatrixMultiply()
     {
-        _result = _leftMatrix.MatrixMultiply(_rightMatrix);
+        _linearAlgebraKernels.MatrixMultiply(_leftMatrix, _rightMatrix, _result);
     }
 
     [GlobalCleanup]

@@ -2,8 +2,8 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
-using Sci.NET.Common.Numerics;
 using Sci.NET.Mathematics.Backends.Devices;
+using Sci.NET.Mathematics.Numerics;
 using Sci.NET.Mathematics.Tensors;
 using Sci.NET.Tests.Framework.Assertions;
 using Sci.NET.Tests.Framework.Integration;
@@ -12,60 +12,11 @@ namespace Sci.NET.Mathematics.IntegrationTests.Tensors.LinearAlgebra;
 
 public class MatrixMultiplyShould : IntegrationTestBase
 {
-    private static Array MatrixMatrixTest<TNumber>(TNumber[,] left, TNumber[,] right, IDevice device)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var leftTensor = Tensor.FromArray<TNumber>(left).WithGradient().ToMatrix();
-        var rightTensor = Tensor.FromArray<TNumber>(right).WithGradient().ToMatrix();
-        leftTensor.To(device);
-        rightTensor.To(device);
-
-        var result = leftTensor.MatrixMultiply(rightTensor);
-
-        result.To<CpuComputeDevice>();
-        return result.ToArray();
-    }
-
-    private static void MatrixMultiplyTestWithGrad<TNumber>(string safetensorsName, IDevice device)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        // Arrange
-        var loadPath = Path.Join(Path.GetDirectoryName(typeof(ContractShould).Assembly.Location) ?? string.Empty, "Tensors", "LinearAlgebra", "Examples", $"{safetensorsName}.safetensors");
-        var tensors = Tensor.LoadSafeTensors<TNumber>(loadPath);
-        var left = tensors["left"].ToMatrix(requiresGradient: true);
-        var right = tensors["right"].ToMatrix(requiresGradient: true);
-        var expectedResult = tensors["result"].ToMatrix(requiresGradient: true);
-        var expectedLeftGradient = tensors["left_grad"];
-        var expectedRightGradient = tensors["right_grad"];
-        using var resultGradient = Tensor.Ones<TNumber>(expectedResult.Shape);
-
-        left.To(device);
-        right.To(device);
-        expectedResult.To(device);
-        resultGradient.To(device);
-        expectedResult.To(device);
-        expectedLeftGradient.To(device);
-        expectedRightGradient.To(device);
-
-        // Act
-        var result = left.MatrixMultiply(right);
-        result.Backward();
-
-        // Assert
-        result.Should().HaveApproximatelyEquivalentElements(expectedResult.ToArray(), TNumber.CreateChecked(1e-4f));
-        result.Gradient!.Should().NotBeNull();
-        result.Gradient!.Should().HaveApproximatelyEquivalentElements(resultGradient.ToArray(), TNumber.CreateChecked(1e-4f));
-        left.Gradient!.Should().NotBeNull();
-        left.Gradient!.Should().HaveApproximatelyEquivalentElements(expectedLeftGradient.ToArray(), TNumber.CreateChecked(1e-4f));
-        right.Gradient!.Should().NotBeNull();
-        right.Gradient!.Should().HaveApproximatelyEquivalentElements(expectedRightGradient.ToArray(), TNumber.CreateChecked(1e-4f));
-    }
-
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenFloatMatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<float>(
+        MatrixMatrixTest(
                 new float[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new float[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -77,7 +28,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenDoubleMatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<double>(
+        MatrixMatrixTest(
                 new double[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new double[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -89,7 +40,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenByteMatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<byte>(
+        MatrixMatrixTest(
                 new byte[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new byte[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -101,7 +52,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenSByteMatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<sbyte>(
+        MatrixMatrixTest(
                 new sbyte[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new sbyte[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -113,7 +64,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenUShortMatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<ushort>(
+        MatrixMatrixTest(
                 new ushort[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new ushort[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -125,7 +76,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenShortMatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<short>(
+        MatrixMatrixTest(
                 new short[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new short[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -137,7 +88,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenUIntMatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<uint>(
+        MatrixMatrixTest(
                 new uint[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new uint[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -149,7 +100,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenIntMatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<int>(
+        MatrixMatrixTest(
                 new int[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new int[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -161,7 +112,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenULongMatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<ulong>(
+        MatrixMatrixTest(
                 new ulong[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new ulong[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -173,7 +124,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenLongMatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<long>(
+        MatrixMatrixTest(
                 new long[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new long[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -185,7 +136,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenBFloat16MatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<BFloat16>(
+        MatrixMatrixTest(
                 new BFloat16[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new BFloat16[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -197,7 +148,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenFloat32MatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<float>(
+        MatrixMatrixTest(
                 new float[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new float[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -209,7 +160,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenFloat64MatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<double>(
+        MatrixMatrixTest(
                 new double[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new double[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -219,7 +170,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
 
     [Theory]
     [MemberData(nameof(ComputeDevices))]
-    public void ReturnExpectedResult_GivenFloat32(IDevice device)
+    public void ReturnExpectedResult_GivenLargerFloat32(IDevice device)
     {
         // Arrange
         const int m = 13;
@@ -280,5 +231,54 @@ public class MatrixMultiplyShould : IntegrationTestBase
     public void ReturnExpectedResult_GivenPyTorchExample4(IDevice device)
     {
         MatrixMultiplyTestWithGrad<double>("MatrixMultiply_4", device);
+    }
+
+    private static Array MatrixMatrixTest<TNumber>(TNumber[,] left, TNumber[,] right, IDevice device)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var leftTensor = Tensor.FromArray<TNumber>(left).WithGradient().ToMatrix();
+        var rightTensor = Tensor.FromArray<TNumber>(right).WithGradient().ToMatrix();
+        leftTensor.To(device);
+        rightTensor.To(device);
+
+        var result = leftTensor.MatrixMultiply(rightTensor);
+
+        result.To<CpuComputeDevice>();
+        return result.ToArray();
+    }
+
+    private static void MatrixMultiplyTestWithGrad<TNumber>(string safetensorsName, IDevice device)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        // Arrange
+        var loadPath = Path.Join(Path.GetDirectoryName(typeof(ContractShould).Assembly.Location) ?? string.Empty, "Tensors", "LinearAlgebra", "Examples", $"{safetensorsName}.safetensors");
+        var tensors = Tensor.LoadSafeTensors<TNumber>(loadPath);
+        var left = tensors["left"].ToMatrix(requiresGradient: true);
+        var right = tensors["right"].ToMatrix(requiresGradient: true);
+        var expectedResult = tensors["result"].ToMatrix(requiresGradient: true);
+        var expectedLeftGradient = tensors["left_grad"];
+        var expectedRightGradient = tensors["right_grad"];
+        using var resultGradient = Tensor.Ones<TNumber>(expectedResult.Shape);
+
+        left.To(device);
+        right.To(device);
+        expectedResult.To(device);
+        resultGradient.To(device);
+        expectedResult.To(device);
+        expectedLeftGradient.To(device);
+        expectedRightGradient.To(device);
+
+        // Act
+        var result = left.MatrixMultiply(right);
+        result.Backward();
+
+        // Assert
+        result.Should().HaveApproximatelyEquivalentElements(expectedResult.ToArray(), TNumber.CreateChecked(1e-4f));
+        result.Gradient!.Should().NotBeNull();
+        result.Gradient!.Should().HaveApproximatelyEquivalentElements(resultGradient.ToArray(), TNumber.CreateChecked(1e-4f));
+        left.Gradient!.Should().NotBeNull();
+        left.Gradient!.Should().HaveApproximatelyEquivalentElements(expectedLeftGradient.ToArray(), TNumber.CreateChecked(1e-4f));
+        right.Gradient!.Should().NotBeNull();
+        right.Gradient!.Should().HaveApproximatelyEquivalentElements(expectedRightGradient.ToArray(), TNumber.CreateChecked(1e-4f));
     }
 }
