@@ -42,43 +42,43 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
     public unsafe void Negate<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        ManagedUnaryOperationIterator.For<NegateMicroKernel<TNumber>, TNumber>(
+        ManagedUnaryOperationIterator.Apply<NegateMicroKernel<TNumber>, TNumber>(
             tensor.Memory.ToPointer(),
             result.Memory.ToPointer(),
             tensor.Shape.ElementCount,
-            (CpuComputeDevice)tensor.Device);
+            (ICpuComputeDevice)tensor.Device);
     }
 
     public unsafe void Abs<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        ManagedUnaryOperationIterator.For<AbsMicroKernel<TNumber>, TNumber>(
+        ManagedUnaryOperationIterator.Apply<AbsMicroKernel<TNumber>, TNumber>(
             tensor.Memory.ToPointer(),
             result.Memory.ToPointer(),
             tensor.Shape.ElementCount,
-            (CpuComputeDevice)tensor.Device);
+            (ICpuComputeDevice)tensor.Device);
     }
 
     public unsafe void AbsGradient<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        ManagedBinaryOperationIterator.For<AbsBackwardMicroKernel<TNumber>, TNumber>(
+        ManagedBinaryOperationIterator.Apply<AbsBackwardMicroKernel<TNumber>, TNumber>(
             tensor.Memory.ToPointer(),
             gradient.Memory.ToPointer(),
             result.Memory.ToPointer(),
             tensor.Shape.ElementCount,
-            (CpuComputeDevice)tensor.Device);
+            (ICpuComputeDevice)tensor.Device);
     }
 
     public unsafe void AbsoluteDifference<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        ManagedBinaryOperationIterator.For<AbsoluteDifferenceMicroKernel<TNumber>, TNumber>(
+        ManagedBinaryOperationIterator.Apply<AbsoluteDifferenceMicroKernel<TNumber>, TNumber>(
             left.Memory.ToPointer(),
             right.Memory.ToPointer(),
             result.Memory.ToPointer(),
             left.Shape.ElementCount,
-            (CpuComputeDevice)left.Device);
+            (ICpuComputeDevice)left.Device);
     }
 
     public unsafe void Sqrt<TNumber>(
@@ -86,10 +86,10 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
         ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        ManagedUnaryOperationIterator.For<SqrtMicroKernel<TNumber>, TNumber>(
+        ManagedUnaryOperationIterator.Apply<SqrtMicroKernel<TNumber>, TNumber>(
             tensor.Memory.ToPointer(),
             result.Memory.ToPointer(),
             tensor.Shape.ElementCount,
-            (CpuComputeDevice)tensor.Device);
+            (ICpuComputeDevice)tensor.Device);
     }
 }

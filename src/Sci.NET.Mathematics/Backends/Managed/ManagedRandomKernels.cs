@@ -3,6 +3,7 @@
 
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Memory;
 using Sci.NET.Mathematics.Numerics;
 using Sci.NET.Mathematics.Random;
@@ -19,10 +20,11 @@ internal class ManagedRandomKernels : IRandomKernels
         _prng.SetSeed(value);
     }
 
-    public ITensor<TNumber> Uniform<TNumber>(Shape shape, TNumber min, TNumber max, ulong? seed = null)
+    public ITensor<TNumber> Uniform<TNumber>(Shape shape, TNumber min, TNumber max, ulong? seed = null, IDevice? device = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var tensor = new Tensor<TNumber>(shape, ManagedTensorBackend.Instance);
+        device ??= new CpuComputeDevice();
+        var tensor = new Tensor<TNumber>(shape, device.GetTensorBackend());
         var prng = seed is null ? _prng : new Prng(seed.Value);
         var memoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
 
@@ -119,10 +121,11 @@ internal class ManagedRandomKernels : IRandomKernels
         return tensor;
     }
 
-    public ITensor<TNumber> Normal<TNumber>(Shape shape, TNumber mean, TNumber stdDev, ulong? seed = null)
+    public ITensor<TNumber> Normal<TNumber>(Shape shape, TNumber mean, TNumber stdDev, ulong? seed = null, IDevice? device = null)
         where TNumber : unmanaged, IFloatingPoint<TNumber>
     {
-        var tensor = new Tensor<TNumber>(shape, ManagedTensorBackend.Instance);
+        device ??= new CpuComputeDevice();
+        var tensor = new Tensor<TNumber>(shape, device.GetTensorBackend());
         var prng = seed is null ? _prng : new Prng(seed.Value);
         var memoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
 
@@ -163,10 +166,11 @@ internal class ManagedRandomKernels : IRandomKernels
         return tensor;
     }
 
-    public ITensor<TNumber> XavierUniform<TNumber>(Shape shape, int inputUnits, int outputUnits, ulong? seed = null)
+    public ITensor<TNumber> XavierUniform<TNumber>(Shape shape, int inputUnits, int outputUnits, ulong? seed = null, IDevice? device = null)
         where TNumber : unmanaged, IFloatingPoint<TNumber>
     {
-        var tensor = new Tensor<TNumber>(shape, ManagedTensorBackend.Instance);
+        device ??= new CpuComputeDevice();
+        var tensor = new Tensor<TNumber>(shape, device.GetTensorBackend());
         var prng = seed is null ? _prng : new Prng(seed.Value);
         var memoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
 
@@ -207,10 +211,11 @@ internal class ManagedRandomKernels : IRandomKernels
         return tensor;
     }
 
-    public ITensor<TNumber> XavierNormal<TNumber>(Shape shape, int inputUnits, int outputUnits, ulong? seed = null)
+    public ITensor<TNumber> XavierNormal<TNumber>(Shape shape, int inputUnits, int outputUnits, ulong? seed = null, IDevice? device = null)
         where TNumber : unmanaged, IFloatingPoint<TNumber>
     {
-        var tensor = new Tensor<TNumber>(shape, ManagedTensorBackend.Instance);
+        device ??= new CpuComputeDevice();
+        var tensor = new Tensor<TNumber>(shape, device.GetTensorBackend());
         var prng = seed is null ? _prng : new Prng(seed.Value);
         var memoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
 
@@ -251,10 +256,11 @@ internal class ManagedRandomKernels : IRandomKernels
         return tensor;
     }
 
-    public ITensor<TNumber> HeUniform<TNumber>(Shape shape, int inputUnits, ulong? seed = null)
+    public ITensor<TNumber> HeUniform<TNumber>(Shape shape, int inputUnits, ulong? seed = null, IDevice? device = null)
         where TNumber : unmanaged, IFloatingPoint<TNumber>
     {
-        var tensor = new Tensor<TNumber>(shape, ManagedTensorBackend.Instance);
+        device ??= new CpuComputeDevice();
+        var tensor = new Tensor<TNumber>(shape, device.GetTensorBackend());
         var prng = seed is null ? _prng : new Prng(seed.Value);
         var memoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
 
@@ -291,10 +297,11 @@ internal class ManagedRandomKernels : IRandomKernels
         return tensor;
     }
 
-    public ITensor<TNumber> HeNormal<TNumber>(Shape shape, int inputUnits, ulong? seed = null)
+    public ITensor<TNumber> HeNormal<TNumber>(Shape shape, int inputUnits, ulong? seed = null, IDevice? device = null)
         where TNumber : unmanaged, IFloatingPoint<TNumber>
     {
-        var tensor = new Tensor<TNumber>(shape, ManagedTensorBackend.Instance);
+        device ??= new CpuComputeDevice();
+        var tensor = new Tensor<TNumber>(shape, device.GetTensorBackend());
         var prng = seed is null ? _prng : new Prng(seed.Value);
         var memoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
 

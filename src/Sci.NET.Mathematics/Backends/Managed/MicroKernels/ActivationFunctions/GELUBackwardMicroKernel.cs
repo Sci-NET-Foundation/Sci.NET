@@ -11,17 +11,11 @@ using Sci.NET.Mathematics.Performance;
 namespace Sci.NET.Mathematics.Backends.Managed.MicroKernels.ActivationFunctions;
 
 [SuppressMessage("Roslynator", "RCS1158:Static member in generic type should use a type parameter", Justification = "By design")]
-internal class GELUBackwardMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUnaryOperationAvx, IUnaryOperationAvxFma
+internal class GELUBackwardMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUnaryOperationAvx2
     where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>, IRootFunctions<TNumber>
 {
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static bool IsAvxSupported()
-    {
-        return false;
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static bool IsAvxFmaSupported()
+    public static bool HasAvx2Implementation()
     {
         return false;
     }
@@ -33,7 +27,7 @@ internal class GELUBackwardMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUna
         var magicNumber2 = TNumber.CreateChecked(0.134145);
         var magicNumber3 = TNumber.CreateChecked(0.044715);
         var two = TNumber.CreateChecked(2);
-        var half = TNumber.One / two;
+        var half = TNumber.CreateChecked(0.5);
         var sqrtPiTerm = TNumber.Sqrt(two / TNumber.Pi);
 
         var xSquared = input * input;
@@ -59,37 +53,73 @@ internal class GELUBackwardMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUna
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static float ApplyTailFp32(float input)
+    public static float ApplyScalarFp32(float input)
+    {
+        const float magicNumber1 = 0.3989422804014327f;
+        const float magicNumber2 = 0.134145f;
+        const float magicNumber3 = 0.044715f;
+        const float sqrtPiTerm = 0.79788456080286535587989211986876f;
+
+        var xSquared = input * input;
+        var xCubed = input * input * input;
+        var xPlusMagicXCubed = input + (magicNumber3 * xCubed);
+
+        // \sqrt{\frac{2}{\pi}}\left(x+0.044715x^{3}\right)
+        var tanhArg = sqrtPiTerm * xPlusMagicXCubed;
+
+        // 0.5\left(1+\tanh\left(\sqrt{\frac{2}{\pi}}\left(x+0.044715x^{3}\right)\right)\right)
+        var halfTanhTerm = 0.5f * (1.0f + MathF.Tanh(tanhArg));
+
+        // \operatorname{sech}\left(\sqrt{\frac{2}{\pi}}\left(x+0.044715x^{3}\right)\right)
+        var sechTerm = 1.0f / MathF.Cosh(tanhArg);
+
+        // \operatorname{sech}^{2}\left(\sqrt{\frac{2}{\pi}}\left(x+0.044715x^{3}\right)\right)
+        var sechSquared = sechTerm * sechTerm;
+
+        // 0.3989422804014327x\left(1+0.134145x^{2}\right)
+        var firstMagicTerm = magicNumber1 * input * (1.0f + (magicNumber2 * xSquared));
+
+        return (firstMagicTerm * sechSquared) + halfTanhTerm;
+    }
+
+    [MethodImpl(ImplementationOptions.HotPath)]
+    public static double ApplyScalarFp64(double input)
+    {
+        const double magicNumber1 = 0.3989422804014327d;
+        const double magicNumber2 = 0.134145d;
+        const double magicNumber3 = 0.044715d;
+        const double sqrtPiTerm = 0.79788456080286535587989211986876d;
+
+        var xSquared = input * input;
+        var xCubed = input * input * input;
+        var xPlusMagicXCubed = input + (magicNumber3 * xCubed);
+
+        // \sqrt{\frac{2}{\pi}}\left(x+0.044715x^{3}\right)
+        var tanhArg = sqrtPiTerm * xPlusMagicXCubed;
+
+        // 0.5\left(1+\tanh\left(\sqrt{\frac{2}{\pi}}\left(x+0.044715x^{3}\right)\right)\right)
+        var halfTanhTerm = 0.5d * (1.0d + Math.Tanh(tanhArg));
+
+        // \operatorname{sech}\left(\sqrt{\frac{2}{\pi}}\left(x+0.044715x^{3}\right)\right)
+        var sechTerm = 1.0d / Math.Cosh(tanhArg);
+
+        // \operatorname{sech}^{2}\left(\sqrt{\frac{2}{\pi}}\left(x+0.044715x^{3}\right)\right)
+        var sechSquared = sechTerm * sechTerm;
+
+        // 0.3989422804014327x\left(1+0.134145x^{2}\right)
+        var firstMagicTerm = magicNumber1 * input * (1.0d + (magicNumber2 * xSquared));
+
+        return (firstMagicTerm * sechSquared) + halfTanhTerm;
+    }
+
+    [ExcludeFromCodeCoverage]
+    public static Vector256<float> ApplyAvx2Fp32(Vector256<float> input)
     {
         throw new IntrinsicTypeNotImplementedException();
     }
 
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static double ApplyTailFp64(double input)
-    {
-        throw new IntrinsicTypeNotImplementedException();
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> ApplyAvxFp32(Vector256<float> input)
-    {
-        throw new IntrinsicTypeNotImplementedException();
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> ApplyAvxFp64(Vector256<double> input)
-    {
-        throw new IntrinsicTypeNotImplementedException();
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> ApplyAvxFmaFp32(Vector256<float> input)
-    {
-        throw new IntrinsicTypeNotImplementedException();
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> ApplyAvxFmaFp64(Vector256<double> input)
+    [ExcludeFromCodeCoverage]
+    public static Vector256<double> ApplyAvx2Fp64(Vector256<double> input)
     {
         throw new IntrinsicTypeNotImplementedException();
     }

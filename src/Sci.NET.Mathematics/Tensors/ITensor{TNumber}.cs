@@ -92,6 +92,23 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
     }
 
     /// <summary>
+    /// Clears the gradient of the <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <returns>The recreated <see cref="ITensor{TNumber}"/> without the gradient.</returns>
+    public ITensor<TNumber> ClearGradient()
+    {
+        var value = new Tensor<TNumber>(Memory, Shape, Backend, requiresGradient: RequiresGradient) { IsGradient = IsGradient };
+
+        if (RequiresGradient)
+        {
+            value.Gradient?.Parents.Clear();
+            value.Gradient?.Dispose();
+        }
+
+        return value;
+    }
+
+    /// <summary>
     /// Recreates the <see cref="ITensor{TNumber}"/> as a gradient.
     /// </summary>
     /// <returns>The recreated <see cref="ITensor{TNumber}"/> as a gradient.</returns>

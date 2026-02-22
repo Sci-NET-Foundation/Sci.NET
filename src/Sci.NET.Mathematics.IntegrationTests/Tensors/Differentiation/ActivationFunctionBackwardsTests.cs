@@ -552,9 +552,9 @@ public class ActivationFunctionsBackwardsTests : IntegrationTestBase
         tensor.Gradient!.Should().NotBeNull();
         result.Gradient!.Should().NotBeNull();
 
-        tensor.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 0.16666666666666666 }, 1e-9);
+        tensor.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 0.166666666666667 }, 1e-9);
         result.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 1.0d }, 1e-9);
-        result.Should().HaveApproximatelyEquivalentElements(new double[] { 0.6666666666 }, 1e-9);
+        result.Should().HaveApproximatelyEquivalentElements(new double[] { 0.666666666666667 }, 1e-9);
     }
 
     [Theory]
@@ -573,9 +573,9 @@ public class ActivationFunctionsBackwardsTests : IntegrationTestBase
         tensor.Gradient!.Should().NotBeNull();
         result.Gradient!.Should().NotBeNull();
 
-        tensor.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 0.16666666666666666 }, 1e-9);
+        tensor.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 0.166666666666667 }, 1e-9);
         result.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 1.0d }, 1e-9);
-        result.Should().HaveApproximatelyEquivalentElements(new double[] { 0.333333333333 }, 1e-9);
+        result.Should().HaveApproximatelyEquivalentElements(new double[] { 0.333333333333333 }, 1e-9);
     }
 
     [Theory]
@@ -594,9 +594,9 @@ public class ActivationFunctionsBackwardsTests : IntegrationTestBase
         tensor.Gradient!.Should().NotBeNull();
         result.Gradient!.Should().NotBeNull();
 
-        tensor.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 0.16666666666 }, 1e-9);
+        tensor.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 0.166666666666667 }, 1e-9);
         result.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 1.0d }, 1e-9);
-        result.Should().HaveApproximatelyEquivalentElements(new double[] { 0.583333333333 }, 1e-9);
+        result.Should().HaveApproximatelyEquivalentElements(new double[] { 0.583333333333333 }, 1e-9);
     }
 
     [Theory]
@@ -783,7 +783,7 @@ public class ActivationFunctionsBackwardsTests : IntegrationTestBase
         tensor.Gradient!.Should().NotBeNull();
         result.Gradient!.Should().NotBeNull();
 
-        tensor.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 1.0829640838457826 }, 1e-9);
+        tensor.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 1.08296408384578 }, 1e-9);
         result.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 1.0d }, 1e-9);
         result.Should().HaveApproximatelyEquivalentElements(new double[] { 0.841191990608276 }, 1e-9);
     }
@@ -804,7 +804,7 @@ public class ActivationFunctionsBackwardsTests : IntegrationTestBase
         tensor.Gradient!.Should().NotBeNull();
         result.Gradient!.Should().NotBeNull();
 
-        tensor.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { -0.08296408384578258 }, 1e-9);
+        tensor.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { -0.0829640838457826 }, 1e-9);
         result.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 1.0d }, 1e-9);
         result.Should().HaveApproximatelyEquivalentElements(new double[] { -0.158808009391723 }, 1e-9);
     }

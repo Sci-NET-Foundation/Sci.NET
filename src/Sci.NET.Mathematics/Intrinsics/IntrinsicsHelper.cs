@@ -11,6 +11,16 @@ namespace Sci.NET.Mathematics.Intrinsics;
 [PublicAPI]
 public static class IntrinsicsHelper
 {
+    /// <summary>
+    /// The size of an AVX vector for single-precision floating-point numbers (FP32).
+    /// </summary>
+    public const int AvxVectorSizeFp32 = 8;
+
+    /// <summary>
+    /// The size of an AVX vector for double-precision floating-point numbers (FP64).
+    /// </summary>
+    public const int AvxVectorSizeFp64 = 4;
+
 #pragma warning disable CA1810
     static IntrinsicsHelper()
 #pragma warning restore CA1810
@@ -56,7 +66,7 @@ public static class IntrinsicsHelper
     /// </summary>
     public static void DisableSimd()
     {
-        AvailableInstructionSets = GetAvailableInstructionSets();
+        AvailableInstructionSets = SimdInstructionSet.None;
     }
 
     /// <summary>
@@ -64,26 +74,20 @@ public static class IntrinsicsHelper
     /// </summary>
     public static void EnableSimd()
     {
-        AvailableInstructionSets = SimdInstructionSet.None;
+        AvailableInstructionSets = GetAvailableInstructionSets();
     }
 
     /// <summary>
-    /// Checks if AVX and FMA instruction sets are supported.
+    /// Checks if AVX2 instruction set is supported, including FMA.
     /// </summary>
-    /// <returns>A value indicating whether AVX and FMA are supported.</returns>
-    public static bool IsAvxFmaSupported()
+    /// <returns>A value indicating whether AVX2 is supported.</returns>
+    /// <remarks>
+    /// We require FMA support alongside AVX2 for our optimizations.
+    /// </remarks>
+    public static bool IsAvx2Supported()
     {
         return (AvailableInstructionSets & SimdInstructionSet.Avx2) != 0 &&
                (AvailableInstructionSets & SimdInstructionSet.Fma) != 0;
-    }
-
-    /// <summary>
-    /// Checks if AVX instruction set is supported.
-    /// </summary>
-    /// <returns>A value indicating whether AVX is supported.</returns>
-    public static bool IsAvxSupported()
-    {
-        return (AvailableInstructionSets & SimdInstructionSet.Avx2) != 0;
     }
 
     private static SimdInstructionSet GetAvailableInstructionSets()

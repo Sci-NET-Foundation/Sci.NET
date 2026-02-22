@@ -11,7 +11,7 @@ internal class DeviceGuardService : IDeviceGuardService
 {
     public ITensorBackend GuardBinaryOperation(IDevice left, IDevice right)
     {
-        if (!left.Equals(right))
+        if (!left.Category.Equals(right.Category))
         {
             throw new TensorDataLocalityException(
                 "The left and right operands must be on the same device, but were on {0} and {1}'",
@@ -24,7 +24,7 @@ internal class DeviceGuardService : IDeviceGuardService
 
     public ITensorBackend GuardMultiParameterOperation(params IDevice[] devices)
     {
-        var allEqual = devices.DistinctBy(x => x.Id).Count() == 1;
+        var allEqual = devices.DistinctBy(x => x.Category).Count() == 1;
 
         if (!allEqual)
         {

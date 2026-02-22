@@ -16,7 +16,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenFloatMatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<float>(
+        MatrixMatrixTest(
                 new float[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new float[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -28,7 +28,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenDoubleMatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<double>(
+        MatrixMatrixTest(
                 new double[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new double[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -40,7 +40,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenByteMatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<byte>(
+        MatrixMatrixTest(
                 new byte[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new byte[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -52,7 +52,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenSByteMatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<sbyte>(
+        MatrixMatrixTest(
                 new sbyte[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new sbyte[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -64,7 +64,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenUShortMatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<ushort>(
+        MatrixMatrixTest(
                 new ushort[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new ushort[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -76,7 +76,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenShortMatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<short>(
+        MatrixMatrixTest(
                 new short[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new short[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -88,7 +88,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenUIntMatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<uint>(
+        MatrixMatrixTest(
                 new uint[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new uint[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -100,7 +100,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenIntMatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<int>(
+        MatrixMatrixTest(
                 new int[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new int[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -112,7 +112,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenULongMatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<ulong>(
+        MatrixMatrixTest(
                 new ulong[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new ulong[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -124,7 +124,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenLongMatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<long>(
+        MatrixMatrixTest(
                 new long[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new long[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -136,7 +136,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenBFloat16MatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<BFloat16>(
+        MatrixMatrixTest(
                 new BFloat16[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new BFloat16[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -148,7 +148,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenFloat32MatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<float>(
+        MatrixMatrixTest(
                 new float[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new float[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
@@ -160,7 +160,7 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenFloat64MatrixAndMatrix(IDevice device)
     {
-        MatrixMatrixTest<double>(
+        MatrixMatrixTest(
                 new double[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new double[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)

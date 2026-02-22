@@ -36,7 +36,7 @@ public interface IBroadcastService
     /// <param name="left">The left <see cref="ITensor{TNumber}"/>.</param>
     /// <param name="right">>The right <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>s.</typeparam>
-    /// <returns>>The broadcast <see cref="ITensor{TNumber}"/> instances.</returns>
+    /// <returns>The broadcast <see cref="ITensor{TNumber}"/> instances.</returns>
     /// <exception cref="InvalidShapeException">Thrown when the two tensors cannot be broadcast to compatible shapes.</exception>
     public (ITensor<TNumber> Left, ITensor<TNumber> Right) Broadcast<TNumber>(
         ITensor<TNumber> left,

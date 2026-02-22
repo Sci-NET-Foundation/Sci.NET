@@ -1040,7 +1040,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Sine of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ASin<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Asin<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1057,7 +1057,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Sine of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ASin<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Asin<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1074,7 +1074,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Sine of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ASin<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Asin<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1091,7 +1091,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Sine of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ASin<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Asin<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1108,7 +1108,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Sine of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ASin<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Asin<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1125,7 +1125,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cosine of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ACos<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Acos<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1142,7 +1142,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cosine of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ACos<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Acos<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1159,7 +1159,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cosine of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ACos<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Acos<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1176,7 +1176,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cosine of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ACos<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Acos<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1193,7 +1193,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cosine of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ACos<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Acos<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1210,7 +1210,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Tangent of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ATan<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Atan<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1227,7 +1227,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Tangent of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ATan<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Atan<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1244,7 +1244,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Tangent of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ATan<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Atan<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1261,7 +1261,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Tangent of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ATan<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Atan<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1278,7 +1278,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Tangent of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ATan<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Atan<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1295,7 +1295,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Sine Squared of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ASin2<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Asin2<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1312,7 +1312,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Sine Squared of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ASin2<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Asin2<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1329,7 +1329,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Sine Squared of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ASin2<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Asin2<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1346,7 +1346,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Sine Squared of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ASin2<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Asin2<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1363,7 +1363,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Sine Squared of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ASin2<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Asin2<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1380,7 +1380,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cosine Squared of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ACos2<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Acos2<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1397,7 +1397,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cosine Squared of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ACos2<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Acos2<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1414,7 +1414,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cosine Squared of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ACos2<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Acos2<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1431,7 +1431,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cosine Squared of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ACos2<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Acos2<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1448,7 +1448,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cosine Squared of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ACos2<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Acos2<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1465,7 +1465,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Tangent Squared of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ATan2<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Atan2<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1482,7 +1482,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Tangent Squared of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ATan2<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Atan2<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1499,7 +1499,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Tangent Squared of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ATan2<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Atan2<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1516,7 +1516,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Tangent Squared of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ATan2<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Atan2<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1533,7 +1533,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Tangent Squared of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ATan2<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Atan2<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -1550,13 +1550,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Sine of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ASinh<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Asinh<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASinh(tensor)
+            .Asinh(tensor)
             .ToScalar();
     }
 
@@ -1567,13 +1567,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Sine of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ASinh<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Asinh<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASinh(tensor)
+            .Asinh(tensor)
             .ToVector();
     }
 
@@ -1584,13 +1584,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Sine of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ASinh<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Asinh<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASinh(tensor)
+            .Asinh(tensor)
             .ToMatrix();
     }
 
@@ -1601,13 +1601,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Sine of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ASinh<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Asinh<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASinh(tensor)
+            .Asinh(tensor)
             .ToTensor();
     }
 
@@ -1618,13 +1618,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Sine of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ASinh<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Asinh<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASinh(tensor)
+            .Asinh(tensor)
             ;
     }
 
@@ -1635,13 +1635,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cosine of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ACosh<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Acosh<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACosh(tensor)
+            .Acosh(tensor)
             .ToScalar();
     }
 
@@ -1652,13 +1652,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cosine of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ACosh<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Acosh<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACosh(tensor)
+            .Acosh(tensor)
             .ToVector();
     }
 
@@ -1669,13 +1669,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cosine of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ACosh<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Acosh<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACosh(tensor)
+            .Acosh(tensor)
             .ToMatrix();
     }
 
@@ -1686,13 +1686,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cosine of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ACosh<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Acosh<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACosh(tensor)
+            .Acosh(tensor)
             .ToTensor();
     }
 
@@ -1703,13 +1703,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cosine of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ACosh<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Acosh<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACosh(tensor)
+            .Acosh(tensor)
             ;
     }
 
@@ -1720,13 +1720,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Tangent of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ATanh<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Atanh<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ATanh(tensor)
+            .Atanh(tensor)
             .ToScalar();
     }
 
@@ -1737,13 +1737,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Tangent of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ATanh<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Atanh<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ATanh(tensor)
+            .Atanh(tensor)
             .ToVector();
     }
 
@@ -1754,13 +1754,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Tangent of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ATanh<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Atanh<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ATanh(tensor)
+            .Atanh(tensor)
             .ToMatrix();
     }
 
@@ -1771,13 +1771,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Tangent of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ATanh<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Atanh<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ATanh(tensor)
+            .Atanh(tensor)
             .ToTensor();
     }
 
@@ -1788,13 +1788,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Tangent of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ATanh<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Atanh<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ATanh(tensor)
+            .Atanh(tensor)
             ;
     }
 
@@ -1805,13 +1805,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Sine Squared of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ASinh2<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Asinh2<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASinh2(tensor)
+            .Asinh2(tensor)
             .ToScalar();
     }
 
@@ -1822,13 +1822,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Sine Squared of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ASinh2<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Asinh2<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASinh2(tensor)
+            .Asinh2(tensor)
             .ToVector();
     }
 
@@ -1839,13 +1839,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Sine Squared of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ASinh2<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Asinh2<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASinh2(tensor)
+            .Asinh2(tensor)
             .ToMatrix();
     }
 
@@ -1856,13 +1856,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Sine Squared of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ASinh2<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Asinh2<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASinh2(tensor)
+            .Asinh2(tensor)
             .ToTensor();
     }
 
@@ -1873,13 +1873,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Sine Squared of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ASinh2<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Asinh2<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASinh2(tensor)
+            .Asinh2(tensor)
             ;
     }
 
@@ -1890,13 +1890,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cosine Squared of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ACosh2<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Acosh2<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACosh2(tensor)
+            .Acosh2(tensor)
             .ToScalar();
     }
 
@@ -1907,13 +1907,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cosine Squared of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ACosh2<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Acosh2<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACosh2(tensor)
+            .Acosh2(tensor)
             .ToVector();
     }
 
@@ -1924,13 +1924,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cosine Squared of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ACosh2<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Acosh2<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACosh2(tensor)
+            .Acosh2(tensor)
             .ToMatrix();
     }
 
@@ -1941,13 +1941,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cosine Squared of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ACosh2<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Acosh2<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACosh2(tensor)
+            .Acosh2(tensor)
             .ToTensor();
     }
 
@@ -1958,13 +1958,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cosine Squared of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ACosh2<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Acosh2<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACosh2(tensor)
+            .Acosh2(tensor)
             ;
     }
 
@@ -1975,13 +1975,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Tangent Squared of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ATanh2<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Atanh2<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ATanh2(tensor)
+            .Atanh2(tensor)
             .ToScalar();
     }
 
@@ -1992,13 +1992,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Tangent Squared of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ATanh2<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Atanh2<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ATanh2(tensor)
+            .Atanh2(tensor)
             .ToVector();
     }
 
@@ -2009,13 +2009,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Tangent Squared of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ATanh2<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Atanh2<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ATanh2(tensor)
+            .Atanh2(tensor)
             .ToMatrix();
     }
 
@@ -2026,13 +2026,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Tangent Squared of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ATanh2<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Atanh2<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ATanh2(tensor)
+            .Atanh2(tensor)
             .ToTensor();
     }
 
@@ -2043,13 +2043,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Tangent Squared of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ATanh2<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Atanh2<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ATanh2(tensor)
+            .Atanh2(tensor)
             ;
     }
 
@@ -3080,7 +3080,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cosecant of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ACsc<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Acsc<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -3097,7 +3097,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cosecant of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ACsc<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Acsc<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -3114,7 +3114,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cosecant of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ACsc<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Acsc<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -3131,7 +3131,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cosecant of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ACsc<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Acsc<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -3148,7 +3148,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cosecant of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ACsc<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Acsc<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -3165,7 +3165,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Secant of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ASec<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Asec<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -3182,7 +3182,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Secant of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ASec<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Asec<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -3199,7 +3199,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Secant of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ASec<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Asec<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -3216,7 +3216,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Secant of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ASec<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Asec<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -3233,7 +3233,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Secant of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ASec<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Asec<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -3250,7 +3250,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cotangent of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ACot<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Acot<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -3267,7 +3267,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cotangent of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ACot<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Acot<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -3284,7 +3284,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cotangent of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ACot<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Acot<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -3301,7 +3301,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cotangent of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ACot<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Acot<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -3318,7 +3318,7 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cotangent of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ACot<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Acot<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -3335,13 +3335,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cosecant Squared of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ACsc2<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Acsc2<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACsc2(tensor)
+            .Acsc2(tensor)
             .ToScalar();
     }
 
@@ -3352,13 +3352,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cosecant Squared of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ACsc2<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Acsc2<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACsc2(tensor)
+            .Acsc2(tensor)
             .ToVector();
     }
 
@@ -3369,13 +3369,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cosecant Squared of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ACsc2<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Acsc2<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACsc2(tensor)
+            .Acsc2(tensor)
             .ToMatrix();
     }
 
@@ -3386,13 +3386,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cosecant Squared of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ACsc2<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Acsc2<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACsc2(tensor)
+            .Acsc2(tensor)
             .ToTensor();
     }
 
@@ -3403,13 +3403,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cosecant Squared of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ACsc2<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Acsc2<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACsc2(tensor)
+            .Acsc2(tensor)
             ;
     }
 
@@ -3420,13 +3420,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Secant Squared of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ASec2<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Asec2<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASec2(tensor)
+            .Asec2(tensor)
             .ToScalar();
     }
 
@@ -3437,13 +3437,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Secant Squared of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ASec2<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Asec2<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASec2(tensor)
+            .Asec2(tensor)
             .ToVector();
     }
 
@@ -3454,13 +3454,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Secant Squared of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ASec2<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Asec2<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASec2(tensor)
+            .Asec2(tensor)
             .ToMatrix();
     }
 
@@ -3471,13 +3471,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Secant Squared of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ASec2<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Asec2<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASec2(tensor)
+            .Asec2(tensor)
             .ToTensor();
     }
 
@@ -3488,13 +3488,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Secant Squared of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ASec2<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Asec2<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASec2(tensor)
+            .Asec2(tensor)
             ;
     }
 
@@ -3505,13 +3505,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cotangent Squared of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ACot2<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Acot2<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACot2(tensor)
+            .Acot2(tensor)
             .ToScalar();
     }
 
@@ -3522,13 +3522,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cotangent Squared of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ACot2<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Acot2<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACot2(tensor)
+            .Acot2(tensor)
             .ToVector();
     }
 
@@ -3539,13 +3539,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cotangent Squared of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ACot2<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Acot2<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACot2(tensor)
+            .Acot2(tensor)
             .ToMatrix();
     }
 
@@ -3556,13 +3556,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cotangent Squared of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ACot2<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Acot2<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACot2(tensor)
+            .Acot2(tensor)
             .ToTensor();
     }
 
@@ -3573,13 +3573,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Inverse Cotangent Squared of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ACot2<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Acot2<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACot2(tensor)
+            .Acot2(tensor)
             ;
     }
 
@@ -3590,13 +3590,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cosecant of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ACsch<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Acsch<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACsch(tensor)
+            .Acsch(tensor)
             .ToScalar();
     }
 
@@ -3607,13 +3607,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cosecant of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ACsch<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Acsch<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACsch(tensor)
+            .Acsch(tensor)
             .ToVector();
     }
 
@@ -3624,13 +3624,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cosecant of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ACsch<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Acsch<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACsch(tensor)
+            .Acsch(tensor)
             .ToMatrix();
     }
 
@@ -3641,13 +3641,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cosecant of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ACsch<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Acsch<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACsch(tensor)
+            .Acsch(tensor)
             .ToTensor();
     }
 
@@ -3658,13 +3658,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cosecant of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ACsch<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Acsch<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACsch(tensor)
+            .Acsch(tensor)
             ;
     }
 
@@ -3675,13 +3675,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Secant of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ASech<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Asech<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASech(tensor)
+            .Asech(tensor)
             .ToScalar();
     }
 
@@ -3692,13 +3692,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Secant of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ASech<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Asech<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASech(tensor)
+            .Asech(tensor)
             .ToVector();
     }
 
@@ -3709,13 +3709,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Secant of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ASech<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Asech<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASech(tensor)
+            .Asech(tensor)
             .ToMatrix();
     }
 
@@ -3726,13 +3726,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Secant of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ASech<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Asech<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASech(tensor)
+            .Asech(tensor)
             .ToTensor();
     }
 
@@ -3743,13 +3743,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Secant of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ASech<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Asech<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASech(tensor)
+            .Asech(tensor)
             ;
     }
 
@@ -3760,13 +3760,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cotangent of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ACoth<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Acoth<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACoth(tensor)
+            .Acoth(tensor)
             .ToScalar();
     }
 
@@ -3777,13 +3777,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cotangent of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ACoth<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Acoth<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACoth(tensor)
+            .Acoth(tensor)
             .ToVector();
     }
 
@@ -3794,13 +3794,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cotangent of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ACoth<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Acoth<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACoth(tensor)
+            .Acoth(tensor)
             .ToMatrix();
     }
 
@@ -3811,13 +3811,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cotangent of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ACoth<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Acoth<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACoth(tensor)
+            .Acoth(tensor)
             .ToTensor();
     }
 
@@ -3828,13 +3828,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cotangent of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ACoth<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Acoth<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACoth(tensor)
+            .Acoth(tensor)
             ;
     }
 
@@ -3845,13 +3845,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cosecant Squared of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ACsch2<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Acsch2<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACsch2(tensor)
+            .Acsch2(tensor)
             .ToScalar();
     }
 
@@ -3862,13 +3862,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cosecant Squared of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ACsch2<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Acsch2<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACsch2(tensor)
+            .Acsch2(tensor)
             .ToVector();
     }
 
@@ -3879,13 +3879,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cosecant Squared of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ACsch2<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Acsch2<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACsch2(tensor)
+            .Acsch2(tensor)
             .ToMatrix();
     }
 
@@ -3896,13 +3896,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cosecant Squared of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ACsch2<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Acsch2<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACsch2(tensor)
+            .Acsch2(tensor)
             .ToTensor();
     }
 
@@ -3913,13 +3913,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cosecant Squared of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ACsch2<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Acsch2<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACsch2(tensor)
+            .Acsch2(tensor)
             ;
     }
 
@@ -3930,13 +3930,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Secant Squared of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ASech2<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Asech2<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASech2(tensor)
+            .Asech2(tensor)
             .ToScalar();
     }
 
@@ -3947,13 +3947,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Secant Squared of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ASech2<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Asech2<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASech2(tensor)
+            .Asech2(tensor)
             .ToVector();
     }
 
@@ -3964,13 +3964,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Secant Squared of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ASech2<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Asech2<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASech2(tensor)
+            .Asech2(tensor)
             .ToMatrix();
     }
 
@@ -3981,13 +3981,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Secant Squared of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ASech2<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Asech2<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASech2(tensor)
+            .Asech2(tensor)
             .ToTensor();
     }
 
@@ -3998,13 +3998,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Secant Squared of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ASech2<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Asech2<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ASech2(tensor)
+            .Asech2(tensor)
             ;
     }
 
@@ -4015,13 +4015,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cotangent Squared of the specified <see cref="Scalar{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Scalar<TNumber> ACoth2<TNumber>(this Scalar<TNumber> tensor)
+    public static Scalar<TNumber> Acoth2<TNumber>(this Scalar<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACoth2(tensor)
+            .Acoth2(tensor)
             .ToScalar();
     }
 
@@ -4032,13 +4032,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cotangent Squared of the specified <see cref="Vector{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Vector<TNumber> ACoth2<TNumber>(this Vector<TNumber> tensor)
+    public static Vector<TNumber> Acoth2<TNumber>(this Vector<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACoth2(tensor)
+            .Acoth2(tensor)
             .ToVector();
     }
 
@@ -4049,13 +4049,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cotangent Squared of the specified <see cref="Matrix{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Matrix<TNumber> ACoth2<TNumber>(this Matrix<TNumber> tensor)
+    public static Matrix<TNumber> Acoth2<TNumber>(this Matrix<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACoth2(tensor)
+            .Acoth2(tensor)
             .ToMatrix();
     }
 
@@ -4066,13 +4066,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cotangent Squared of the specified <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static Tensor<TNumber> ACoth2<TNumber>(this Tensor<TNumber> tensor)
+    public static Tensor<TNumber> Acoth2<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACoth2(tensor)
+            .Acoth2(tensor)
             .ToTensor();
     }
 
@@ -4083,13 +4083,13 @@ public static class TrigonometryExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The Hyperbolic Inverse Cotangent Squared of the specified <see cref="ITensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
-    public static ITensor<TNumber> ACoth2<TNumber>(this ITensor<TNumber> tensor)
+    public static ITensor<TNumber> Acoth2<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .ACoth2(tensor)
+            .Acoth2(tensor)
             ;
     }
 

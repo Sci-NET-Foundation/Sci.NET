@@ -64,7 +64,7 @@ public class ManagedActivationFunctionBenchmarks<TNumber>
             _max = TNumber.CreateChecked(10); // Hard Tanh max
         }
 
-        _tensor = Tensor.Random.Uniform<TNumber>(Shape, min, max, seed: 123456).ToTensor();
+        _tensor = Tensor.Random.Uniform(Shape, min, max, seed: 123456).ToTensor();
         _result = Tensor.Zeros<TNumber>(Shape);
         _activationFunctionKernels = ManagedTensorBackend.Instance.ActivationFunctions;
     }

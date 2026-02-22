@@ -335,7 +335,7 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
     /// <inheritdoc />
     public void To(IDevice device)
     {
-        if (device.Name == Device.Name)
+        if (device.Equals(Device))
         {
             return;
         }

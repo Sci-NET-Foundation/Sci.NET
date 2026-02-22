@@ -15,8 +15,8 @@ public class SoftmaxBackwardShould : IntegrationTestBase
     public void ReturnExpectedResult_GivenExample1(IDevice device)
     {
         // Softmax'([1, 2, 3]) = [0.090030573170380462f, 0.244728471054797646f, 0.665240955774821878f]
-        var floatResult = SoftmaxBackwardTest<float>(new float[] { 1, 2, 3 }, device) as float[];
-        var doubleResult = SoftmaxBackwardTest<double>(new double[] { 1, 2, 3 }, device) as double[];
+        var floatResult = SoftmaxBackwardTest(new float[] { 1, 2, 3 }, device) as float[];
+        var doubleResult = SoftmaxBackwardTest(new double[] { 1, 2, 3 }, device) as double[];
 
         floatResult![0].Should().BeApproximately(0.08192506906499322f, 1e-6f);
         floatResult[1].Should().BeApproximately(0.18483646F, 1e-6f);

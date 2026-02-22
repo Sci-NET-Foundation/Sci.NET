@@ -53,8 +53,8 @@ public class ManagedEqualityBenchmarks<TNumber>
         }
 
         _equalitiyOperationKernels = ManagedTensorBackend.Instance.EqualityOperations;
-        _leftTensor = Tensor.Random.Uniform<TNumber>(Shape, min, max, seed: 123456).ToTensor();
-        _rightTensor = Tensor.Random.Uniform<TNumber>(Shape, min, max, seed: 654321).ToTensor();
+        _leftTensor = Tensor.Random.Uniform(Shape, min, max, seed: 123456).ToTensor();
+        _rightTensor = Tensor.Random.Uniform(Shape, min, max, seed: 654321).ToTensor();
         _result = Tensor.Zeros<TNumber>(_leftTensor.Shape).ToTensor();
     }
 

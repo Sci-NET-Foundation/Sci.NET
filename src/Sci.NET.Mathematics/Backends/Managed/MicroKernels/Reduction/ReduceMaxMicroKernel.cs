@@ -6,14 +6,13 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
-using Sci.NET.Mathematics.Intrinsics;
 using Sci.NET.Mathematics.Numerics;
 using Sci.NET.Mathematics.Performance;
 
 namespace Sci.NET.Mathematics.Backends.Managed.MicroKernels.Reduction;
 
 [SuppressMessage("Roslynator", "RCS1158:Static member in generic type should use a type parameter", Justification = "By design")]
-internal class ReduceMaxMicroKernel<TNumber> : IReductionOperation<TNumber>, IReductionOperationAvx
+internal class ReduceMaxMicroKernel<TNumber> : IReductionOperation<TNumber>, IReductionOperationAvx2
     where TNumber : unmanaged, INumber<TNumber>
 {
     public static TNumber Identity => GenericMath.MinValue<TNumber>();
@@ -23,9 +22,9 @@ internal class ReduceMaxMicroKernel<TNumber> : IReductionOperation<TNumber>, IRe
     public static Vector256<double> Avx256Fp64Identity => Vector256.Create(double.MinValue);
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static bool IsAvxSupported()
+    public static bool HasAvx2Implementation()
     {
-        return IntrinsicsHelper.IsAvxSupported();
+        return true;
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
@@ -41,19 +40,19 @@ internal class ReduceMaxMicroKernel<TNumber> : IReductionOperation<TNumber>, IRe
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> AccumulateAvx256Fp32(Vector256<float> current, Vector256<float> values)
+    public static Vector256<float> AccumulateAvxFp32(Vector256<float> current, Vector256<float> values)
     {
         return Avx.Max(current, values);
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> AccumulateAvx256Fp64(Vector256<double> current, Vector256<double> values)
+    public static Vector256<double> AccumulateAvxFp64(Vector256<double> current, Vector256<double> values)
     {
         return Avx.Max(current, values);
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static float HorizontalReduceAvx256Fp32(Vector256<float> vector)
+    public static float HorizontalReduceAvxFp32(Vector256<float> vector)
     {
         var low = vector.GetLower();
         var high = vector.GetUpper();
@@ -69,7 +68,7 @@ internal class ReduceMaxMicroKernel<TNumber> : IReductionOperation<TNumber>, IRe
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static double HorizontalReduceAvx256Fp64(Vector256<double> vector)
+    public static double HorizontalReduceAvxFp64(Vector256<double> vector)
     {
         var low = vector.GetLower();
         var high = vector.GetUpper();

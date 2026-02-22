@@ -319,7 +319,7 @@ public sealed class Vector<TNumber> : ITensor<TNumber>
     /// <inheritdoc />
     public void To(IDevice device)
     {
-        if (device.Name == Device.Name)
+        if (device.Equals(Device))
         {
             return;
         }

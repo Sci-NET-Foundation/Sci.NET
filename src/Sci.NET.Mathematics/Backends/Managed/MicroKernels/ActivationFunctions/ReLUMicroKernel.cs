@@ -6,26 +6,18 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
-using Sci.NET.Mathematics.Exceptions;
-using Sci.NET.Mathematics.Intrinsics;
 using Sci.NET.Mathematics.Performance;
 
 namespace Sci.NET.Mathematics.Backends.Managed.MicroKernels.ActivationFunctions;
 
 [SuppressMessage("Roslynator", "RCS1158:Static member in generic type should use a type parameter", Justification = "By design")]
-internal class ReLUMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUnaryOperationAvx, IUnaryOperationAvxFma
+internal class ReLUMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUnaryOperationAvx2
     where TNumber : unmanaged, INumber<TNumber>
 {
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static bool IsAvxSupported()
+    public static bool HasAvx2Implementation()
     {
-        return IntrinsicsHelper.IsAvxSupported();
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static bool IsAvxFmaSupported()
-    {
-        return false;
+        return true;
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
@@ -35,38 +27,26 @@ internal class ReLUMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUnaryOperat
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static float ApplyTailFp32(float input)
+    public static float ApplyScalarFp32(float input)
     {
         return MathF.Max(0.0f, input);
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static double ApplyTailFp64(double input)
+    public static double ApplyScalarFp64(double input)
     {
         return Math.Max(0.0, input);
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> ApplyAvxFp32(Vector256<float> input)
+    public static Vector256<float> ApplyAvx2Fp32(Vector256<float> input)
     {
         return Avx.Max(Vector256<float>.Zero, input);
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> ApplyAvxFp64(Vector256<double> input)
+    public static Vector256<double> ApplyAvx2Fp64(Vector256<double> input)
     {
         return Avx.Max(Vector256<double>.Zero, input);
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> ApplyAvxFmaFp32(Vector256<float> input)
-    {
-        throw new IntrinsicTypeNotImplementedException();
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> ApplyAvxFmaFp64(Vector256<double> input)
-    {
-        throw new IntrinsicTypeNotImplementedException();
     }
 }

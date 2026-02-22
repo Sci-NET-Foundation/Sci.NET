@@ -12,8 +12,7 @@ namespace Sci.NET.Mathematics.Backends.Managed.MicroKernels.ActivationFunctions;
 
 [SuppressMessage("Roslynator", "RCS1158:Static member in generic type should use a type parameter", Justification = "By design")]
 internal class EluBackwardMicroKernel<TNumber> : IUnaryParameterizedOperation<EluBackwardMicroKernel<TNumber>, TNumber>,
-    IUnaryParameterizedOperationAvx<EluBackwardMicroKernel<TNumber>>,
-    IUnaryParameterizedOperationAvxFma<EluBackwardMicroKernel<TNumber>>
+    IUnaryParameterizedOperationAvx2<EluBackwardMicroKernel<TNumber>>
     where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
 {
     private readonly MicroKernelParameter<TNumber> _alpha;
@@ -23,14 +22,7 @@ internal class EluBackwardMicroKernel<TNumber> : IUnaryParameterizedOperation<El
         _alpha = alpha;
     }
 
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static bool IsAvxSupported()
-    {
-        return false;
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static bool IsAvxFmaSupported()
+    public static bool IsAvx2Supported()
     {
         return false;
     }
@@ -44,35 +36,23 @@ internal class EluBackwardMicroKernel<TNumber> : IUnaryParameterizedOperation<El
     [MethodImpl(ImplementationOptions.HotPath)]
     public static float ApplyTailFp32(float input, EluBackwardMicroKernel<TNumber> instance)
     {
-        throw new IntrinsicTypeNotImplementedException();
+        return input > 0f ? 1f : instance._alpha.ScalarFp32Value * MathF.Exp(input);
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
     public static double ApplyTailFp64(double input, EluBackwardMicroKernel<TNumber> instance)
     {
-        throw new IntrinsicTypeNotImplementedException();
+        return input > 0.0 ? 1.0 : instance._alpha.ScalarFp64Value * Math.Exp(input);
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> ApplyAvxFp32(Vector256<float> input, EluBackwardMicroKernel<TNumber> instance)
+    public static Vector256<float> ApplyAvx2Fp32(Vector256<float> input, EluBackwardMicroKernel<TNumber> instance)
     {
         throw new IntrinsicTypeNotImplementedException();
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> ApplyAvxFp64(Vector256<double> input, EluBackwardMicroKernel<TNumber> instance)
-    {
-        throw new IntrinsicTypeNotImplementedException();
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> ApplyAvxFmaFp32(Vector256<float> input, EluBackwardMicroKernel<TNumber> instance)
-    {
-        throw new IntrinsicTypeNotImplementedException();
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> ApplyAvxFmaFp64(Vector256<double> input, EluBackwardMicroKernel<TNumber> instance)
+    public static Vector256<double> ApplyAvx2Fp64(Vector256<double> input, EluBackwardMicroKernel<TNumber> instance)
     {
         throw new IntrinsicTypeNotImplementedException();
     }

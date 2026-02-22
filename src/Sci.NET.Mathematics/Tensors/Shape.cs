@@ -3,8 +3,6 @@
 
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
-using Sci.NET.Mathematics.Performance;
 
 namespace Sci.NET.Mathematics.Tensors;
 
@@ -222,7 +220,6 @@ public sealed class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     /// <param name="linearIndex">The linear index.</param>
     /// <returns>The multi dimensional indices of the element at the given linear index.</returns>
     /// <exception cref="ArgumentOutOfRangeException">The given index was out of the range of acceptable values.</exception>
-    [MethodImpl(ImplementationOptions.HotPath)]
     public int[] GetIndicesFromLinearIndex(long linearIndex)
     {
         linearIndex -= DataOffset;
@@ -252,7 +249,6 @@ public sealed class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     /// <returns>The linear index for the given N-Dimension index.</returns>
     /// <exception cref="ArgumentException">The indices array length was not equal to the number of dimensions.</exception>
     /// <exception cref="ArgumentOutOfRangeException">The index of a given dimension was outside the bounds of the dimension.</exception>
-    [MethodImpl(ImplementationOptions.HotPath)]
     public long GetLinearIndex(params int[] indices)
     {
         if (indices.LongLength != Rank)

@@ -6,26 +6,18 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
-using Sci.NET.Mathematics.Exceptions;
-using Sci.NET.Mathematics.Intrinsics;
 using Sci.NET.Mathematics.Performance;
 
 namespace Sci.NET.Mathematics.Backends.Managed.MicroKernels.Exponential;
 
 [SuppressMessage("Roslynator", "RCS1158:Static member in generic type should use a type parameter", Justification = "By design")]
-internal class LogBackwardMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUnaryOperationAvx, IUnaryOperationAvxFma
+internal class LogBackwardMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUnaryOperationAvx2
     where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>
 {
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static bool IsAvxSupported()
+    public static bool HasAvx2Implementation()
     {
-        return IntrinsicsHelper.IsAvxSupported();
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static bool IsAvxFmaSupported()
-    {
-        return false;
+        return true;
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
@@ -35,38 +27,26 @@ internal class LogBackwardMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUnar
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static float ApplyTailFp32(float input)
+    public static float ApplyScalarFp32(float input)
     {
         return 1.0f / input;
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static double ApplyTailFp64(double input)
+    public static double ApplyScalarFp64(double input)
     {
         return 1.0 / input;
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> ApplyAvxFp32(Vector256<float> input)
+    public static Vector256<float> ApplyAvx2Fp32(Vector256<float> input)
     {
         return Avx.Divide(Vector256<float>.One, input);
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> ApplyAvxFp64(Vector256<double> input)
+    public static Vector256<double> ApplyAvx2Fp64(Vector256<double> input)
     {
         return Avx.Divide(Vector256<double>.One, input);
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> ApplyAvxFmaFp32(Vector256<float> input)
-    {
-        throw new IntrinsicTypeNotImplementedException();
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> ApplyAvxFmaFp64(Vector256<double> input)
-    {
-        throw new IntrinsicTypeNotImplementedException();
     }
 }

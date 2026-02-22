@@ -56,8 +56,8 @@ public class ManagedMatrixMultiplyBenchmarks<TNumber> : IDisposable
         }
 
         _linearAlgebraKernels = ManagedTensorBackend.Instance.LinearAlgebra;
-        _leftMatrix = Tensor.Random.Uniform<TNumber>(new Shape(SizeParam.Left.Rows, SizeParam.Left.Columns), min, max, seed: 123456).ToMatrix();
-        _rightMatrix = Tensor.Random.Uniform<TNumber>(new Shape(SizeParam.Right.Columns, SizeParam.Right.Rows), min, max, seed: 654321).ToMatrix();
+        _leftMatrix = Tensor.Random.Uniform(new Shape(SizeParam.Left.Rows, SizeParam.Left.Columns), min, max, seed: 123456).ToMatrix();
+        _rightMatrix = Tensor.Random.Uniform(new Shape(SizeParam.Right.Columns, SizeParam.Right.Rows), min, max, seed: 654321).ToMatrix();
         _result = Tensor.Zeros<TNumber>(new Shape(SizeParam.Left.Rows, SizeParam.Right.Columns)).ToMatrix();
     }
 

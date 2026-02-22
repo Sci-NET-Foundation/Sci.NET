@@ -1,5 +1,4 @@
 ﻿<#@ template language="C#" #>
-<#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".cs" #>
 <#
@@ -23,12 +22,12 @@
         new TrigFunctionTemplate("Asin2", "Inverse Sine Squared", "ITrigonometricFunctions<TNumber>"),
         new TrigFunctionTemplate("Acos2", "Inverse Cosine Squared", "ITrigonometricFunctions<TNumber>"),
         new TrigFunctionTemplate("Atan2", "Inverse Tangent Squared", "ITrigonometricFunctions<TNumber>"),
-        new TrigFunctionTemplate("ASinh", "Hyperbolic Inverse Sine", "IHyperbolicFunctions<TNumber>"),
-        new TrigFunctionTemplate("ACosh", "Hyperbolic Inverse Cosine", "IHyperbolicFunctions<TNumber>"),
-        new TrigFunctionTemplate("ATanh", "Hyperbolic Inverse Tangent", "IHyperbolicFunctions<TNumber>"),
-        new TrigFunctionTemplate("ASinh2", "Hyperbolic Inverse Sine Squared", "IHyperbolicFunctions<TNumber>"),
-        new TrigFunctionTemplate("ACosh2", "Hyperbolic Inverse Cosine Squared", "IHyperbolicFunctions<TNumber>"),
-        new TrigFunctionTemplate("ATanh2", "Hyperbolic Inverse Tangent Squared", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Asinh", "Hyperbolic Inverse Sine", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Acosh", "Hyperbolic Inverse Cosine", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Atanh", "Hyperbolic Inverse Tangent", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Asinh2", "Hyperbolic Inverse Sine Squared", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Acosh2", "Hyperbolic Inverse Cosine Squared", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Atanh2", "Hyperbolic Inverse Tangent Squared", "IHyperbolicFunctions<TNumber>"),
         new TrigFunctionTemplate("Csc", "Cosecant", "ITrigonometricFunctions<TNumber>"),
         new TrigFunctionTemplate("Sec", "Secant", "ITrigonometricFunctions<TNumber>"),
         new TrigFunctionTemplate("Cot", "Cotangent", "ITrigonometricFunctions<TNumber>"),
@@ -44,15 +43,15 @@
         new TrigFunctionTemplate("Acsc", "Inverse Cosecant", "ITrigonometricFunctions<TNumber>"),
         new TrigFunctionTemplate("Asec", "Inverse Secant", "ITrigonometricFunctions<TNumber>"),
         new TrigFunctionTemplate("Acot", "Inverse Cotangent", "ITrigonometricFunctions<TNumber>"),
-        new TrigFunctionTemplate("ACsc2", "Inverse Cosecant Squared", "ITrigonometricFunctions<TNumber>"),
-        new TrigFunctionTemplate("ASec2", "Inverse Secant Squared", "ITrigonometricFunctions<TNumber>"),
-        new TrigFunctionTemplate("ACot2", "Inverse Cotangent Squared", "ITrigonometricFunctions<TNumber>"),
-        new TrigFunctionTemplate("ACsch", "Hyperbolic Inverse Cosecant", "IHyperbolicFunctions<TNumber>"),
-        new TrigFunctionTemplate("ASech", "Hyperbolic Inverse Secant", "IHyperbolicFunctions<TNumber>"),
-        new TrigFunctionTemplate("ACoth", "Hyperbolic Inverse Cotangent", "IHyperbolicFunctions<TNumber>"),
-        new TrigFunctionTemplate("ACsch2", "Hyperbolic Inverse Cosecant Squared", "IHyperbolicFunctions<TNumber>"),
-        new TrigFunctionTemplate("ASech2", "Hyperbolic Inverse Secant Squared", "IHyperbolicFunctions<TNumber>"),
-        new TrigFunctionTemplate("ACoth2", "Hyperbolic Inverse Cotangent Squared", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Acsc2", "Inverse Cosecant Squared", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Asec2", "Inverse Secant Squared", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Acot2", "Inverse Cotangent Squared", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Acsch", "Hyperbolic Inverse Cosecant", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Asech", "Hyperbolic Inverse Secant", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Acoth", "Hyperbolic Inverse Cotangent", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Acsch2", "Hyperbolic Inverse Cosecant Squared", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Asech2", "Hyperbolic Inverse Secant Squared", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Acoth2", "Hyperbolic Inverse Cotangent Squared", "IHyperbolicFunctions<TNumber>"),
     };
 
     var tensorTypes = new List<TensorTypeTemplate>

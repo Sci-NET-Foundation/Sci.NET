@@ -3,17 +3,16 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
-using Sci.NET.Mathematics.Exceptions;
-using Sci.NET.Mathematics.Intrinsics;
+using Sci.NET.Mathematics.Performance;
 
 namespace Sci.NET.Mathematics.Backends.Managed.MicroKernels.ActivationFunctions;
 
 [SuppressMessage("Roslynator", "RCS1158:Static member in generic type should use a type parameter", Justification = "By design")]
 internal class LeakyReLUBackwardMicroKernel<TNumber> : IUnaryParameterizedOperation<LeakyReLUBackwardMicroKernel<TNumber>, TNumber>,
-    IUnaryParameterizedOperationAvx<LeakyReLUBackwardMicroKernel<TNumber>>,
-    IUnaryParameterizedOperationAvxFma<LeakyReLUBackwardMicroKernel<TNumber>>
+    IUnaryParameterizedOperationAvx2<LeakyReLUBackwardMicroKernel<TNumber>>
     where TNumber : unmanaged, INumber<TNumber>
 {
     private readonly MicroKernelParameter<TNumber> _alpha;
@@ -23,32 +22,31 @@ internal class LeakyReLUBackwardMicroKernel<TNumber> : IUnaryParameterizedOperat
         _alpha = alpha;
     }
 
-    public static bool IsAvxSupported()
+    public static bool IsAvx2Supported()
     {
-        return IntrinsicsHelper.IsAvxSupported();
+        return true;
     }
 
-    public static bool IsAvxFmaSupported()
-    {
-        return false;
-    }
-
+    [MethodImpl(ImplementationOptions.HotPath)]
     public static TNumber ApplyScalar(TNumber input, LeakyReLUBackwardMicroKernel<TNumber> instance)
     {
         return input > TNumber.Zero ? TNumber.One : instance._alpha.ScalarValue;
     }
 
+    [MethodImpl(ImplementationOptions.HotPath)]
     public static float ApplyTailFp32(float input, LeakyReLUBackwardMicroKernel<TNumber> instance)
     {
         return input > 0.0f ? 1.0f : instance._alpha.ScalarFp32Value;
     }
 
+    [MethodImpl(ImplementationOptions.HotPath)]
     public static double ApplyTailFp64(double input, LeakyReLUBackwardMicroKernel<TNumber> instance)
     {
         return input > 0.0d ? 1.0d : instance._alpha.ScalarFp64Value;
     }
 
-    public static Vector256<float> ApplyAvxFp32(Vector256<float> input, LeakyReLUBackwardMicroKernel<TNumber> instance)
+    [MethodImpl(ImplementationOptions.HotPath)]
+    public static Vector256<float> ApplyAvx2Fp32(Vector256<float> input, LeakyReLUBackwardMicroKernel<TNumber> instance)
     {
         var zero = Vector256<float>.Zero;
         var one = Vector256<float>.One;
@@ -57,22 +55,13 @@ internal class LeakyReLUBackwardMicroKernel<TNumber> : IUnaryParameterizedOperat
         return Avx.BlendVariable(instance._alpha.Vector256ValueFp32, one, mask);
     }
 
-    public static Vector256<double> ApplyAvxFp64(Vector256<double> input, LeakyReLUBackwardMicroKernel<TNumber> instance)
+    [MethodImpl(ImplementationOptions.HotPath)]
+    public static Vector256<double> ApplyAvx2Fp64(Vector256<double> input, LeakyReLUBackwardMicroKernel<TNumber> instance)
     {
         var zero = Vector256<double>.Zero;
         var one = Vector256<double>.One;
         var mask = Avx.Compare(input, zero, FloatComparisonMode.OrderedGreaterThanSignaling);
 
         return Avx.BlendVariable(instance._alpha.Vector256ValueFp64, one, mask);
-    }
-
-    public static Vector256<float> ApplyAvxFmaFp32(Vector256<float> input, LeakyReLUBackwardMicroKernel<TNumber> instance)
-    {
-        throw new IntrinsicTypeNotImplementedException();
-    }
-
-    public static Vector256<double> ApplyAvxFmaFp64(Vector256<double> input, LeakyReLUBackwardMicroKernel<TNumber> instance)
-    {
-        throw new IntrinsicTypeNotImplementedException();
     }
 }

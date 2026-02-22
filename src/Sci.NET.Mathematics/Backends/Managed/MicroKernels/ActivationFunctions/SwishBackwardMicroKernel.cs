@@ -11,17 +11,11 @@ using Sci.NET.Mathematics.Performance;
 namespace Sci.NET.Mathematics.Backends.Managed.MicroKernels.ActivationFunctions;
 
 [SuppressMessage("Roslynator", "RCS1158:Static member in generic type should use a type parameter", Justification = "By design")]
-internal class SwishBackwardMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUnaryOperationAvx, IUnaryOperationAvxFma
+internal class SwishBackwardMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUnaryOperationAvx2
     where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
 {
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static bool IsAvxSupported()
-    {
-        return false;
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static bool IsAvxFmaSupported()
+    public static bool HasAvx2Implementation()
     {
         return false;
     }
@@ -34,37 +28,27 @@ internal class SwishBackwardMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUn
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static float ApplyTailFp32(float input)
+    public static float ApplyScalarFp32(float input)
+    {
+        var expNegX = MathF.Exp(-input);
+        return ((expNegX * (input + 1.0f)) + 1.0f) / ((1.0f + expNegX) * (1.0f + expNegX));
+    }
+
+    [MethodImpl(ImplementationOptions.HotPath)]
+    public static double ApplyScalarFp64(double input)
+    {
+        var expNegX = Math.Exp(-input);
+        return ((expNegX * (input + 1.0)) + 1.0) / ((1.0 + expNegX) * (1.0 + expNegX));
+    }
+
+    [ExcludeFromCodeCoverage]
+    public static Vector256<float> ApplyAvx2Fp32(Vector256<float> input)
     {
         throw new IntrinsicTypeNotImplementedException();
     }
 
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static double ApplyTailFp64(double input)
-    {
-        throw new IntrinsicTypeNotImplementedException();
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> ApplyAvxFp32(Vector256<float> input)
-    {
-        throw new IntrinsicTypeNotImplementedException();
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> ApplyAvxFp64(Vector256<double> input)
-    {
-        throw new IntrinsicTypeNotImplementedException();
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> ApplyAvxFmaFp32(Vector256<float> input)
-    {
-        throw new IntrinsicTypeNotImplementedException();
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> ApplyAvxFmaFp64(Vector256<double> input)
+    [ExcludeFromCodeCoverage]
+    public static Vector256<double> ApplyAvx2Fp64(Vector256<double> input)
     {
         throw new IntrinsicTypeNotImplementedException();
     }

@@ -64,7 +64,6 @@ public static class GenericMath
     /// <typeparam name="TNumber">The number type.</typeparam>
     /// <returns>The square root of the provided number.</returns>
     /// <exception cref="NotSupportedException">Thrown if the number type is not supported.</exception>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static TNumber Sqrt<TNumber>(TNumber number)
     {
         return number switch
@@ -94,7 +93,6 @@ public static class GenericMath
     /// <typeparam name="TNumber">The number type to find the epsilon for.</typeparam>
     /// <param name="multiplier">The multiplier to use for the epsilon.</param>
     /// <returns>A small epsilon for the specified number type.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static TNumber ScaledEpsilon<TNumber>(int multiplier)
         where TNumber : unmanaged, INumber<TNumber>
     {

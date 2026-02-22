@@ -49,7 +49,7 @@ public class ManagedBroadcastingBenchmarks<TNumber>
             max = TNumber.CreateChecked(10);
         }
 
-        _tensor = Tensor.Random.Uniform<TNumber>(Shapes.From, min, max, seed: 123456).ToTensor();
+        _tensor = Tensor.Random.Uniform(Shapes.From, min, max, seed: 123456).ToTensor();
         _result = Tensor.Zeros<TNumber>(Shapes.To).ToTensor();
     }
 

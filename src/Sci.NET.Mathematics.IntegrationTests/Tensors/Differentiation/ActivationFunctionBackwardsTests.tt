@@ -1,5 +1,4 @@
 ﻿<#@ template language="C#" #>
-<#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".cs" #>
 <#
@@ -94,9 +93,9 @@
         {
             FunctionName = "HardSigmoid",
             Parameters = [
-                new() { Input = 1.0d, Parameters = "", Primal = 1.0d, Derivative = 0.0d },
-                new() { Input = -1.0d, Parameters = "", Primal = 0.0d, Derivative = 0.0d },
-                new() { Input = 0.5d, Parameters = "", Primal = 0.25d, Derivative = 0.5d }
+                new() { Input = 1.0d, Parameters = "", Primal = 0.6666666666666666d, Derivative = 0.16666666666666666 },
+                new() { Input = -1.0d, Parameters = "", Primal = 0.33333333333333337d, Derivative = 0.16666666666666666d },
+                new() { Input = 0.5d, Parameters = "", Primal = 0.5833333333333334, Derivative = 0.16666666666666666 }
                 ]
         },
         new()
@@ -129,8 +128,8 @@
         {
             FunctionName = "GELU",
             Parameters = [
-                new() { Input = 1.0d, Parameters = "", Primal = 0.841191990608276, Derivative = 1.0850864475321376 },
-                new() { Input = -1.0d, Parameters = "", Primal = -0.15880800939172324, Derivative = -0.08508644753213751 },
+                new() { Input = 1.0d, Parameters = "", Primal = 0.841191990608276, Derivative = 1.0829640838457826 },
+                new() { Input = -1.0d, Parameters = "", Primal = -0.15880800939172324, Derivative = -0.08296408384578258 },
                 new() { Input = 0.0d, Parameters = "", Primal = 0.0d, Derivative = 0.5d }
                 ]
         }

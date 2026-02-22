@@ -12,8 +12,7 @@ namespace Sci.NET.Mathematics.Backends.Managed.MicroKernels.ActivationFunctions;
 
 [SuppressMessage("Roslynator", "RCS1158:Static member in generic type should use a type parameter", Justification = "By design")]
 internal class CeluMicroKernel<TNumber> : IUnaryParameterizedOperation<CeluMicroKernel<TNumber>, TNumber>,
-    IUnaryParameterizedOperationAvx<CeluMicroKernel<TNumber>>,
-    IUnaryParameterizedOperationAvxFma<CeluMicroKernel<TNumber>>
+    IUnaryParameterizedOperationAvx2<CeluMicroKernel<TNumber>>
     where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
 {
     private readonly MicroKernelParameter<TNumber> _alpha;
@@ -23,14 +22,7 @@ internal class CeluMicroKernel<TNumber> : IUnaryParameterizedOperation<CeluMicro
         _alpha = alpha;
     }
 
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static bool IsAvxSupported()
-    {
-        return false;
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static bool IsAvxFmaSupported()
+    public static bool IsAvx2Supported()
     {
         return false;
     }
@@ -44,35 +36,23 @@ internal class CeluMicroKernel<TNumber> : IUnaryParameterizedOperation<CeluMicro
     [MethodImpl(ImplementationOptions.HotPath)]
     public static float ApplyTailFp32(float input, CeluMicroKernel<TNumber> instance)
     {
-        throw new IntrinsicTypeNotImplementedException();
+        return MathF.Max(0f, input) + MathF.Min(0f, instance._alpha.ScalarFp32Value * (MathF.Exp(input / instance._alpha.ScalarFp32Value) - 1f));
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
     public static double ApplyTailFp64(double input, CeluMicroKernel<TNumber> instance)
     {
-        throw new IntrinsicTypeNotImplementedException();
+        return Math.Max(0.0, input) + Math.Min(0.0, instance._alpha.ScalarFp64Value * (Math.Exp(input / instance._alpha.ScalarFp64Value) - 1.0));
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> ApplyAvxFp32(Vector256<float> input, CeluMicroKernel<TNumber> instance)
+    public static Vector256<float> ApplyAvx2Fp32(Vector256<float> input, CeluMicroKernel<TNumber> instance)
     {
         throw new IntrinsicTypeNotImplementedException();
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> ApplyAvxFp64(Vector256<double> input, CeluMicroKernel<TNumber> instance)
-    {
-        throw new IntrinsicTypeNotImplementedException();
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> ApplyAvxFmaFp32(Vector256<float> input, CeluMicroKernel<TNumber> instance)
-    {
-        throw new IntrinsicTypeNotImplementedException();
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> ApplyAvxFmaFp64(Vector256<double> input, CeluMicroKernel<TNumber> instance)
+    public static Vector256<double> ApplyAvx2Fp64(Vector256<double> input, CeluMicroKernel<TNumber> instance)
     {
         throw new IntrinsicTypeNotImplementedException();
     }

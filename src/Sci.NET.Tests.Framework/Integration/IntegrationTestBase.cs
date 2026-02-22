@@ -4,6 +4,7 @@
 using Sci.NET.Mathematics;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Intrinsics;
+using Sci.NET.Tests.Framework.Devices;
 
 namespace Sci.NET.Tests.Framework.Integration;
 
@@ -30,18 +31,14 @@ public abstract class IntegrationTestBase
 
     private static TheoryData<IDevice> GenerateInstructionSets()
     {
+        IntrinsicsHelper.EnableSimd();
         var data = new TheoryData<IDevice>();
 
-        data.Add(new CpuComputeDevice());
+        data.Add(new NoAvxCpuComputeDevice());
 
-        if (IntrinsicsHelper.IsAvxSupported())
+        if (IntrinsicsHelper.IsAvx2Supported())
         {
-            data.Add(new AvxCpuComputeDevice());
-        }
-
-        if (IntrinsicsHelper.IsAvxFmaSupported())
-        {
-            data.Add(new AvxFmaCpuComputeDevice());
+            data.Add(new CpuComputeDevice());
         }
 
         return data;

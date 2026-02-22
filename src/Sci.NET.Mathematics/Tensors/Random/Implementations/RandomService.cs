@@ -19,7 +19,8 @@ internal class RandomService : IRandomService
                 shape,
                 min,
                 max,
-                seed);
+                seed,
+                device);
     }
 
     public ITensor<TNumber> Normal<TNumber>(Shape shape, TNumber mean, TNumber stdDev, ulong? seed = null, IDevice? device = null)
@@ -33,7 +34,8 @@ internal class RandomService : IRandomService
                 shape,
                 mean,
                 stdDev,
-                seed);
+                seed,
+                device);
     }
 
     public ITensor<TNumber> XavierUniform<TNumber>(Shape shape, int inputUnits, int outputUnits, ulong? seed = null, IDevice? device = null)
@@ -47,7 +49,8 @@ internal class RandomService : IRandomService
                 shape,
                 inputUnits,
                 outputUnits,
-                seed);
+                seed,
+                device);
     }
 
     public ITensor<TNumber> XavierNormal<TNumber>(Shape shape, int inputUnits, int outputUnits, ulong? seed = null, IDevice? device = null)
@@ -61,7 +64,8 @@ internal class RandomService : IRandomService
                 shape,
                 inputUnits,
                 outputUnits,
-                seed);
+                seed,
+                device);
     }
 
     public ITensor<TNumber> HeUniform<TNumber>(Shape shape, int inputUnits, ulong? seed = null, IDevice? device = null)
@@ -74,7 +78,8 @@ internal class RandomService : IRandomService
             .Random.HeUniform<TNumber>(
                 shape,
                 inputUnits,
-                seed);
+                seed,
+                device);
     }
 
     public ITensor<TNumber> HeNormal<TNumber>(Shape shape, int inputUnits, ulong? seed = null, IDevice? device = null)
@@ -87,7 +92,8 @@ internal class RandomService : IRandomService
             .Random.HeNormal<TNumber>(
                 shape,
                 inputUnits,
-                seed);
+                seed,
+                device);
     }
 
     public void Seed(ulong seed, IDevice? device = null)

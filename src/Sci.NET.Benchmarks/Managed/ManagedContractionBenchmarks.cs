@@ -51,8 +51,8 @@ public class ManagedContractionBenchmarks<TNumber>
             max = TNumber.CreateChecked(10);
         }
 
-        _leftTensor = Tensor.Random.Uniform<TNumber>(Shapes.LeftShape, min, max, seed: 123456).ToTensor();
-        _rightTensor = Tensor.Random.Uniform<TNumber>(Shapes.RightShape, min, max, seed: 654321).ToTensor();
+        _leftTensor = Tensor.Random.Uniform(Shapes.LeftShape, min, max, seed: 123456).ToTensor();
+        _rightTensor = Tensor.Random.Uniform(Shapes.RightShape, min, max, seed: 654321).ToTensor();
     }
 
     [Benchmark]

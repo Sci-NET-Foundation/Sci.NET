@@ -49,7 +49,7 @@ public class ManagedPermutationBenchmarks<TNumber>
             max = TNumber.CreateChecked(10);
         }
 
-        _tensor = Tensor.Random.Uniform<TNumber>(OpShapes.From, min, max, seed: 123456).ToTensor();
+        _tensor = Tensor.Random.Uniform(OpShapes.From, min, max, seed: 123456).ToTensor();
     }
 
     [Benchmark]

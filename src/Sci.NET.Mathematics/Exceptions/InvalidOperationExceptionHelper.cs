@@ -3,7 +3,6 @@
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 
 namespace Sci.NET.Mathematics.Exceptions;
 
@@ -21,7 +20,6 @@ public static class InvalidOperationExceptionHelper
     /// <typeparam name="T">The type of the value.</typeparam>
     /// <exception cref="InvalidOperationException">The value of <paramref name="value"/> is not equal to the <paramref name="expected"/> value.</exception>
     [StackTraceHidden]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [ExcludeFromCodeCoverage]
     public static void ThrowIfNotEqual<T>(T value, T expected, string customMessage)
         where T : IEquatable<T>

@@ -18,7 +18,7 @@ public interface IHypotService
     /// <param name="left">The left operand.</param>
     /// <param name="right">>The right operand.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>s.</typeparam>
-    /// <returns>>>The result of the element-wise hypotenuse.</returns>
+    /// <returns>>The result of the element-wise hypotenuse.</returns>
     /// <remarks>The shapes of <paramref name="left"/> and <paramref name="right"/> must be compatible for broadcasting.</remarks>
     /// <exception cref="InvalidShapeException">Thrown when the two tensors cannot be broadcast to compatible shapes.</exception>
     public ITensor<TNumber> Hypot<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)

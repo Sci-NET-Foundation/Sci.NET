@@ -6,9 +6,10 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
+using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Backends.Iterators;
-using Sci.NET.Mathematics.Backends.Managed.Buffers;
 using Sci.NET.Mathematics.Backends.Managed.MicroKernels;
+using Sci.NET.Mathematics.Intrinsics;
 using Sci.NET.Mathematics.Memory;
 using Sci.NET.Mathematics.Tensors;
 
@@ -17,7 +18,7 @@ namespace Sci.NET.Mathematics.Backends.Managed.Iterators;
 [SuppressMessage("Style", "IDE0010:Add missing cases", Justification = "All cases are covered.")]
 internal static class ManagedReductionIterator<TNumber, TReduction>
     where TNumber : unmanaged, INumber<TNumber>
-    where TReduction : IReductionOperation<TNumber>, IReductionOperationAvx
+    where TReduction : IReductionOperation<TNumber>, IReductionOperationAvx2
 {
     public static unsafe void Apply(
         ITensor<TNumber> input,
@@ -31,18 +32,18 @@ internal static class ManagedReductionIterator<TNumber, TReduction>
         switch (geometry.Pattern)
         {
             case ReductionPattern.FullReduction:
-                ApplyFullReduction(inputMemory, outputMemory, geometry);
+                ApplyFullReduction(inputMemory, outputMemory, geometry, (ICpuComputeDevice)input.Device);
                 break;
 
             case ReductionPattern.ContiguousInner:
-                ApplyContiguousInner(inputMemory, outputMemory, geometry);
+                ApplyContiguousInner(inputMemory, outputMemory, geometry, (ICpuComputeDevice)input.Device);
                 break;
 
             case ReductionPattern.ContiguousOuter:
-                ApplyContiguousOuter(inputMemory.ToPointer(), outputMemory.ToPointer(), geometry);
+                ApplyContiguousOuter(inputMemory.ToPointer(), outputMemory.ToPointer(), geometry, (ICpuComputeDevice)input.Device);
                 break;
             case ReductionPattern.Strided:
-                ApplyStrided(inputMemory.ToPointer(), outputMemory.ToPointer(), geometry);
+                ApplyStrided(inputMemory.ToPointer(), outputMemory.ToPointer(), geometry, (ICpuComputeDevice)input.Device);
                 break;
             default:
                 throw new InvalidOperationException($"Unsupported reduction pattern: {geometry.Pattern}");
@@ -52,11 +53,12 @@ internal static class ManagedReductionIterator<TNumber, TReduction>
     private static unsafe void ApplyFullReduction(
         SystemMemoryBlock<TNumber> input,
         SystemMemoryBlock<TNumber> output,
-        in ReductionGeometry geometry)
+        in ReductionGeometry geometry,
+        ICpuComputeDevice device)
     {
         var count = geometry.TotalElements;
 
-        if (TReduction.IsAvxSupported())
+        if (device.IsAvx2Supported() && TReduction.HasAvx2Implementation())
         {
             switch (TNumber.Zero)
             {
@@ -106,7 +108,7 @@ internal static class ManagedReductionIterator<TNumber, TReduction>
     private static unsafe void ApplyFullReductionAvx256Fp32InnerLoop(int tid, int numThreads, long n, float* input, float[] partials)
     {
         const int unrollFactor = 4;
-        const int elementsPerIteration = NativeBufferHelpers.AvxVectorSizeFp32 * unrollFactor;
+        const int elementsPerIteration = IntrinsicsHelper.AvxVectorSizeFp32 * unrollFactor;
         const int prefetchDistance = 64;
 
         var start = tid * n / numThreads;
@@ -126,22 +128,22 @@ internal static class ManagedReductionIterator<TNumber, TReduction>
         {
             Sse.Prefetch0(basePtr + i + prefetchDistance);
 
-            acc0 = TReduction.AccumulateAvx256Fp32(acc0, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp32 * 0)));
-            acc1 = TReduction.AccumulateAvx256Fp32(acc1, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp32 * 1)));
-            acc2 = TReduction.AccumulateAvx256Fp32(acc2, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp32 * 2)));
-            acc3 = TReduction.AccumulateAvx256Fp32(acc3, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp32 * 3)));
+            acc0 = TReduction.AccumulateAvxFp32(acc0, Avx.LoadVector256(basePtr + i + (IntrinsicsHelper.AvxVectorSizeFp32 * 0)));
+            acc1 = TReduction.AccumulateAvxFp32(acc1, Avx.LoadVector256(basePtr + i + (IntrinsicsHelper.AvxVectorSizeFp32 * 1)));
+            acc2 = TReduction.AccumulateAvxFp32(acc2, Avx.LoadVector256(basePtr + i + (IntrinsicsHelper.AvxVectorSizeFp32 * 2)));
+            acc3 = TReduction.AccumulateAvxFp32(acc3, Avx.LoadVector256(basePtr + i + (IntrinsicsHelper.AvxVectorSizeFp32 * 3)));
         }
 
-        acc0 = TReduction.AccumulateAvx256Fp32(acc0, acc1);
-        acc2 = TReduction.AccumulateAvx256Fp32(acc2, acc3);
-        acc0 = TReduction.AccumulateAvx256Fp32(acc0, acc2);
+        acc0 = TReduction.AccumulateAvxFp32(acc0, acc1);
+        acc2 = TReduction.AccumulateAvxFp32(acc2, acc3);
+        acc0 = TReduction.AccumulateAvxFp32(acc0, acc2);
 
-        for (; i <= count - NativeBufferHelpers.AvxVectorSizeFp32; i += NativeBufferHelpers.AvxVectorSizeFp32)
+        for (; i <= count - IntrinsicsHelper.AvxVectorSizeFp32; i += IntrinsicsHelper.AvxVectorSizeFp32)
         {
-            acc0 = TReduction.AccumulateAvx256Fp32(acc0, Avx.LoadVector256(basePtr + i));
+            acc0 = TReduction.AccumulateAvxFp32(acc0, Avx.LoadVector256(basePtr + i));
         }
 
-        var scalar = TReduction.HorizontalReduceAvx256Fp32(acc0);
+        var scalar = TReduction.HorizontalReduceAvxFp32(acc0);
 
         for (; i < count; i++)
         {
@@ -188,7 +190,7 @@ internal static class ManagedReductionIterator<TNumber, TReduction>
     private static unsafe void ApplyFullReductionAvx256Fp64InnerLoop(int tid, int numThreads, long n, double* input, double[] partials)
     {
         const int unrollFactor = 4;
-        const int elementsPerIteration = NativeBufferHelpers.AvxVectorSizeFp64 * unrollFactor;
+        const int elementsPerIteration = IntrinsicsHelper.AvxVectorSizeFp64 * unrollFactor;
         const int prefetchDistance = 64;
 
         var start = tid * n / numThreads;
@@ -208,22 +210,22 @@ internal static class ManagedReductionIterator<TNumber, TReduction>
         {
             Sse.Prefetch0(basePtr + i + prefetchDistance);
 
-            acc0 = TReduction.AccumulateAvx256Fp64(acc0, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp64 * 0)));
-            acc1 = TReduction.AccumulateAvx256Fp64(acc1, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp64 * 1)));
-            acc2 = TReduction.AccumulateAvx256Fp64(acc2, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp64 * 2)));
-            acc3 = TReduction.AccumulateAvx256Fp64(acc3, Avx.LoadVector256(basePtr + i + (NativeBufferHelpers.AvxVectorSizeFp64 * 3)));
+            acc0 = TReduction.AccumulateAvxFp64(acc0, Avx.LoadVector256(basePtr + i + (IntrinsicsHelper.AvxVectorSizeFp64 * 0)));
+            acc1 = TReduction.AccumulateAvxFp64(acc1, Avx.LoadVector256(basePtr + i + (IntrinsicsHelper.AvxVectorSizeFp64 * 1)));
+            acc2 = TReduction.AccumulateAvxFp64(acc2, Avx.LoadVector256(basePtr + i + (IntrinsicsHelper.AvxVectorSizeFp64 * 2)));
+            acc3 = TReduction.AccumulateAvxFp64(acc3, Avx.LoadVector256(basePtr + i + (IntrinsicsHelper.AvxVectorSizeFp64 * 3)));
         }
 
-        acc0 = TReduction.AccumulateAvx256Fp64(acc0, acc1);
-        acc2 = TReduction.AccumulateAvx256Fp64(acc2, acc3);
-        acc0 = TReduction.AccumulateAvx256Fp64(acc0, acc2);
+        acc0 = TReduction.AccumulateAvxFp64(acc0, acc1);
+        acc2 = TReduction.AccumulateAvxFp64(acc2, acc3);
+        acc0 = TReduction.AccumulateAvxFp64(acc0, acc2);
 
-        for (; i <= count - NativeBufferHelpers.AvxVectorSizeFp64; i += NativeBufferHelpers.AvxVectorSizeFp64)
+        for (; i <= count - IntrinsicsHelper.AvxVectorSizeFp64; i += IntrinsicsHelper.AvxVectorSizeFp64)
         {
-            acc0 = TReduction.AccumulateAvx256Fp64(acc0, Avx.LoadVector256(basePtr + i));
+            acc0 = TReduction.AccumulateAvxFp64(acc0, Avx.LoadVector256(basePtr + i));
         }
 
-        var scalar = TReduction.HorizontalReduceAvx256Fp64(acc0);
+        var scalar = TReduction.HorizontalReduceAvxFp64(acc0);
 
         for (; i < count; i++)
         {
@@ -284,12 +286,13 @@ internal static class ManagedReductionIterator<TNumber, TReduction>
     private static unsafe void ApplyContiguousInner(
         SystemMemoryBlock<TNumber> input,
         SystemMemoryBlock<TNumber> output,
-        in ReductionGeometry geometry)
+        in ReductionGeometry geometry,
+        ICpuComputeDevice device)
     {
         var outerCount = geometry.OuterCount;
         var innerCount = geometry.InnerCount;
 
-        if (TReduction.IsAvxSupported() && innerCount >= Vector256<TNumber>.Count * 4)
+        if (device.IsAvx2Supported() && TReduction.HasAvx2Implementation() && innerCount >= Vector256<TNumber>.Count * 4)
         {
             switch (TNumber.Zero)
             {
@@ -334,26 +337,26 @@ internal static class ManagedReductionIterator<TNumber, TReduction>
         var acc3 = TReduction.Avx256Fp32Identity;
 
         var j = 0;
-        var unrollLimit = innerCount - (NativeBufferHelpers.AvxVectorSizeFp32 * 4);
+        var unrollLimit = innerCount - (IntrinsicsHelper.AvxVectorSizeFp32 * 4);
 
-        for (; j <= unrollLimit; j += NativeBufferHelpers.AvxVectorSizeFp32 * 4)
+        for (; j <= unrollLimit; j += IntrinsicsHelper.AvxVectorSizeFp32 * 4)
         {
-            acc0 = TReduction.AccumulateAvx256Fp32(acc0, Vector256.Load(basePtr + j + (NativeBufferHelpers.AvxVectorSizeFp32 * 0)));
-            acc1 = TReduction.AccumulateAvx256Fp32(acc1, Vector256.Load(basePtr + j + (NativeBufferHelpers.AvxVectorSizeFp32 * 1)));
-            acc2 = TReduction.AccumulateAvx256Fp32(acc2, Vector256.Load(basePtr + j + (NativeBufferHelpers.AvxVectorSizeFp32 * 2)));
-            acc3 = TReduction.AccumulateAvx256Fp32(acc3, Vector256.Load(basePtr + j + (NativeBufferHelpers.AvxVectorSizeFp32 * 3)));
+            acc0 = TReduction.AccumulateAvxFp32(acc0, Vector256.Load(basePtr + j + (IntrinsicsHelper.AvxVectorSizeFp32 * 0)));
+            acc1 = TReduction.AccumulateAvxFp32(acc1, Vector256.Load(basePtr + j + (IntrinsicsHelper.AvxVectorSizeFp32 * 1)));
+            acc2 = TReduction.AccumulateAvxFp32(acc2, Vector256.Load(basePtr + j + (IntrinsicsHelper.AvxVectorSizeFp32 * 2)));
+            acc3 = TReduction.AccumulateAvxFp32(acc3, Vector256.Load(basePtr + j + (IntrinsicsHelper.AvxVectorSizeFp32 * 3)));
         }
 
-        acc0 = TReduction.AccumulateAvx256Fp32(acc0, acc1);
-        acc2 = TReduction.AccumulateAvx256Fp32(acc2, acc3);
-        acc0 = TReduction.AccumulateAvx256Fp32(acc0, acc2);
+        acc0 = TReduction.AccumulateAvxFp32(acc0, acc1);
+        acc2 = TReduction.AccumulateAvxFp32(acc2, acc3);
+        acc0 = TReduction.AccumulateAvxFp32(acc0, acc2);
 
-        for (; j <= innerCount - NativeBufferHelpers.AvxVectorSizeFp32; j += NativeBufferHelpers.AvxVectorSizeFp32)
+        for (; j <= innerCount - IntrinsicsHelper.AvxVectorSizeFp32; j += IntrinsicsHelper.AvxVectorSizeFp32)
         {
-            acc0 = TReduction.AccumulateAvx256Fp32(acc0, Vector256.Load(basePtr + j));
+            acc0 = TReduction.AccumulateAvxFp32(acc0, Vector256.Load(basePtr + j));
         }
 
-        var scalarAcc = TReduction.HorizontalReduceAvx256Fp32(acc0);
+        var scalarAcc = TReduction.HorizontalReduceAvxFp32(acc0);
 
         for (; j < innerCount; j++)
         {
@@ -394,26 +397,26 @@ internal static class ManagedReductionIterator<TNumber, TReduction>
         var acc3 = TReduction.Avx256Fp64Identity;
 
         var j = 0;
-        var unrollLimit = innerCount - (NativeBufferHelpers.AvxVectorSizeFp64 * 4);
+        var unrollLimit = innerCount - (IntrinsicsHelper.AvxVectorSizeFp64 * 4);
 
-        for (; j <= unrollLimit; j += NativeBufferHelpers.AvxVectorSizeFp64 * 4)
+        for (; j <= unrollLimit; j += IntrinsicsHelper.AvxVectorSizeFp64 * 4)
         {
-            acc0 = TReduction.AccumulateAvx256Fp64(acc0, Vector256.Load(basePtr + j + (NativeBufferHelpers.AvxVectorSizeFp64 * 0)));
-            acc1 = TReduction.AccumulateAvx256Fp64(acc1, Vector256.Load(basePtr + j + (NativeBufferHelpers.AvxVectorSizeFp64 * 1)));
-            acc2 = TReduction.AccumulateAvx256Fp64(acc2, Vector256.Load(basePtr + j + (NativeBufferHelpers.AvxVectorSizeFp64 * 2)));
-            acc3 = TReduction.AccumulateAvx256Fp64(acc3, Vector256.Load(basePtr + j + (NativeBufferHelpers.AvxVectorSizeFp64 * 3)));
+            acc0 = TReduction.AccumulateAvxFp64(acc0, Vector256.Load(basePtr + j + (IntrinsicsHelper.AvxVectorSizeFp64 * 0)));
+            acc1 = TReduction.AccumulateAvxFp64(acc1, Vector256.Load(basePtr + j + (IntrinsicsHelper.AvxVectorSizeFp64 * 1)));
+            acc2 = TReduction.AccumulateAvxFp64(acc2, Vector256.Load(basePtr + j + (IntrinsicsHelper.AvxVectorSizeFp64 * 2)));
+            acc3 = TReduction.AccumulateAvxFp64(acc3, Vector256.Load(basePtr + j + (IntrinsicsHelper.AvxVectorSizeFp64 * 3)));
         }
 
-        acc0 = TReduction.AccumulateAvx256Fp64(acc0, acc1);
-        acc2 = TReduction.AccumulateAvx256Fp64(acc2, acc3);
-        acc0 = TReduction.AccumulateAvx256Fp64(acc0, acc2);
+        acc0 = TReduction.AccumulateAvxFp64(acc0, acc1);
+        acc2 = TReduction.AccumulateAvxFp64(acc2, acc3);
+        acc0 = TReduction.AccumulateAvxFp64(acc0, acc2);
 
-        for (; j <= innerCount - NativeBufferHelpers.AvxVectorSizeFp64; j += NativeBufferHelpers.AvxVectorSizeFp64)
+        for (; j <= innerCount - IntrinsicsHelper.AvxVectorSizeFp64; j += IntrinsicsHelper.AvxVectorSizeFp64)
         {
-            acc0 = TReduction.AccumulateAvx256Fp64(acc0, Vector256.Load(basePtr + j));
+            acc0 = TReduction.AccumulateAvxFp64(acc0, Vector256.Load(basePtr + j));
         }
 
-        var scalarAcc = TReduction.HorizontalReduceAvx256Fp64(acc0);
+        var scalarAcc = TReduction.HorizontalReduceAvxFp64(acc0);
 
         for (; j < innerCount; j++)
         {
@@ -460,11 +463,15 @@ internal static class ManagedReductionIterator<TNumber, TReduction>
     private static unsafe void ApplyContiguousOuter(
         TNumber* input,
         TNumber* output,
-        in ReductionGeometry geometry)
+        in ReductionGeometry geometry,
+        ICpuComputeDevice device)
     {
         var outerCount = geometry.OuterCount;
         var innerCount = geometry.InnerCount;
         var stride = geometry.OuterStride;
+
+        // No AVX implementation for this pattern yet
+        _ = device;
 
         _ = Parallel.For(
             0,
@@ -486,8 +493,12 @@ internal static class ManagedReductionIterator<TNumber, TReduction>
     private static unsafe void ApplyStrided(
         TNumber* input,
         TNumber* output,
-        in ReductionGeometry geometry)
+        in ReductionGeometry geometry,
+        ICpuComputeDevice device)
     {
+        // No AVX implementation for this pattern yet
+        _ = device;
+
         var outerCount = geometry.OuterCount;
         var innerCount = geometry.InnerCount;
         var tensorStrides = geometry.TensorStrides;

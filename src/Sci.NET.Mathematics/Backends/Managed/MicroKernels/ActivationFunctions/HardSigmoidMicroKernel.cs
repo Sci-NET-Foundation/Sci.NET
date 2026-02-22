@@ -3,27 +3,23 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
-using Sci.NET.Mathematics.Exceptions;
-using Sci.NET.Mathematics.Intrinsics;
+using Sci.NET.Mathematics.Performance;
 
 namespace Sci.NET.Mathematics.Backends.Managed.MicroKernels.ActivationFunctions;
 
 [SuppressMessage("Roslynator", "RCS1158:Static member in generic type should use a type parameter", Justification = "By design")]
-internal class HardSigmoidMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUnaryOperationAvx, IUnaryOperationAvxFma
+internal class HardSigmoidMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUnaryOperationAvx2
     where TNumber : unmanaged, INumber<TNumber>
 {
-    public static bool IsAvxSupported()
+    public static bool HasAvx2Implementation()
     {
-        return IntrinsicsHelper.IsAvxSupported();
+        return true;
     }
 
-    public static bool IsAvxFmaSupported()
-    {
-        return false;
-    }
-
+    [MethodImpl(ImplementationOptions.HotPath)]
     public static TNumber ApplyScalar(TNumber input)
     {
         var three = TNumber.One + TNumber.One + TNumber.One;
@@ -46,7 +42,8 @@ internal class HardSigmoidMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUnar
         }
     }
 
-    public static float ApplyTailFp32(float input)
+    [MethodImpl(ImplementationOptions.HotPath)]
+    public static float ApplyScalarFp32(float input)
     {
         if (input <= -3.0f)
         {
@@ -62,7 +59,8 @@ internal class HardSigmoidMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUnar
         }
     }
 
-    public static double ApplyTailFp64(double input)
+    [MethodImpl(ImplementationOptions.HotPath)]
+    public static double ApplyScalarFp64(double input)
     {
         if (input <= -3.0f)
         {
@@ -78,7 +76,8 @@ internal class HardSigmoidMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUnar
         }
     }
 
-    public static Vector256<float> ApplyAvxFp32(Vector256<float> input)
+    [MethodImpl(ImplementationOptions.HotPath)]
+    public static Vector256<float> ApplyAvx2Fp32(Vector256<float> input)
     {
         var negThree = Vector256.Create(-3.0f);
         var posThree = Vector256.Create(3.0f);
@@ -86,7 +85,7 @@ internal class HardSigmoidMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUnar
         var half = Vector256.Create(0.5f);
         var zero = Vector256<float>.Zero;
         var one = Vector256.Create(1.0f);
-        var linear = Avx.Add(Avx.Multiply(input, sixth), half);
+        var linear = Fma.MultiplyAdd(input, sixth, half);
         var maskLow = Avx.Compare(input, negThree, FloatComparisonMode.OrderedLessThanOrEqualNonSignaling);
         var maskHigh = Avx.Compare(input, posThree, FloatComparisonMode.OrderedGreaterThanOrEqualNonSignaling);
         var result = Avx.BlendVariable(linear, zero, maskLow);
@@ -94,7 +93,8 @@ internal class HardSigmoidMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUnar
         return Avx.BlendVariable(result, one, maskHigh);
     }
 
-    public static Vector256<double> ApplyAvxFp64(Vector256<double> input)
+    [MethodImpl(ImplementationOptions.HotPath)]
+    public static Vector256<double> ApplyAvx2Fp64(Vector256<double> input)
     {
         var negThree = Vector256.Create(-3.0d);
         var posThree = Vector256.Create(3.0d);
@@ -102,21 +102,11 @@ internal class HardSigmoidMicroKernel<TNumber> : IUnaryOperation<TNumber>, IUnar
         var half = Vector256.Create(0.5d);
         var zero = Vector256<double>.Zero;
         var one = Vector256.Create(1.0d);
-        var linear = Avx.Add(Avx.Multiply(input, sixth), half);
+        var linear = Fma.MultiplyAdd(input, sixth, half);
         var maskLow = Avx.Compare(input, negThree, FloatComparisonMode.OrderedLessThanOrEqualNonSignaling);
         var maskHigh = Avx.Compare(input, posThree, FloatComparisonMode.OrderedGreaterThanOrEqualNonSignaling);
         var result = Avx.BlendVariable(linear, zero, maskLow);
 
         return Avx.BlendVariable(result, one, maskHigh);
-    }
-
-    public static Vector256<float> ApplyAvxFmaFp32(Vector256<float> input)
-    {
-        throw new IntrinsicTypeNotImplementedException();
-    }
-
-    public static Vector256<double> ApplyAvxFmaFp64(Vector256<double> input)
-    {
-        throw new IntrinsicTypeNotImplementedException();
     }
 }

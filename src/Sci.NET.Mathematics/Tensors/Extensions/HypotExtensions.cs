@@ -40,7 +40,7 @@ public static class HypotExtensions
     /// <param name="left">The left <see cref="Scalar{TNumber}"/>.</param>
     /// <param name="right">>The right <see cref="Vector{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The numeric type.</typeparam>
-    /// <returns>>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
+    /// <returns>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
     [DebuggerStepThrough]
     public static Vector<TNumber> Hypot<TNumber>(this Scalar<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, IFloatingPointIeee754<TNumber>, IRootFunctions<TNumber>
@@ -58,7 +58,7 @@ public static class HypotExtensions
     /// <param name="left">The left <see cref="Scalar{TNumber}"/>.</param>
     /// <param name="right">>The right <see cref="Matrix{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The numeric type.</typeparam>
-    /// <returns>>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
+    /// <returns>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
     [DebuggerStepThrough]
     public static Matrix<TNumber> Hypot<TNumber>(this Scalar<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, IFloatingPointIeee754<TNumber>, IRootFunctions<TNumber>
@@ -76,7 +76,7 @@ public static class HypotExtensions
     /// <param name="left">The left <see cref="Scalar{TNumber}"/>.</param>
     /// <param name="right">>The right <see cref="Tensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The numeric type.</typeparam>
-    /// <returns>>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
+    /// <returns>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
     [DebuggerStepThrough]
     public static Tensor<TNumber> Hypot<TNumber>(this Scalar<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, IFloatingPointIeee754<TNumber>, IRootFunctions<TNumber>
@@ -94,7 +94,7 @@ public static class HypotExtensions
     /// <param name="left">The left <see cref="Vector{TNumber}"/>.</param>
     /// <param name="right">The right <see cref="Scalar{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The numeric type.</typeparam>
-    /// <returns>>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
+    /// <returns>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
     public static Vector<TNumber> Hypot<TNumber>(this Vector<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, IFloatingPointIeee754<TNumber>, IRootFunctions<TNumber>
     {
@@ -111,7 +111,7 @@ public static class HypotExtensions
     /// <param name="left">The left <see cref="Vector{TNumber}"/>.</param>
     /// <param name="right">>The right <see cref="Vector{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The numeric type.</typeparam>
-    /// <returns>>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
+    /// <returns>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
     public static Vector<TNumber> Hypot<TNumber>(this Vector<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, IFloatingPointIeee754<TNumber>, IRootFunctions<TNumber>
     {
@@ -128,7 +128,7 @@ public static class HypotExtensions
     /// <param name="left">The left <see cref="Vector{TNumber}"/>.</param>
     /// <param name="right">>The right <see cref="Matrix{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The numeric type.</typeparam>
-    /// <returns>>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
+    /// <returns>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
     public static Matrix<TNumber> Hypot<TNumber>(this Vector<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, IFloatingPointIeee754<TNumber>, IRootFunctions<TNumber>
     {
@@ -145,7 +145,7 @@ public static class HypotExtensions
     /// <param name="left">The left <see cref="Vector{TNumber}"/>.</param>
     /// <param name="right">>The right <see cref="Tensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The numeric type.</typeparam>
-    /// <returns>>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
+    /// <returns>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
     public static Tensor<TNumber> Hypot<TNumber>(this Vector<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, IFloatingPointIeee754<TNumber>, IRootFunctions<TNumber>
     {
@@ -196,7 +196,7 @@ public static class HypotExtensions
     /// <param name="left">The left <see cref="Matrix{TNumber}"/>.</param>
     /// <param name="right"> The right <see cref="Matrix{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The numeric type.</typeparam>
-    /// <returns>>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
+    /// <returns>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
     public static Matrix<TNumber> Hypot<TNumber>(this Matrix<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, IFloatingPointIeee754<TNumber>, IRootFunctions<TNumber>
     {
@@ -213,7 +213,7 @@ public static class HypotExtensions
     /// <param name="left">The left <see cref="Matrix{TNumber}"/>.</param>
     /// <param name="right"> The right <see cref="Tensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The numeric type.</typeparam>
-    /// <returns>>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
+    /// <returns>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
     public static Tensor<TNumber> Hypot<TNumber>(this Matrix<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, IFloatingPointIeee754<TNumber>, IRootFunctions<TNumber>
     {
@@ -230,7 +230,7 @@ public static class HypotExtensions
     /// <param name="left">The left <see cref="Tensor{TNumber}"/>.</param>
     /// <param name="right"> The right <see cref="Scalar{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The numeric type.</typeparam>
-    /// <returns>>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
+    /// <returns>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
     public static Tensor<TNumber> Hypot<TNumber>(this Tensor<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, IFloatingPointIeee754<TNumber>, IRootFunctions<TNumber>
     {
@@ -247,7 +247,7 @@ public static class HypotExtensions
     /// <param name="left">The left <see cref="Tensor{TNumber}"/>.</param>
     /// <param name="right"> The right <see cref="Vector{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The numeric type.</typeparam>
-    /// <returns>>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
+    /// <returns>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
     public static Tensor<TNumber> Hypot<TNumber>(this Tensor<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, IFloatingPointIeee754<TNumber>, IRootFunctions<TNumber>
     {
@@ -264,7 +264,7 @@ public static class HypotExtensions
     /// <param name="left">The left <see cref="Tensor{TNumber}"/>.</param>
     /// <param name="right"> The right <see cref="Matrix{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The numeric type.</typeparam>
-    /// <returns>>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
+    /// <returns>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
     public static Tensor<TNumber> Hypot<TNumber>(this Tensor<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, IFloatingPointIeee754<TNumber>, IRootFunctions<TNumber>
     {
@@ -281,7 +281,7 @@ public static class HypotExtensions
     /// <param name="left">The left <see cref="Tensor{TNumber}"/>.</param>
     /// <param name="right"> The right <see cref="Tensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The numeric type.</typeparam>
-    /// <returns>>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
+    /// <returns>The hypotenuse of the <paramref name="left"/> and <paramref name="right"/> values.</returns>
     public static Tensor<TNumber> Hypot<TNumber>(this Tensor<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, IFloatingPointIeee754<TNumber>, IRootFunctions<TNumber>
     {

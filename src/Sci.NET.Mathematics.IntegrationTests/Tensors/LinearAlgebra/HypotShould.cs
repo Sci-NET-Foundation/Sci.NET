@@ -111,8 +111,8 @@ public class HypotShould : IntegrationTestBase
     public void ReturnExpectedResult_GivenLargeFp32(IDevice device)
     {
         // Arrange
-        var left = Tensor.Random.Uniform<float>(new Shape(1000, 100), -100f, 100f, seed: 123456).ToTensor();
-        var right = Tensor.Random.Uniform<float>(new Shape(1000, 100), -100f, 100f, seed: 654321).ToTensor();
+        var left = Tensor.Random.Uniform(new Shape(1000, 100), -100f, 100f, seed: 123456).ToTensor();
+        var right = Tensor.Random.Uniform(new Shape(1000, 100), -100f, 100f, seed: 654321).ToTensor();
         var expected = Tensor.Zeros<float>(new Shape(1000, 100));
 
         for (var i = 0; i < left.Shape.ElementCount; i++)

@@ -10,7 +10,6 @@ using Newtonsoft.Json;
 using Sci.NET.Mathematics.Attributes;
 using Sci.NET.Mathematics.Exceptions;
 using Sci.NET.Mathematics.Numerics;
-using Sci.NET.Mathematics.Performance;
 using Sci.NET.Mathematics.Streams;
 using Sci.NET.Mathematics.Tensors.Serialization.Implementations.Safetensors;
 
@@ -21,7 +20,6 @@ internal class SerializationService : ISerializationService
     private const string SerializerVersion = "Sci.NET v0.2";
 
     [PreviewFeature]
-    [MethodImpl(ImplementationOptions.AggressiveOptimization)]
     public unsafe void SaveNpy<TNumber>(ITensor<TNumber> tensor, string path)
         where TNumber : unmanaged, INumber<TNumber>
     {

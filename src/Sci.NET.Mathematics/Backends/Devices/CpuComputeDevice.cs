@@ -11,7 +11,7 @@ namespace Sci.NET.Mathematics.Backends.Devices;
 /// A CPU compute device.
 /// </summary>
 [PublicAPI]
-public class CpuComputeDevice : IDevice
+public class CpuComputeDevice : ICpuComputeDevice
 {
     private static readonly CpuComputeDevice Instance = new(Guid.NewGuid(), CpuInfo.GetInfoString());
 
@@ -49,25 +49,6 @@ public class CpuComputeDevice : IDevice
     /// <inheritdoc />
     public DeviceCategory Category => DeviceCategory.Cpu;
 
-    /// <summary>
-    /// Gets the supported CPU compute device.
-    /// </summary>
-    /// <returns>The supported <see cref="CpuComputeDevice"/>.</returns>
-    public static CpuComputeDevice GetSupportedDevice()
-    {
-        if (IntrinsicsHelper.IsAvxFmaSupported())
-        {
-            return new AvxFmaCpuComputeDevice();
-        }
-
-        if (IntrinsicsHelper.IsAvxSupported())
-        {
-            return new AvxCpuComputeDevice();
-        }
-
-        return new CpuComputeDevice();
-    }
-
     /// <inheritdoc />
     public ITensorBackend GetTensorBackend()
     {
@@ -81,20 +62,11 @@ public class CpuComputeDevice : IDevice
     }
 
     /// <summary>
-    /// Checks if AVX is supported on the current CPU.
+    /// Checks if AVX2 (with FMA) is supported on the current CPU.
     /// </summary>
-    /// <returns>True if AVX is supported; otherwise, false.</returns>
-    public virtual bool IsAvxSupported()
+    /// <returns>True if AVX2/FMA is supported; otherwise, false.</returns>
+    public virtual bool IsAvx2Supported()
     {
-        return false;
-    }
-
-    /// <summary>
-    /// Checks if AVX FMA is supported on the current CPU.
-    /// </summary>
-    /// <returns>True if AVX FMA is supported; otherwise, false.</returns>
-    public virtual bool IsAvxFmaSupported()
-    {
-        return false;
+        return IntrinsicsHelper.IsAvx2Supported();
     }
 }

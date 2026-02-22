@@ -1336,6 +1336,9 @@ dotnet_diagnostic.CA2225.severity = none
 dotnet_diagnostic.SA1600.api_surface = public
 dotnet_diagnostic.SA1600.severity = warning
 
+# Partial elements should be documented
+dotnet_diagnostic.SA1601.severity = none
+
 # A call to an instance member of the local class or a base class is prefixed with 'this.', within a C# code file.
 dotnet_diagnostic.SX1101.severity = warning
 

@@ -47,8 +47,8 @@ public class ManagedInnerProductBenchmarks<TNumber>
             max = TNumber.CreateChecked(10);
         }
 
-        _left = Tensor.Random.Uniform<TNumber>(new Shape(Length), min, max, seed: 123456).ToVector();
-        _right = Tensor.Random.Uniform<TNumber>(new Shape(Length), min, max, seed: 654321).ToVector();
+        _left = Tensor.Random.Uniform(new Shape(Length), min, max, seed: 123456).ToVector();
+        _right = Tensor.Random.Uniform(new Shape(Length), min, max, seed: 654321).ToVector();
         _result = new Scalar<TNumber>(backend: ManagedTensorBackend.Instance);
         _linearAlgebraKernels = ManagedTensorBackend.Instance.LinearAlgebra;
     }

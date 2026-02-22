@@ -47,7 +47,7 @@ public class ManagedReductionBenchmarks<TNumber>
             max = TNumber.CreateChecked(10);
         }
 
-        _tensor = Tensor.Random.Uniform<TNumber>(Shape, min, max, seed: 123456).ToTensor();
+        _tensor = Tensor.Random.Uniform(Shape, min, max, seed: 123456).ToTensor();
     }
 
     [Benchmark]

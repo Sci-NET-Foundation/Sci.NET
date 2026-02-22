@@ -152,7 +152,6 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     }
 
     /// <inheritdoc />
-    [MethodImpl(ImplementationOptions.HotPath)]
     public unsafe T[] ToArray()
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
@@ -174,7 +173,6 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     }
 
     /// <inheritdoc />
-    [MethodImpl(ImplementationOptions.HotPath)]
     public unsafe void Fill(T value)
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
@@ -345,7 +343,6 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     }
 
     /// <inheritdoc />
-    [MethodImpl(ImplementationOptions.HotPath)]
     public IMemoryBlock<T> Copy()
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
@@ -356,7 +353,6 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     }
 
     /// <inheritdoc />
-    [MethodImpl(ImplementationOptions.FastPath)]
     public SystemMemoryBlock<T> ToSystemMemory()
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
@@ -365,7 +361,6 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     }
 
     /// <inheritdoc />
-    [MethodImpl(ImplementationOptions.FastPath)]
     public unsafe void CopyTo(IMemoryBlock<T> destination)
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
@@ -388,7 +383,6 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     }
 
     /// <inheritdoc cref="IValueEquatable{T}.Equals(object?)" />
-    [MethodImpl(ImplementationOptions.HotPath)]
     public override bool Equals(object? obj)
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
@@ -397,7 +391,6 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     }
 
     /// <inheritdoc cref="IValueEquatable{T}.Equals(T)" />
-    [MethodImpl(ImplementationOptions.HotPath)]
     public unsafe bool Equals(SystemMemoryBlock<T>? other)
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
@@ -407,7 +400,6 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     }
 
     /// <inheritdoc cref="IValueEquatable{T}.GetHashCode" />
-    [MethodImpl(ImplementationOptions.HotPath)]
     public override unsafe int GetHashCode()
     {
         return HashCode.Combine((int)((long)Pointer & uint.MaxValue), (int)((long)Pointer >> 32));
@@ -513,7 +505,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// Loads a vector from the memory block at the specified index.
     /// </summary>
     /// <param name="i">The index to load the vector from.</param>
-    /// <returns>>The loaded vector.</returns>
+    /// <returns>The loaded vector.</returns>
     [MethodImpl(ImplementationOptions.HotPath)]
     public unsafe Vector<T> LoadVector(long i)
     {
@@ -528,7 +520,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// Unsafely loads a vector from the memory block at the specified index without bounds checking.
     /// </summary>
     /// <param name="i">The index to load the vector from.</param>
-    /// <returns>>The loaded vector.</returns>
+    /// <returns>The loaded vector.</returns>
     [MethodImpl(ImplementationOptions.HotPath)]
     public unsafe Vector<T> UnsafeLoadUncheckedVector(long i)
     {

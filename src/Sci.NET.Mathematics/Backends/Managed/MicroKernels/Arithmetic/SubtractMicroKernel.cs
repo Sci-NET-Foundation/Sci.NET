@@ -6,19 +6,18 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
-using Sci.NET.Mathematics.Intrinsics;
 using Sci.NET.Mathematics.Performance;
 
 namespace Sci.NET.Mathematics.Backends.Managed.MicroKernels.Arithmetic;
 
 [SuppressMessage("Roslynator", "RCS1158:Static member in generic type should use a type parameter", Justification = "By design")]
-internal class SubtractMicroKernel<TNumber> : IBinaryOperation<TNumber>, IBinaryOperationAvx
+internal class SubtractMicroKernel<TNumber> : IBinaryOperation<TNumber>, IBinaryOperationAvx2
     where TNumber : unmanaged, INumber<TNumber>
 {
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static bool IsAvxSupported()
+    public static bool HasAvx2Implementation()
     {
-        return IntrinsicsHelper.IsAvxSupported();
+        return true;
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
@@ -28,13 +27,13 @@ internal class SubtractMicroKernel<TNumber> : IBinaryOperation<TNumber>, IBinary
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static float ApplyTailFp32(float left, float right)
+    public static float ApplyScalarFp32(float left, float right)
     {
         return left - right;
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static double ApplyTailFp64(double left, double right)
+    public static double ApplyScalarFp64(double left, double right)
     {
         return left - right;
     }

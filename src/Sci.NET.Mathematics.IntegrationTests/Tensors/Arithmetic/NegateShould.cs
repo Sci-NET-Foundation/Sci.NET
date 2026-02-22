@@ -17,7 +17,7 @@ public class NegateShould : IntegrationTestBase
     public void NegateTensor_GivenLargeFp32(IDevice device)
     {
         // Arrange
-        var tensor = Tensor.Random.Uniform<float>(new Shape(1000, 200), -1000f, 1000f, seed: 123456).ToTensor();
+        var tensor = Tensor.Random.Uniform(new Shape(1000, 200), -1000f, 1000f, seed: 123456).ToTensor();
         var expected = Tensor.FromArray<float>(tensor.Memory.ToArray().Select(x => -x).ToArray()).Reshape(tensor.Shape);
 
         tensor.To(device);
@@ -57,7 +57,7 @@ public class NegateShould : IntegrationTestBase
         NegateScalarTest<byte>(1, device).Should().Be(1);
         NegateScalarTest<short>(1, device).Should().Be(-1);
         NegateScalarTest<ushort>(1, device).Should().Be(1);
-        NegateScalarTest<int>(1, device).Should().Be(-1);
+        NegateScalarTest(1, device).Should().Be(-1);
         NegateScalarTest<uint>(1, device).Should().Be(1);
         NegateScalarTest<long>(1, device).Should().Be(-1);
         NegateScalarTest<ulong>(1, device).Should().Be(1);
@@ -67,34 +67,34 @@ public class NegateShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void NegateTensor_GivenVector(IDevice device)
     {
-        NegateVectorTest<BFloat16>(new BFloat16[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new BFloat16[] { -1, -2, -3 });
-        NegateVectorTest<float>(new float[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new float[] { -1, -2, -3 });
-        NegateVectorTest<double>(new double[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new double[] { -1, -2, -3 });
-        NegateVectorTest<sbyte>(new sbyte[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new sbyte[] { -1, -2, -3 });
-        NegateVectorTest<byte>(new byte[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new byte[] { 1, 2, 3 });
-        NegateVectorTest<short>(new short[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new short[] { -1, -2, -3 });
-        NegateVectorTest<ushort>(new ushort[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new ushort[] { 1, 2, 3 });
-        NegateVectorTest<int>(new int[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new int[] { -1, -2, -3 });
-        NegateVectorTest<uint>(new uint[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new uint[] { 1, 2, 3 });
-        NegateVectorTest<long>(new long[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new long[] { -1, -2, -3 });
-        NegateVectorTest<ulong>(new ulong[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new ulong[] { 1, 2, 3 });
+        NegateVectorTest(new BFloat16[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new BFloat16[] { -1, -2, -3 });
+        NegateVectorTest(new float[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new float[] { -1, -2, -3 });
+        NegateVectorTest(new double[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new double[] { -1, -2, -3 });
+        NegateVectorTest(new sbyte[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new sbyte[] { -1, -2, -3 });
+        NegateVectorTest(new byte[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new byte[] { 1, 2, 3 });
+        NegateVectorTest(new short[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new short[] { -1, -2, -3 });
+        NegateVectorTest(new ushort[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new ushort[] { 1, 2, 3 });
+        NegateVectorTest(new int[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new int[] { -1, -2, -3 });
+        NegateVectorTest(new uint[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new uint[] { 1, 2, 3 });
+        NegateVectorTest(new long[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new long[] { -1, -2, -3 });
+        NegateVectorTest(new ulong[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new ulong[] { 1, 2, 3 });
     }
 
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void NegateTensor_GivenMatrix(IDevice device)
     {
-        NegateMatrixTest<BFloat16>(new BFloat16[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new BFloat16[,] { { -1, -2, -3 }, { -4, -5, -6 } });
-        NegateMatrixTest<float>(new float[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new float[,] { { -1, -2, -3 }, { -4, -5, -6 } });
-        NegateMatrixTest<double>(new double[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new double[,] { { -1, -2, -3 }, { -4, -5, -6 } });
-        NegateMatrixTest<sbyte>(new sbyte[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new sbyte[,] { { -1, -2, -3 }, { -4, -5, -6 } });
-        NegateMatrixTest<byte>(new byte[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new byte[,] { { 1, 2, 3 }, { 4, 5, 6 } });
-        NegateMatrixTest<short>(new short[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new short[,] { { -1, -2, -3 }, { -4, -5, -6 } });
-        NegateMatrixTest<ushort>(new ushort[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new ushort[,] { { 1, 2, 3 }, { 4, 5, 6 } });
-        NegateMatrixTest<int>(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new int[,] { { -1, -2, -3 }, { -4, -5, -6 } });
-        NegateMatrixTest<uint>(new uint[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new uint[,] { { 1, 2, 3 }, { 4, 5, 6 } });
-        NegateMatrixTest<long>(new long[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new long[,] { { -1, -2, -3 }, { -4, -5, -6 } });
-        NegateMatrixTest<ulong>(new ulong[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new ulong[,] { { 1, 2, 3 }, { 4, 5, 6 } });
+        NegateMatrixTest(new BFloat16[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new BFloat16[,] { { -1, -2, -3 }, { -4, -5, -6 } });
+        NegateMatrixTest(new float[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new float[,] { { -1, -2, -3 }, { -4, -5, -6 } });
+        NegateMatrixTest(new double[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new double[,] { { -1, -2, -3 }, { -4, -5, -6 } });
+        NegateMatrixTest(new sbyte[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new sbyte[,] { { -1, -2, -3 }, { -4, -5, -6 } });
+        NegateMatrixTest(new byte[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new byte[,] { { 1, 2, 3 }, { 4, 5, 6 } });
+        NegateMatrixTest(new short[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new short[,] { { -1, -2, -3 }, { -4, -5, -6 } });
+        NegateMatrixTest(new ushort[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new ushort[,] { { 1, 2, 3 }, { 4, 5, 6 } });
+        NegateMatrixTest(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new int[,] { { -1, -2, -3 }, { -4, -5, -6 } });
+        NegateMatrixTest(new uint[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new uint[,] { { 1, 2, 3 }, { 4, 5, 6 } });
+        NegateMatrixTest(new long[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new long[,] { { -1, -2, -3 }, { -4, -5, -6 } });
+        NegateMatrixTest(new ulong[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new ulong[,] { { 1, 2, 3 }, { 4, 5, 6 } });
     }
 
     private static Array NegateMatrixTest<TNumber>(TNumber[,] numbers, IDevice device)
@@ -112,17 +112,17 @@ public class NegateShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void NegateTensor_GivenTensor(IDevice device)
     {
-        NegateTensorTest<BFloat16>(new BFloat16[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new BFloat16[,,] { { { -1, -2, -3 }, { -4, -5, -6 } }, { { -7, -8, -9 }, { -10, -11, -12 } } });
-        NegateTensorTest<float>(new float[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new float[,,] { { { -1, -2, -3 }, { -4, -5, -6 } }, { { -7, -8, -9 }, { -10, -11, -12 } } });
-        NegateTensorTest<double>(new double[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new double[,,] { { { -1, -2, -3 }, { -4, -5, -6 } }, { { -7, -8, -9 }, { -10, -11, -12 } } });
-        NegateTensorTest<sbyte>(new sbyte[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new sbyte[,,] { { { -1, -2, -3 }, { -4, -5, -6 } }, { { -7, -8, -9 }, { -10, -11, -12 } } });
-        NegateTensorTest<byte>(new byte[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new byte[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } });
-        NegateTensorTest<short>(new short[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new short[,,] { { { -1, -2, -3 }, { -4, -5, -6 } }, { { -7, -8, -9 }, { -10, -11, -12 } } });
-        NegateTensorTest<ushort>(new ushort[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new ushort[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } });
-        NegateTensorTest<int>(new int[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new int[,,] { { { -1, -2, -3 }, { -4, -5, -6 } }, { { -7, -8, -9 }, { -10, -11, -12 } } });
-        NegateTensorTest<uint>(new uint[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new uint[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } });
-        NegateTensorTest<long>(new long[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new long[,,] { { { -1, -2, -3 }, { -4, -5, -6 } }, { { -7, -8, -9 }, { -10, -11, -12 } } });
-        NegateTensorTest<ulong>(new ulong[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new ulong[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } });
+        NegateTensorTest(new BFloat16[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new BFloat16[,,] { { { -1, -2, -3 }, { -4, -5, -6 } }, { { -7, -8, -9 }, { -10, -11, -12 } } });
+        NegateTensorTest(new float[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new float[,,] { { { -1, -2, -3 }, { -4, -5, -6 } }, { { -7, -8, -9 }, { -10, -11, -12 } } });
+        NegateTensorTest(new double[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new double[,,] { { { -1, -2, -3 }, { -4, -5, -6 } }, { { -7, -8, -9 }, { -10, -11, -12 } } });
+        NegateTensorTest(new sbyte[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new sbyte[,,] { { { -1, -2, -3 }, { -4, -5, -6 } }, { { -7, -8, -9 }, { -10, -11, -12 } } });
+        NegateTensorTest(new byte[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new byte[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } });
+        NegateTensorTest(new short[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new short[,,] { { { -1, -2, -3 }, { -4, -5, -6 } }, { { -7, -8, -9 }, { -10, -11, -12 } } });
+        NegateTensorTest(new ushort[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new ushort[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } });
+        NegateTensorTest(new int[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new int[,,] { { { -1, -2, -3 }, { -4, -5, -6 } }, { { -7, -8, -9 }, { -10, -11, -12 } } });
+        NegateTensorTest(new uint[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new uint[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } });
+        NegateTensorTest(new long[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new long[,,] { { { -1, -2, -3 }, { -4, -5, -6 } }, { { -7, -8, -9 }, { -10, -11, -12 } } });
+        NegateTensorTest(new ulong[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } }, device).Should().BeEquivalentTo(new ulong[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } });
     }
 
     private static TNumber NegateScalarTest<TNumber>(TNumber number, IDevice device)

@@ -53,9 +53,9 @@ public class ManagedUnaryArithmeticBenchmarks<TNumber>
         }
 
         _arithmeticKernels = ManagedTensorBackend.Instance.Arithmetic;
-        _tensor = Tensor.Random.Uniform<TNumber>(Shape, min, max, seed: 123456).ToTensor();
+        _tensor = Tensor.Random.Uniform(Shape, min, max, seed: 123456).ToTensor();
         _result = Tensor.Zeros<TNumber>(_tensor.Shape).ToTensor();
-        _gradient = Tensor.Random.Uniform<TNumber>(Shape, min, max, seed: 654321).ToTensor();
+        _gradient = Tensor.Random.Uniform(Shape, min, max, seed: 654321).ToTensor();
     }
 
     [Benchmark]

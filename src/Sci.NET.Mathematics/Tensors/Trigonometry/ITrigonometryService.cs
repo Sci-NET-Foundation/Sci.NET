@@ -152,7 +152,7 @@ public interface ITrigonometryService
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the inverse hyperbolic sine of.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The inverse hyperbolic sine of the <see cref="ITensor{TNumber}"/>.</returns>
-    public ITensor<TNumber> ASinh<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Asinh<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
@@ -161,7 +161,7 @@ public interface ITrigonometryService
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the inverse hyperbolic cosine of.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The inverse hyperbolic cosine of the <see cref="ITensor{TNumber}"/>.</returns>
-    public ITensor<TNumber> ACosh<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Acosh<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
@@ -170,7 +170,7 @@ public interface ITrigonometryService
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the inverse hyperbolic tangent of.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The inverse hyperbolic tangent of the <see cref="ITensor{TNumber}"/>.</returns>
-    public ITensor<TNumber> ATanh<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Atanh<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
@@ -206,7 +206,7 @@ public interface ITrigonometryService
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the inverse hyperbolic sine squared of.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The inverse hyperbolic sine squared of the <see cref="ITensor{TNumber}"/>.</returns>
-    public ITensor<TNumber> ASinh2<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Asinh2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
@@ -215,7 +215,7 @@ public interface ITrigonometryService
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the inverse hyperbolic cosine squared of.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The inverse hyperbolic cosine squared of the <see cref="ITensor{TNumber}"/>.</returns>
-    public ITensor<TNumber> ACosh2<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Acosh2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
@@ -224,7 +224,7 @@ public interface ITrigonometryService
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the inverse hyperbolic tangent squared of.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The inverse hyperbolic tangent squared of the <see cref="ITensor{TNumber}"/>.</returns>
-    public ITensor<TNumber> ATanh2<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Atanh2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
@@ -368,7 +368,7 @@ public interface ITrigonometryService
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the inverse cosecant squared of.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The inverse cosecant squared of the <see cref="ITensor{TNumber}"/>.</returns>
-    public ITensor<TNumber> ACsc2<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Acsc2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
@@ -377,7 +377,7 @@ public interface ITrigonometryService
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the inverse secant squared of.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The inverse secant squared of the <see cref="ITensor{TNumber}"/>.</returns>
-    public ITensor<TNumber> ASec2<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Asec2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
@@ -386,7 +386,7 @@ public interface ITrigonometryService
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the inverse cotangent squared of.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The inverse cotangent squared of the <see cref="ITensor{TNumber}"/>.</returns>
-    public ITensor<TNumber> ACot2<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Acot2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
@@ -395,7 +395,7 @@ public interface ITrigonometryService
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the inverse hyperbolic cosecant of.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The inverse hyperbolic cosecant of the <see cref="ITensor{TNumber}"/>.</returns>
-    public ITensor<TNumber> ACsch<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Acsch<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
@@ -404,7 +404,7 @@ public interface ITrigonometryService
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the inverse hyperbolic secant of.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The inverse hyperbolic secant of the <see cref="ITensor{TNumber}"/>.</returns>
-    public ITensor<TNumber> ASech<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Asech<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
@@ -413,7 +413,7 @@ public interface ITrigonometryService
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the inverse hyperbolic cotangent of.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The inverse hyperbolic cotangent of the <see cref="ITensor{TNumber}"/>.</returns>
-    public ITensor<TNumber> ACoth<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Acoth<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
@@ -422,7 +422,7 @@ public interface ITrigonometryService
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the inverse hyperbolic cosecant squared of.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The inverse hyperbolic cosecant squared of the <see cref="ITensor{TNumber}"/>.</returns>
-    public ITensor<TNumber> ACsch2<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Acsch2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
@@ -431,7 +431,7 @@ public interface ITrigonometryService
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the inverse hyperbolic secant squared of.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The inverse hyperbolic secant squared of the <see cref="ITensor{TNumber}"/>.</returns>
-    public ITensor<TNumber> ASech2<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Asech2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
@@ -440,6 +440,6 @@ public interface ITrigonometryService
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the inverse hyperbolic cotangent squared of.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The inverse hyperbolic cotangent squared of the <see cref="ITensor{TNumber}"/>.</returns>
-    public ITensor<TNumber> ACoth2<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Acoth2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>;
 }

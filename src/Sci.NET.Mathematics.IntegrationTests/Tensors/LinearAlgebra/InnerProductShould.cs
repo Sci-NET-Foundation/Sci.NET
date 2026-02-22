@@ -79,8 +79,8 @@ public class InnerProductShould : IntegrationTestBase
     public void ReturnCorrectResult_GivenLargeFp32(IDevice device)
     {
         // Arrange
-        var left = Tensor.Random.Uniform<float>(new Shape(50000), -1.0f, 1.0f).ToVector();
-        var right = Tensor.Random.Uniform<float>(new Shape(50000), -1.0f, 1.0f).ToVector();
+        var left = Tensor.Random.Uniform(new Shape(50000), -1.0f, 1.0f).ToVector();
+        var right = Tensor.Random.Uniform(new Shape(50000), -1.0f, 1.0f).ToVector();
 
         var expected = 0.0f;
 

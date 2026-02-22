@@ -12,8 +12,7 @@ namespace Sci.NET.Mathematics.Backends.Managed.MicroKernels.Exponential;
 
 [SuppressMessage("Roslynator", "RCS1158:Static member in generic type should use a type parameter", Justification = "By design")]
 internal class PowBackwardMicroKernel<TNumber> : IUnaryParameterizedOperation<PowBackwardMicroKernel<TNumber>, TNumber>,
-    IUnaryParameterizedOperationAvx<PowBackwardMicroKernel<TNumber>>,
-    IUnaryParameterizedOperationAvxFma<PowBackwardMicroKernel<TNumber>>
+    IUnaryParameterizedOperationAvx2<PowBackwardMicroKernel<TNumber>>
     where TNumber : unmanaged, INumber<TNumber>, IPowerFunctions<TNumber>
 {
     private readonly MicroKernelParameter<TNumber> _exponentParameter;
@@ -23,14 +22,7 @@ internal class PowBackwardMicroKernel<TNumber> : IUnaryParameterizedOperation<Po
         _exponentParameter = exponentParameter;
     }
 
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static bool IsAvxSupported()
-    {
-        return false;
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static bool IsAvxFmaSupported()
+    public static bool IsAvx2Supported()
     {
         return false;
     }
@@ -54,25 +46,13 @@ internal class PowBackwardMicroKernel<TNumber> : IUnaryParameterizedOperation<Po
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> ApplyAvxFp32(Vector256<float> input, PowBackwardMicroKernel<TNumber> instance)
+    public static Vector256<float> ApplyAvx2Fp32(Vector256<float> input, PowBackwardMicroKernel<TNumber> instance)
     {
         throw new IntrinsicTypeNotImplementedException();
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> ApplyAvxFp64(Vector256<double> input, PowBackwardMicroKernel<TNumber> instance)
-    {
-        throw new IntrinsicTypeNotImplementedException();
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> ApplyAvxFmaFp32(Vector256<float> input, PowBackwardMicroKernel<TNumber> instance)
-    {
-        throw new IntrinsicTypeNotImplementedException();
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> ApplyAvxFmaFp64(Vector256<double> input, PowBackwardMicroKernel<TNumber> instance)
+    public static Vector256<double> ApplyAvx2Fp64(Vector256<double> input, PowBackwardMicroKernel<TNumber> instance)
     {
         throw new IntrinsicTypeNotImplementedException();
     }

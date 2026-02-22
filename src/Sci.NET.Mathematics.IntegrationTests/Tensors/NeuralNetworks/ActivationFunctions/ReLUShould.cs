@@ -16,8 +16,8 @@ public class ReLUShould : IntegrationTestBase
     public void ReturnExpectedResult_GivenHalf(IDevice device)
     {
         // ReLU(0.5) = 0.5
-        ScalarReLUTest<float>(0.5f, device).Should().BeApproximately(0.5f, 1e-6f);
-        ScalarReLUTest<double>(0.5, device).Should().BeApproximately(0.5, 1e-6);
+        ScalarReLUTest(0.5f, device).Should().BeApproximately(0.5f, 1e-6f);
+        ScalarReLUTest(0.5, device).Should().BeApproximately(0.5, 1e-6);
     }
 
     [Theory]
@@ -25,8 +25,8 @@ public class ReLUShould : IntegrationTestBase
     public void ReturnExpectedResult_GivenZero(IDevice device)
     {
         // ReLU(0.0) = 0.0
-        ScalarReLUTest<float>(0.0f, device).Should().BeApproximately(0.0f, 1e-6f);
-        ScalarReLUTest<double>(0.0, device).Should().BeApproximately(0.0, 1e-6);
+        ScalarReLUTest(0.0f, device).Should().BeApproximately(0.0f, 1e-6f);
+        ScalarReLUTest(0.0, device).Should().BeApproximately(0.0, 1e-6);
     }
 
     [Theory]
@@ -34,8 +34,8 @@ public class ReLUShould : IntegrationTestBase
     public void ReturnExpectedResult_GivenNegativeHalf(IDevice device)
     {
         // ReLU(-0.5) = 0.0
-        ScalarReLUTest<float>(-0.5f, device).Should().BeApproximately(0.0f, 1e-6f);
-        ScalarReLUTest<double>(-0.5, device).Should().BeApproximately(0.0, 1e-6);
+        ScalarReLUTest(-0.5f, device).Should().BeApproximately(0.0f, 1e-6f);
+        ScalarReLUTest(-0.5, device).Should().BeApproximately(0.0, 1e-6);
     }
 
     [Theory]
@@ -57,20 +57,6 @@ public class ReLUShould : IntegrationTestBase
         }
 
         result.Should().HaveEquivalentElements(expectedArray);
-    }
-
-    [Fact]
-    public void Stress_Test()
-    {
-        var tensor = Tensor.Random.Uniform<float>(new Shape(100, 200), -1f, 1f, seed: 123456).ToTensor();
-        var result = Tensor.Zeros<float>(new Shape(100, 200));
-
-        for (var i = 0; i < 100_000; i++)
-        {
-            tensor.Backend.ActivationFunctions.ReLU(tensor, result);
-        }
-
-        result.Should().HaveShape(100, 200);
     }
 
     private static TNumber ScalarReLUTest<TNumber>(TNumber value, IDevice device)

@@ -2,1703 +2,1023 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
-using Sci.NET.Mathematics.Concurrency;
-using Sci.NET.Mathematics.Memory;
+using Sci.NET.Mathematics.Backends.Devices;
+using Sci.NET.Mathematics.Backends.Managed.Iterators;
+using Sci.NET.Mathematics.Backends.Managed.MicroKernels.Arithmetic;
+using Sci.NET.Mathematics.Backends.Managed.MicroKernels.Exponential;
+using Sci.NET.Mathematics.Backends.Managed.MicroKernels.Trigonometry;
+using Sci.NET.Mathematics.Backends.Managed.MicroKernels.Trigonometry.Backwards;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends.Managed;
 
 internal class ManagedTrigonometryKernels : ITrigonometryKernels
 {
-    public void Sin<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Sin<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.Sin(input[i]));
+        ManagedUnaryOperationIterator.Apply<SinMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Cos<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Cos<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.Cos(input[i]));
+        ManagedUnaryOperationIterator.Apply<CosMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Tan<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Tan<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.Tan(input[i]));
+        ManagedUnaryOperationIterator.Apply<TanMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Sin2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Sin2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var sin = TNumber.Sin(input[i]);
-                output[i] = sin * sin;
-            });
+        ManagedUnaryOperationIterator.Apply<SinMicroKernel<TNumber>, SquareMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Cos2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Cos2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var cos = TNumber.Cos(input[i]);
-                output[i] = cos * cos;
-            });
+        ManagedUnaryOperationIterator.Apply<CosMicroKernel<TNumber>, SquareMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Tan2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Tan2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var tan = TNumber.Tan(input[i]);
-                output[i] = tan * tan;
-            });
+        ManagedUnaryOperationIterator.Apply<TanMicroKernel<TNumber>, SquareMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Sinh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Sinh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.Sinh(input[i]));
+        ManagedUnaryOperationIterator.Apply<SinhMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Cosh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Cosh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.Cosh(input[i]));
+        ManagedUnaryOperationIterator.Apply<CoshMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Tanh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Tanh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.Tanh(input[i]));
+        ManagedUnaryOperationIterator.Apply<TanhMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Sinh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Sinh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var sinh = TNumber.Sinh(input[i]);
-                output[i] = sinh * sinh;
-            });
+        ManagedUnaryOperationIterator.Apply<SinhMicroKernel<TNumber>, SquareMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Cosh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Cosh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var cosh = TNumber.Cosh(input[i]);
-                output[i] = cosh * cosh;
-            });
+        ManagedUnaryOperationIterator.Apply<CoshMicroKernel<TNumber>, SquareMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Tanh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Tanh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var tanh = TNumber.Tanh(input[i]);
-                output[i] = tanh * tanh;
-            });
+        ManagedUnaryOperationIterator.Apply<TanhMicroKernel<TNumber>, SquareMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Asin<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Asin<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.Asin(input[i]));
+        ManagedUnaryOperationIterator.Apply<ASinMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Acos<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Acos<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = input[i] < -TNumber.One || TNumber.NaN > TNumber.One ? TNumber.NaN : TNumber.Acos(input[i]));
+        ManagedUnaryOperationIterator.Apply<ACosMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Atan<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Atan<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.Atan(input[i]));
+        ManagedUnaryOperationIterator.Apply<ATanMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Asin2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Asin2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var asin = TNumber.Asin(input[i]);
-                output[i] = asin * asin;
-            });
+        ManagedUnaryOperationIterator.Apply<ASinMicroKernel<TNumber>, SquareMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Acos2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Acos2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var acos = TNumber.Acos(input[i]);
-                output[i] = acos * acos;
-            });
+        ManagedUnaryOperationIterator.Apply<ACosMicroKernel<TNumber>, SquareMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Atan2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Atan2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var atan = TNumber.Atan(input[i]);
-                output[i] = atan * atan;
-            });
+        ManagedUnaryOperationIterator.Apply<ATanMicroKernel<TNumber>, SquareMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Asinh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Asinh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.Asinh(input[i]));
+        ManagedUnaryOperationIterator.Apply<ASinhMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Acosh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Acosh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.Acosh(input[i]));
+        ManagedUnaryOperationIterator.Apply<ACoshMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Atanh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Atanh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.Atanh(input[i]));
+        ManagedUnaryOperationIterator.Apply<ATanhMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Asinh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Asinh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var asinh = TNumber.Asinh(input[i]);
-                output[i] = asinh * asinh;
-            });
+        ManagedUnaryOperationIterator.Apply<ASinhMicroKernel<TNumber>, SquareMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Acosh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Acosh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var acosh = TNumber.Acosh(input[i]);
-                output[i] = acosh * acosh;
-            });
+        ManagedUnaryOperationIterator.Apply<ACoshMicroKernel<TNumber>, SquareMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Atanh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Atanh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var atanh = TNumber.Atanh(input[i]);
-                output[i] = atanh * atanh;
-            });
+        ManagedUnaryOperationIterator.Apply<ATanhMicroKernel<TNumber>, SquareMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Csc<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Csc<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.One / TNumber.Sin(input[i]));
+        ManagedUnaryOperationIterator.Apply<SinMicroKernel<TNumber>, ReciprocalMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Sec<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Sec<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.One / TNumber.Cos(input[i]));
+        ManagedUnaryOperationIterator.Apply<CosMicroKernel<TNumber>, ReciprocalMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Cot<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Cot<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                // TODO - Consider performance/accuracy of -tan(x+pi/2) vs cos(x)/sin(x), due to boxing/etc.
-                var (sin, cos) = TNumber.SinCos(input[i]);
-
-                output[i] = cos / sin;
-            });
+        ManagedUnaryOperationIterator.Apply<TanMicroKernel<TNumber>, ReciprocalMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Csc2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Csc2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var sin = TNumber.Sin(input[i]);
-                output[i] = TNumber.One / (sin * sin);
-            });
+        ManagedUnaryOperationIterator.Apply<SinMicroKernel<TNumber>, SquareMicroKernel<TNumber>, ReciprocalMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Sec2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Sec2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var cos = TNumber.Cos(input[i]);
-                output[i] = TNumber.One / (cos * cos);
-            });
+        ManagedUnaryOperationIterator.Apply<CosMicroKernel<TNumber>, SquareMicroKernel<TNumber>, ReciprocalMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Cot2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Cot2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                // TODO - Consider performance/accuracy of -tan(x+pi/2) vs cos(x)/sin(x), due to boxing/etc.
-                var (sin, cos) = TNumber.SinCos(input[i]);
-                var cosOverSin = cos / sin;
-
-                output[i] = cosOverSin * cosOverSin;
-            });
+        ManagedUnaryOperationIterator.Apply<CotMicroKernel<TNumber>, SquareMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Csch<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Csch<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.One / TNumber.Sinh(input[i]));
+        ManagedUnaryOperationIterator.Apply<SinhMicroKernel<TNumber>, ReciprocalMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Sech<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Sech<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.One / TNumber.Cosh(input[i]));
+        ManagedUnaryOperationIterator.Apply<CoshMicroKernel<TNumber>, ReciprocalMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Coth<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Coth<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                // TODO - Consider performance/accuracy of -tanh(x+pi/2) vs cosh(x)/sinh(x), due to boxing/etc.
-                var sinh = TNumber.Sinh(input[i]);
-                var cosh = TNumber.Cosh(input[i]);
-
-                output[i] = cosh / sinh;
-            });
+        ManagedUnaryOperationIterator.Apply<CothMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Csch2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Csch2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var sinh = TNumber.Sinh(input[i]);
-                output[i] = TNumber.One / (sinh * sinh);
-            });
+        ManagedUnaryOperationIterator.Apply<SinhMicroKernel<TNumber>, SquareMicroKernel<TNumber>, ReciprocalMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Sech2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Sech2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var cosh = TNumber.Cosh(input[i]);
-                output[i] = TNumber.One / (cosh * cosh);
-            });
+        ManagedUnaryOperationIterator.Apply<CoshMicroKernel<TNumber>, SquareMicroKernel<TNumber>, ReciprocalMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Coth2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Coth2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                // TODO - Consider performance/accuracy of -tanh(x+pi/2) vs cosh(x)/sinh(x), due to boxing/etc.
-                var sinh = TNumber.Sinh(input[i]);
-                var cosh = TNumber.Cosh(input[i]);
-                var coshOverSinh = cosh / sinh;
-
-                output[i] = coshOverSinh * coshOverSinh;
-            });
+        ManagedUnaryOperationIterator.Apply<CothMicroKernel<TNumber>, SquareMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Acsc<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Acsc<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.Asin(TNumber.One / input[i]));
+        ManagedUnaryOperationIterator.Apply<ReciprocalMicroKernel<TNumber>, ASinMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Asec<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Asec<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.Acos(TNumber.One / input[i]));
+        ManagedUnaryOperationIterator.Apply<ReciprocalMicroKernel<TNumber>, ACosMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Acot<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Acot<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.Atan(TNumber.One / input[i]));
+        ManagedUnaryOperationIterator.Apply<ReciprocalMicroKernel<TNumber>, ATanMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Acsc2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Acsc2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var acsc = TNumber.Asin(TNumber.One / input[i]);
-                output[i] = acsc * acsc;
-            });
+        ManagedUnaryOperationIterator.Apply<ReciprocalMicroKernel<TNumber>, ASinMicroKernel<TNumber>, SquareMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Asec2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Asec2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var asec = TNumber.Acos(TNumber.One / input[i]);
-                output[i] = asec * asec;
-            });
+        ManagedUnaryOperationIterator.Apply<ReciprocalMicroKernel<TNumber>, ACosMicroKernel<TNumber>, SquareMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Acot2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Acot2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var acot = TNumber.Atan(TNumber.One / input[i]);
-                output[i] = acot * acot;
-            });
+        ManagedUnaryOperationIterator.Apply<ReciprocalMicroKernel<TNumber>, ATanMicroKernel<TNumber>, SquareMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Acsch<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Acsch<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.Asinh(TNumber.One / input[i]));
+        ManagedUnaryOperationIterator.Apply<ReciprocalMicroKernel<TNumber>, ASinhMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Asech<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Asech<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.Acosh(TNumber.One / input[i]));
+        ManagedUnaryOperationIterator.Apply<ReciprocalMicroKernel<TNumber>, ACoshMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Acoth<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Acoth<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.Atanh(TNumber.One / input[i]));
+        ManagedUnaryOperationIterator.Apply<ReciprocalMicroKernel<TNumber>, ATanhMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Acsch2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Acsch2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var acsch = TNumber.Asinh(TNumber.One / input[i]);
-                output[i] = acsch * acsch;
-            });
+        ManagedUnaryOperationIterator.Apply<ReciprocalMicroKernel<TNumber>, ASinhMicroKernel<TNumber>, SquareMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Asech2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Asech2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var asech = TNumber.Acosh(TNumber.One / input[i]);
-                output[i] = asech * asech;
-            });
+        ManagedUnaryOperationIterator.Apply<ReciprocalMicroKernel<TNumber>, ACoshMicroKernel<TNumber>, SquareMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Acoth2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+    public unsafe void Acoth2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var acoth = TNumber.Atanh(TNumber.One / input[i]);
-                output[i] = acoth * acoth;
-            });
+        ManagedUnaryOperationIterator.Apply<ReciprocalMicroKernel<TNumber>, ATanhMicroKernel<TNumber>, SquareMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            tensor.Shape.ElementCount,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void SinBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void SinBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = grad[i] * TNumber.Cos(input[i]));
+        ManagedBinaryOperationIterator.Apply<SinBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void CosBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void CosBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = grad[i] * -TNumber.Sin(input[i]));
+        ManagedBinaryOperationIterator.Apply<CosBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void TanBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void TanBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var cos = TNumber.Cos(input[i]);
-                output[i] = grad[i] * (TNumber.One / (cos * cos));
-            });
+        ManagedBinaryOperationIterator.Apply<TanBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Sin2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Sin2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var (sin, cos) = TNumber.SinCos(input[i]);
-                var two = TNumber.One + TNumber.One;
-                output[i] = grad[i] * two * sin * cos;
-            });
+        ManagedBinaryOperationIterator.Apply<Sin2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Cos2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Cos2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var (sin, cos) = TNumber.SinCos(input[i]);
-                var two = TNumber.One + TNumber.One;
-                output[i] = grad[i] * -two * sin * cos;
-            });
+        ManagedBinaryOperationIterator.Apply<Cos2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Tan2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Tan2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var tan = TNumber.Tan(input[i]);
-                var cos = TNumber.Cos(input[i]);
-                var sec2 = TNumber.One / (cos * cos);
-                var two = TNumber.One + TNumber.One;
-                output[i] = grad[i] * two * tan * sec2;
-            });
+        ManagedBinaryOperationIterator.Apply<Tan2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void SinhBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void SinhBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var cosh = TNumber.Cosh(input[i]);
-                output[i] = grad[i] * cosh;
-            });
+        ManagedBinaryOperationIterator.Apply<SinhBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void CoshBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void CoshBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var sinh = TNumber.Sinh(input[i]);
-                output[i] = grad[i] * sinh;
-            });
+        ManagedBinaryOperationIterator.Apply<CoshBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void TanhBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void TanhBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var tanh = TNumber.Tanh(input[i]);
-                output[i] = grad[i] * (TNumber.One - (tanh * tanh));
-            });
+        ManagedBinaryOperationIterator.Apply<TanhBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Sinh2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Sinh2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var sinh = TNumber.Sinh(input[i]);
-                var cosh = TNumber.Cosh(input[i]);
-                var two = TNumber.One + TNumber.One;
-                output[i] = grad[i] * two * sinh * cosh;
-            });
+        ManagedBinaryOperationIterator.Apply<Sinh2Cosh2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Cosh2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Cosh2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var sinh = TNumber.Sinh(input[i]);
-                var cosh = TNumber.Cosh(input[i]);
-                var two = TNumber.One + TNumber.One;
-                output[i] = grad[i] * two * sinh * cosh;
-            });
+        ManagedBinaryOperationIterator.Apply<Sinh2Cosh2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Tanh2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Tanh2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var tanh = TNumber.Tanh(input[i]);
-                var cosh = TNumber.Cosh(input[i]);
-                var sech2 = TNumber.One / (cosh * cosh);
-                var two = TNumber.One + TNumber.One;
-                output[i] = grad[i] * two * tanh * sech2;
-            });
+        ManagedBinaryOperationIterator.Apply<Tanh2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void AsinBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void AsinBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var sqrt = TNumber.Sqrt(TNumber.One - (input[i] * input[i]));
-                output[i] = grad[i] * (TNumber.One / sqrt);
-            });
+        ManagedBinaryOperationIterator.Apply<AsinBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void AcosBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void AcosBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var sqrt = TNumber.Sqrt(TNumber.One - (input[i] * input[i]));
-                output[i] = grad[i] * (-TNumber.One / sqrt);
-            });
+        ManagedBinaryOperationIterator.Apply<AcosBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void AtanBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void AtanBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var onePlusX2 = TNumber.One + (input[i] * input[i]);
-                output[i] = grad[i] * (TNumber.One / onePlusX2);
-            });
+        ManagedBinaryOperationIterator.Apply<AtanBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Asin2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Asin2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var two = TNumber.One + TNumber.One;
-                var asin = TNumber.Asin(input[i]);
-                var sqrt1MinusX2 = TNumber.Sqrt(TNumber.One - (input[i] * input[i]));
-
-                output[i] = grad[i] * (two * asin / sqrt1MinusX2);
-            });
+        ManagedBinaryOperationIterator.Apply<Asin2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Acos2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Acos2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var two = TNumber.One + TNumber.One;
-                var acos = TNumber.Acos(input[i]);
-                var sqrt1MinusX2 = TNumber.Sqrt(TNumber.One - (input[i] * input[i]));
-
-                output[i] = grad[i] * (-two * acos / sqrt1MinusX2);
-            });
+        ManagedBinaryOperationIterator.Apply<Acos2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Atan2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Atan2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var two = TNumber.One + TNumber.One;
-                var atan = TNumber.Atan(input[i]);
-                var twoAtan = two * atan;
-                var x2Plus1 = (input[i] * input[i]) + TNumber.One;
-
-                output[i] = grad[i] * (twoAtan / x2Plus1);
-            });
+        ManagedBinaryOperationIterator.Apply<Atan2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void AsinhBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void AsinhBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var sqrt = TNumber.Sqrt(TNumber.One + (input[i] * input[i]));
-                output[i] = grad[i] * (TNumber.One / sqrt);
-            });
+        ManagedBinaryOperationIterator.Apply<AsinhBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void AcoshBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void AcoshBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var sqrt = TNumber.Sqrt((input[i] * input[i]) - TNumber.One);
-                output[i] = grad[i] * (TNumber.One / sqrt);
-            });
+        ManagedBinaryOperationIterator.Apply<AcoshBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void AtanhBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void AtanhBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var oneMinusX2 = TNumber.One - (input[i] * input[i]);
-                output[i] = grad[i] * (TNumber.One / oneMinusX2);
-            });
+        ManagedBinaryOperationIterator.Apply<AtanhBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Asinh2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Asinh2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var two = TNumber.One + TNumber.One;
-                var asinh = TNumber.Asinh(input[i]);
-                var sqrtOnePlusX2 = TNumber.Sqrt(TNumber.One + (input[i] * input[i]));
-
-                output[i] = grad[i] * (two * asinh / sqrtOnePlusX2);
-            });
+        ManagedBinaryOperationIterator.Apply<Asinh2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Acosh2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Acosh2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var two = TNumber.One + TNumber.One;
-                var acosh = TNumber.Acosh(input[i]);
-                var sqrtX2MinusOne = TNumber.Sqrt((input[i] * input[i]) - TNumber.One);
-
-                output[i] = grad[i] * (two * acosh / sqrtX2MinusOne);
-            });
+        ManagedBinaryOperationIterator.Apply<Acosh2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Atanh2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Atanh2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var two = TNumber.One + TNumber.One;
-                var atanh = TNumber.Atanh(input[i]);
-                var oneMinusX2 = TNumber.One - (input[i] * input[i]);
-
-                output[i] = grad[i] * (two * atanh / oneMinusX2);
-            });
+        ManagedBinaryOperationIterator.Apply<Atanh2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void CscBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void CscBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var (sin, cos) = TNumber.SinCos(input[i]);
-                var csc = TNumber.One / sin;
-                var cot = cos / sin;
-                output[i] = grad[i] * -csc * cot;
-            });
+        ManagedBinaryOperationIterator.Apply<CscBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void SecBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void SecBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var (sin, cos) = TNumber.SinCos(input[i]);
-                var sec = TNumber.One / cos;
-                var tan = sin / cos;
-                output[i] = grad[i] * sec * tan;
-            });
+        ManagedBinaryOperationIterator.Apply<SecBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void CotBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void CotBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var sin = TNumber.Sin(input[i]);
-                var csc2 = TNumber.One / (sin * sin);
-
-                output[i] = grad[i] * -csc2;
-            });
+        ManagedBinaryOperationIterator.Apply<CotBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Csc2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Csc2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var two = TNumber.One + TNumber.One;
-                var (sin, cos) = TNumber.SinCos(input[i]);
-                var twoCosX = two * cos;
-                var sin3 = sin * sin * sin;
-
-                output[i] = grad[i] * -(twoCosX / sin3);
-            });
+        ManagedBinaryOperationIterator.Apply<Csc2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Sec2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Sec2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var two = TNumber.One + TNumber.One;
-                var cos = TNumber.Cos(input[i]);
-                var sec2 = TNumber.One / (cos * cos);
-                var tan = TNumber.Tan(input[i]);
-
-                output[i] = grad[i] * two * sec2 * tan;
-            });
+        ManagedBinaryOperationIterator.Apply<Sec2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Cot2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Cot2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var two = TNumber.One + TNumber.One;
-                var (sin, cos) = TNumber.SinCos(input[i]);
-                var cot = cos / sin;
-                var csc2 = TNumber.One / (sin * sin);
-
-                output[i] = grad[i] * -two * csc2 * cot;
-            });
+        ManagedBinaryOperationIterator.Apply<Cot2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void CschBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void CschBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var sinh = TNumber.Sinh(input[i]);
-                var csch = TNumber.One / sinh;
-                var coth = TNumber.Cosh(input[i]) / sinh;
-
-                output[i] = grad[i] * -csch * coth;
-            });
+        ManagedBinaryOperationIterator.Apply<CschBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void SechBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void SechBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var cosh = TNumber.Cosh(input[i]);
-                var sech = TNumber.One / cosh;
-                var tanh = TNumber.Tanh(input[i]);
-
-                output[i] = grad[i] * -sech * tanh;
-            });
+        ManagedBinaryOperationIterator.Apply<SechBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void CothBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void CothBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var csch = TNumber.One / TNumber.Sinh(input[i]);
-
-                output[i] = grad[i] * -(csch * csch);
-            });
+        ManagedBinaryOperationIterator.Apply<CothBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Csch2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Csch2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var two = TNumber.One + TNumber.One;
-                var sinh = TNumber.Sinh(input[i]);
-                var csch2 = TNumber.One / (sinh * sinh);
-                var coth = TNumber.Cosh(input[i]) / sinh;
-
-                output[i] = grad[i] * -two * csch2 * coth;
-            });
+        ManagedBinaryOperationIterator.Apply<Csch2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Sech2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Sech2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var two = TNumber.One + TNumber.One;
-                var cosh = TNumber.Cosh(input[i]);
-                var sech2 = TNumber.One / (cosh * cosh);
-                var tanh = TNumber.Tanh(input[i]);
-
-                output[i] = grad[i] * -two * sech2 * tanh;
-            });
+        ManagedBinaryOperationIterator.Apply<Sech2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Coth2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Coth2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var two = TNumber.One + TNumber.One;
-                var sinh = TNumber.Sinh(input[i]);
-                var sinh2 = sinh * sinh;
-                var cosh = TNumber.Cosh(input[i]);
-                var coth = cosh / sinh;
-
-                output[i] = grad[i] * -two * (TNumber.One / sinh2) * coth;
-            });
+        ManagedBinaryOperationIterator.Apply<Coth2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void AcscBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void AcscBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var x2 = input[i] * input[i];
-                var sqrt = TNumber.Sqrt(TNumber.One - (TNumber.One / x2));
-                var denominator = -TNumber.One / (x2 * sqrt);
-                output[i] = grad[i] * denominator;
-            });
+        ManagedBinaryOperationIterator.Apply<AcscBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void AsecBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void AsecBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var x2 = input[i] * input[i];
-                var sqrt = TNumber.Sqrt(TNumber.One - (TNumber.One / x2));
-                var denominator = TNumber.One / (x2 * sqrt);
-                output[i] = grad[i] * denominator;
-            });
+        ManagedBinaryOperationIterator.Apply<AsecBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void AcotBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void AcotBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = grad[i] * -TNumber.One / (TNumber.One + (input[i] * input[i])));
+        ManagedBinaryOperationIterator.Apply<AcotBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Acsc2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Acsc2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var two = TNumber.One + TNumber.One;
-                var x2 = input[i] * input[i];
-                var sqrt = TNumber.Sqrt(TNumber.One - (TNumber.One / x2));
-                var denominator = x2 * sqrt;
-                var acsc = TNumber.Asin(TNumber.One / input[i]);
-                var derivative = -two * acsc / denominator;
-
-                output[i] = grad[i] * derivative;
-            });
+        ManagedBinaryOperationIterator.Apply<Acsc2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Asec2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Asec2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var two = TNumber.One + TNumber.One;
-                var x2 = input[i] * input[i];
-                var sqrt = TNumber.Sqrt(TNumber.One - (TNumber.One / x2));
-                var denominator = x2 * sqrt;
-                var acsc = TNumber.Acos(TNumber.One / input[i]);
-                var derivative = two * acsc / denominator;
-
-                output[i] = grad[i] * derivative;
-            });
+        ManagedBinaryOperationIterator.Apply<Asec2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Acot2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Acot2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var two = TNumber.One + TNumber.One;
-                var acot = TNumber.Atan(TNumber.One / input[i]);
-                var x2 = input[i] * input[i];
-
-                output[i] = grad[i] * (-two * acot / (x2 + TNumber.One));
-            });
+        ManagedBinaryOperationIterator.Apply<Acot2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void AcschBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void AcschBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var x2 = input[i] * input[i];
-                var sqrt = TNumber.Sqrt(TNumber.One + (TNumber.One / x2)) * x2;
-
-                output[i] = grad[i] * (-TNumber.One / sqrt);
-            });
+        ManagedBinaryOperationIterator.Apply<AcschBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void AsechBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void AsechBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var x2 = input[i] * input[i];
-                var sqrt = TNumber.Sqrt((TNumber.One / x2) - TNumber.One) * x2;
-
-                output[i] = grad[i] * (-TNumber.One / sqrt);
-            });
+        ManagedBinaryOperationIterator.Apply<AsechBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void AcothBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void AcothBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = grad[i] * -TNumber.One / ((input[i] * input[i]) - TNumber.One));
+        ManagedBinaryOperationIterator.Apply<AcothBackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Acsch2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Acsch2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var two = TNumber.One + TNumber.One;
-                var x2 = input[i] * input[i];
-                var sqrt = TNumber.Sqrt(TNumber.One + (TNumber.One / x2)) * x2;
-                var acsch = TNumber.Asinh(TNumber.One / input[i]);
-
-                output[i] = grad[i] * (-two * acsch / sqrt);
-            });
+        ManagedBinaryOperationIterator.Apply<Acsch2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Asech2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Asech2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var two = TNumber.One + TNumber.One;
-                var x2 = input[i] * input[i];
-                var sqrt = TNumber.Sqrt((TNumber.One / x2) - TNumber.One) * x2;
-                var asech = TNumber.Acosh(TNumber.One / input[i]);
-
-                output[i] = grad[i] * (-two * asech / sqrt);
-            });
+        ManagedBinaryOperationIterator.Apply<Asech2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 
-    public void Acoth2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
+    public unsafe void Acoth2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var output = (SystemMemoryBlock<TNumber>)result.Memory;
-        var grad = (SystemMemoryBlock<TNumber>)gradient.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            input.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var two = TNumber.One + TNumber.One;
-                var acoth = TNumber.Atanh(TNumber.One / input[i]);
-                var x2 = input[i] * input[i];
-                var denominator = x2 - TNumber.One;
-
-                output[i] = grad[i] * (-two * acoth / denominator);
-            });
+        ManagedBinaryOperationIterator.Apply<Acoth2BackwardsMicroKernel<TNumber>, TNumber>(
+            tensor.Memory.ToPointer(),
+            gradient.Memory.ToPointer(),
+            result.Memory.ToPointer(),
+            result.Memory.Length,
+            (ICpuComputeDevice)tensor.Device);
     }
 }

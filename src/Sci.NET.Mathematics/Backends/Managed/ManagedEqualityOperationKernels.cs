@@ -14,66 +14,66 @@ internal class ManagedEqualityOperationKernels : IEqualityOperationKernels
     public unsafe void PointwiseEqual<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        ManagedBlockedBinaryOperationIterator.For<PointwiseEqualMicroKernel<TNumber>, TNumber>(
+        ManagedBinaryOperationIterator.Apply<PointwiseEqualMicroKernel<TNumber>, TNumber>(
             left.Memory.ToPointer(),
             right.Memory.ToPointer(),
             result.Memory.ToPointer(),
             left.Shape.ElementCount,
-            (CpuComputeDevice)left.Device);
+            (ICpuComputeDevice)left.Device);
     }
 
     public unsafe void PointwiseNotEqual<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        ManagedBlockedBinaryOperationIterator.For<PointwiseNotEqualMicroKernel<TNumber>, TNumber>(
+        ManagedBinaryOperationIterator.Apply<PointwiseNotEqualMicroKernel<TNumber>, TNumber>(
             left.Memory.ToPointer(),
             right.Memory.ToPointer(),
             result.Memory.ToPointer(),
             left.Shape.ElementCount,
-            (CpuComputeDevice)left.Device);
+            (ICpuComputeDevice)left.Device);
     }
 
     public unsafe void PointwiseGreaterThan<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        ManagedBinaryOperationIterator.For<PointwiseGreaterThanMicroKernel<TNumber>, TNumber>(
+        ManagedBinaryOperationIterator.Apply<PointwiseGreaterThanMicroKernel<TNumber>, TNumber>(
             left.Memory.ToPointer(),
             right.Memory.ToPointer(),
             result.Memory.ToPointer(),
             left.Shape.ElementCount,
-            (CpuComputeDevice)left.Device);
+            (ICpuComputeDevice)left.Device);
     }
 
     public unsafe void PointwiseGreaterThanOrEqual<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        ManagedBinaryOperationIterator.For<PointwiseGreaterThanOrEqualMicroKernel<TNumber>, TNumber>(
+        ManagedBinaryOperationIterator.Apply<PointwiseGreaterThanOrEqualMicroKernel<TNumber>, TNumber>(
             left.Memory.ToPointer(),
             right.Memory.ToPointer(),
             result.Memory.ToPointer(),
             left.Shape.ElementCount,
-            (CpuComputeDevice)left.Device);
+            (ICpuComputeDevice)left.Device);
     }
 
     public unsafe void PointwiseLessThan<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        ManagedBinaryOperationIterator.For<PointwiseLessThanMicroKernel<TNumber>, TNumber>(
+        ManagedBinaryOperationIterator.Apply<PointwiseLessThanMicroKernel<TNumber>, TNumber>(
             left.Memory.ToPointer(),
             right.Memory.ToPointer(),
             result.Memory.ToPointer(),
             left.Shape.ElementCount,
-            (CpuComputeDevice)left.Device);
+            (ICpuComputeDevice)left.Device);
     }
 
     public unsafe void PointwiseLessThanOrEqual<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        ManagedBinaryOperationIterator.For<PointwiseLessThanOrEqualMicroKernel<TNumber>, TNumber>(
+        ManagedBinaryOperationIterator.Apply<PointwiseLessThanOrEqualMicroKernel<TNumber>, TNumber>(
             left.Memory.ToPointer(),
             right.Memory.ToPointer(),
             result.Memory.ToPointer(),
             left.Shape.ElementCount,
-            (CpuComputeDevice)left.Device);
+            (ICpuComputeDevice)left.Device);
     }
 }

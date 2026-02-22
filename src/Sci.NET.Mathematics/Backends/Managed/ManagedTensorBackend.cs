@@ -11,7 +11,7 @@ namespace Sci.NET.Mathematics.Backends.Managed;
 /// An implementation of <see cref="ITensorBackend"/> for the managed backend.
 /// </summary>
 [PublicAPI]
-public class ManagedTensorBackend : ITensorBackend
+public sealed class ManagedTensorBackend : ITensorBackend
 {
     static ManagedTensorBackend()
     {
@@ -27,7 +27,7 @@ public class ManagedTensorBackend : ITensorBackend
         LinearAlgebra = new ManagedLinearAlgebraKernels();
         Arithmetic = new ManagedArithmeticKernels();
         Exponential = new ManagedExponentialKernels();
-        Device = CpuComputeDevice.GetSupportedDevice();
+        Device = new CpuComputeDevice();
         Reduction = new ManagedReductionKernels();
         Trigonometry = new ManagedTrigonometryKernels();
         Random = new ManagedRandomKernels();
@@ -64,19 +64,6 @@ public class ManagedTensorBackend : ITensorBackend
         {
             ArgumentOutOfRangeException.ThrowIfLessThan(value, 1);
 
-            field = value;
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets the threshold for parallelization in terms of number of elements.
-    /// </summary>
-    public static int StreamingThreshold
-    {
-        get;
-        set
-        {
-            ArgumentOutOfRangeException.ThrowIfLessThan(value, 1);
             field = value;
         }
     }
@@ -125,7 +112,7 @@ public class ManagedTensorBackend : ITensorBackend
     public IExponentialKernels Exponential { get; }
 
     /// <inheritdoc />
-    public IDevice Device { get; }
+    public IDevice Device { get; private set; }
 
     /// <inheritdoc />
     public IReductionKernels Reduction { get; }
@@ -161,7 +148,6 @@ public class ManagedTensorBackend : ITensorBackend
     {
         MaxDegreeOfParallelism = Environment.ProcessorCount;
         MinBytesPerThread = 256 * 1024; // 256 KiB per thread
-        StreamingThreshold = 100_000;
         ParallelizationThreshold = 100_000;
         ParallelizationTileThreshold = 2;
     }
@@ -187,16 +173,5 @@ public class ManagedTensorBackend : ITensorBackend
         var maxUsefulThreads = Math.Max(1, elementCount * Unsafe.SizeOf<TNumber>() / MinBytesPerThread);
 
         return (int)Math.Min(maxUsefulThreads, MaxDegreeOfParallelism);
-    }
-
-    internal static bool ShouldStream(long elementCount)
-    {
-        // Always use streaming for small tensors to avoid blocking overhead
-        if (elementCount < 128)
-        {
-            return true;
-        }
-
-        return elementCount >= StreamingThreshold;
     }
 }

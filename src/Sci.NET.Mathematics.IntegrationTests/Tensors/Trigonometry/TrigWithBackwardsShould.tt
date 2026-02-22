@@ -1,7 +1,12 @@
 ﻿<#@ template language="C#" #>
-<#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#
+    var tensorTypes = new List<(string type, string typeName, string precision)>
+    {
+        ("Fp32", "float", "1e-5f"),
+        ("Fp64", "double", "1e-6f"),
+    };
+
     var testCases = new List<TrigPrimalAndDerivativeState>()
     {
         new(
@@ -209,7 +214,7 @@
             "0.639700008449224",
             "0.136218687427113"),
         new(
-            "ASin",
+            "Asin",
             "-1.0",
             "-0.5",
             "0.0",
@@ -226,7 +231,7 @@
             "1.15470053837925",
             "\u221e"),
         new(
-            "ACos",
+            "Acos",
             "-1.0",
             "-0.5",
             "0.0",
@@ -243,7 +248,7 @@
             "-1.1547005383792517",
             "-\u221e"),
         new(
-            "ATan",
+            "Atan",
             "-2.0",
             "-1.0",
             "0.0",
@@ -260,7 +265,7 @@
             "0.500000000000000",
             "0.200000000000000"),
         new(
-            "ASin2",
+            "Asin2",
             "-1.0",
             "-0.5",
             "0.0",
@@ -277,7 +282,7 @@
             "1.20919957615615",
             "\u221e"),
         new(
-            "ACos2",
+            "Acos2",
             "-1.0",
             "-0.5",
             "0.0",
@@ -294,7 +299,7 @@
             "-2.41839915231229",
             "NaN"),
         new(
-            "ATan2",
+            "Atan2",
             "-2.0",
             "-1.0",
             "0.0",
@@ -311,7 +316,7 @@
             "0.785398163397448",
             "0.442859487117636"),
         new(
-            "ASinh",
+            "Asinh",
             "-2.0",
             "-1.0",
             "0.0",
@@ -328,7 +333,7 @@
             "0.707106781186548",
             "0.447213595499958"),
         new(
-            "ACosh",
+            "Acosh",
             "1.0",
             "2.0",
             "3.0",
@@ -345,7 +350,7 @@
             "0.258198889747161",
             "0.204124145231932"),
         new(
-            "ATanh",
+            "Atanh",
             "-0.9",
             "-0.5",
             "0.0",
@@ -362,7 +367,7 @@
             "1.33333333333333",
             "5.26315789473684"),
         new(
-            "ASinh2",
+            "Asinh2",
             "-2.0",
             "-1.0",
             "0.0",
@@ -379,7 +384,7 @@
             "1.24645048028046",
             "1.29122682289201"),
         new(
-            "ACosh2",
+            "Acosh2",
             "1.0",
             "2.0",
             "3.0",
@@ -396,7 +401,7 @@
             "1.06555432050394",
             "0.935881310103570"),
         new(
-            "ATanh2",
+            "Atanh2",
             "-0.9",
             "-0.5",
             "0.0",
@@ -617,7 +622,7 @@
             "-1.90143701945204",
             "-0.157717126375352"),
         new(
-            "ACsc",
+            "Acsc",
             "-2.0",
             "-1.0",
             "1.0",
@@ -634,7 +639,7 @@
             "-0.288675134594813",
             "-0.117851130197758"),
         new(
-            "ASec",
+            "Asec",
             "-2.0",
             "-1.0",
             "1.0",
@@ -651,7 +656,7 @@
             "0.288675134594813",
             "0.117851130197758"),
         new(
-            "ACot",
+            "Acot",
             "-2.0",
             "-1.0",
             "0.0",
@@ -668,7 +673,7 @@
             "-0.500000000000000",
             "-0.200000000000000"),
         new(
-            "ACsc2",
+            "Acsc2",
             "-2.0",
             "-1.0",
             "1.0",
@@ -685,7 +690,7 @@
             "-0.302299894039036",
             "-0.0801003277241628"),
         new(
-            "ASec2",
+            "Asec2",
             "-2.0",
             "-1.0",
             "1.0",
@@ -702,7 +707,7 @@
             "0.604599788078073",
             "0.290139917122368"),
         new(
-            "ACot2",
+            "Acot2",
             "-2.0",
             "-1.0",
             "0.0",
@@ -719,7 +724,7 @@
             "-0.785398163397448",
             "-0.185459043600322"),
         new(
-            "ACsch",
+            "Acsch",
             "-2.0",
             "-1.0",
             "1.0",
@@ -736,7 +741,7 @@
             "-0.223606797749979",
             "-0.105409255338946"),
         new(
-            "ASech",
+            "Asech",
             "0.2",
             "0.3",
             "0.5",
@@ -753,7 +758,7 @@
             "-2.08333333333333",
             "-\u221e"),
         new(
-            "ACoth",
+            "Acoth",
             "-2.0",
             "-1.0",
             "1.0",
@@ -770,7 +775,7 @@
             "-0.333333333333333",
             "-0.125000000000000"),
         new(
-            "ACsch2",
+            "Acsch2",
             "-2.0",
             "-1.0",
             "1.0",
@@ -787,7 +792,7 @@
             "-0.215204470482002",
             "-0.0690325529942708"),
         new(
-            "ASech2",
+            "Asech2",
             "0.2",
             "0.3",
             "0.5",
@@ -804,7 +809,7 @@
             "-2.88811325233311",
             "NaN"),
         new(
-            "ACoth2",
+            "Acoth2",
             "-2.0",
             "-1.0",
             "1.0",
@@ -826,8 +831,8 @@
 // <auto-generated />
 
 using System.Numerics;
-using Sci.NET.Common.Numerics;
 using Sci.NET.Mathematics.Backends.Devices;
+using Sci.NET.Mathematics.Numerics;
 using Sci.NET.Mathematics.Tensors;
 using Sci.NET.Tests.Framework.Assertions;
 using Sci.NET.Tests.Framework.Integration;
@@ -839,15 +844,42 @@ public class TrigWithBackwardsShould : IntegrationTestBase
 <#
     foreach (var function in testCases)
     {
+        foreach (var (type, typeName, precision) in tensorTypes)
+        {
 #>
     [Theory]
     [MemberData(nameof(ComputeDevices))]
-    public void ReturnCorrectResult_For<#= function.FunctionName #>(IDevice device)
+    public void ReturnCorrectResult_For<#= function.FunctionName #><#= type #>(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { <#= function.Input1 #>, <#= function.Input2 #>, <#= function.Input3 #>, <#= function.Input4 #>, <#= function.Input5 #> }, requiresGradient: true);
-        var expectedOutput = new[] { <#= TrigPrimalAndDerivativeState.Parse(function.Primal1) #>, <#= TrigPrimalAndDerivativeState.Parse(function.Primal2) #>, <#= TrigPrimalAndDerivativeState.Parse(function.Primal3) #>, <#= TrigPrimalAndDerivativeState.Parse(function.Primal4) #>, <#= TrigPrimalAndDerivativeState.Parse(function.Primal5) #> };
-        var expectedGradient = new[] { <#= TrigPrimalAndDerivativeState.Parse(function.Derivative1) #>, <#= TrigPrimalAndDerivativeState.Parse(function.Derivative2) #>, <#= TrigPrimalAndDerivativeState.Parse(function.Derivative3) #>, <#= TrigPrimalAndDerivativeState.Parse(function.Derivative4) #>, <#= TrigPrimalAndDerivativeState.Parse(function.Derivative5) #> };
+        using var input = Tensor.FromArray<<#= typeName #>>(new <#= typeName #>[] 
+        { 
+            <#= TrigPrimalAndDerivativeState.Parse(function.Input1, typeName) #>,
+            <#= TrigPrimalAndDerivativeState.Parse(function.Input2, typeName) #>,
+            <#= TrigPrimalAndDerivativeState.Parse(function.Input3, typeName) #>,
+            <#= TrigPrimalAndDerivativeState.Parse(function.Input4, typeName) #>,
+            <#= TrigPrimalAndDerivativeState.Parse(function.Input5, typeName) #>
+        },
+        requiresGradient: true).Broadcast(new Shape(10, 5)).ClearGradient();
+
+        using var expectedOutput = Tensor.FromArray<<#= typeName #>>(new <#= typeName #>[] 
+        { 
+            <#= TrigPrimalAndDerivativeState.Parse(function.Primal1, typeName) #>,
+            <#= TrigPrimalAndDerivativeState.Parse(function.Primal2, typeName) #>,
+            <#= TrigPrimalAndDerivativeState.Parse(function.Primal3, typeName) #>,
+            <#= TrigPrimalAndDerivativeState.Parse(function.Primal4, typeName) #>,
+            <#= TrigPrimalAndDerivativeState.Parse(function.Primal5, typeName) #> 
+        }).Broadcast(new Shape(10, 5)).ClearGradient();
+
+        using var expectedGradient = Tensor.FromArray<<#= typeName #>>(new <#= typeName #>[] 
+        {
+            <#= TrigPrimalAndDerivativeState.Parse(function.Derivative1, typeName) #>,
+            <#= TrigPrimalAndDerivativeState.Parse(function.Derivative2, typeName) #>,
+            <#= TrigPrimalAndDerivativeState.Parse(function.Derivative3, typeName) #>,
+            <#= TrigPrimalAndDerivativeState.Parse(function.Derivative4, typeName) #>,
+            <#= TrigPrimalAndDerivativeState.Parse(function.Derivative5, typeName) #> 
+        }).Broadcast(new Shape(10, 5)).ClearGradient();
+
         input.To(device);
 
         // Act
@@ -856,11 +888,12 @@ public class TrigWithBackwardsShould : IntegrationTestBase
         result.Backward();
 
         // Assert
-        result.Should().HaveApproximatelyEquivalentElements(expectedOutput, 1e-5);
-        input.Gradient!.Should().HaveApproximatelyEquivalentElements(expectedGradient, 1e-5);
+        result.Should().HaveApproximatelyEquivalentElements(expectedOutput.ToArray(), <#= precision #>);
+        input.Gradient!.Should().HaveApproximatelyEquivalentElements(expectedGradient.ToArray(), <#= precision #>);
     }
 
 <#
+        }
     }
 #>}
 <#+
@@ -934,23 +967,34 @@ public class TrigWithBackwardsShould : IntegrationTestBase
             Derivative5 = derivative5;
         }
 
-        public static string Parse(string value)
+        public static string Parse(string value, string typeName)
         {
             var result = double.Parse(value);
 
             if (double.IsPositiveInfinity(result))
             {
-                return "double.PositiveInfinity";
+                return $"{typeName}.PositiveInfinity";
             }
             if (double.IsNegativeInfinity(result))
             {
-                return "double.NegativeInfinity";
+                return $"{typeName}.NegativeInfinity";
             }
             if (double.IsNaN(result))
             {
-                return "double.NaN";
+                return $"{typeName}.NaN";
             }
-            return result.ToString("R");
+
+            if (typeName == "Half")
+            {
+                return "Half.CreateChecked(" + result.ToString("R") + "f)";
+            }
+
+            if (typeName == "double")
+            {
+                return result.ToString("R");
+            }
+
+            return result.ToString("R") + "f";
         }
     }
 #>

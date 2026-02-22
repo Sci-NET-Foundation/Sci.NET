@@ -14,22 +14,22 @@ internal class ManagedNormalisationKernels : INormalisationKernels
     public unsafe void Clip<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result, TNumber min, TNumber max)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        ManagedParameterizedUnaryOperation.For(
+        ManagedUnaryOperationIterator.Apply(
             tensor.Memory.ToPointer(),
             result.Memory.ToPointer(),
             new ClampMicroKernel<TNumber>(min, max),
             tensor.Memory.Length,
-            (CpuComputeDevice)tensor.Device);
+            (ICpuComputeDevice)tensor.Device);
     }
 
     public unsafe void ClipBackward<TNumber>(ITensor<TNumber> tensor, Tensor<TNumber> result, TNumber min, TNumber max)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        ManagedParameterizedUnaryOperation.For(
+        ManagedUnaryOperationIterator.Apply(
             tensor.Memory.ToPointer(),
             result.Memory.ToPointer(),
             new ClampBackwardMicroKernel<TNumber>(min, max),
             tensor.Memory.Length,
-            (CpuComputeDevice)tensor.Device);
+            (ICpuComputeDevice)tensor.Device);
     }
 }

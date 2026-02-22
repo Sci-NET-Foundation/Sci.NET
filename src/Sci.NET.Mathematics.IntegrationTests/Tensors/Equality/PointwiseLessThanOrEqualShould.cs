@@ -19,97 +19,97 @@ public class PointwiseLessThanOrEqualShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnCorrectResult_GivenBf16Scalar(IDevice device)
     {
-        PerformScalarTest<BFloat16>(device, BFloat16.CreateChecked(10), BFloat16.CreateChecked(10), true);
-        PerformScalarTest<BFloat16>(device, BFloat16.CreateChecked(11), BFloat16.CreateChecked(10), false);
-        PerformScalarTest<BFloat16>(device, BFloat16.CreateChecked(9), BFloat16.CreateChecked(10), true);
+        PerformScalarTest(device, BFloat16.CreateChecked(10), BFloat16.CreateChecked(10), true);
+        PerformScalarTest(device, BFloat16.CreateChecked(11), BFloat16.CreateChecked(10), false);
+        PerformScalarTest(device, BFloat16.CreateChecked(9), BFloat16.CreateChecked(10), true);
     }
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void ReturnCorrectResult_GivenFp16Scalar(IDevice device)
     {
-        PerformScalarTest<Half>(device, Half.CreateChecked(10), Half.CreateChecked(10), true);
-        PerformScalarTest<Half>(device, Half.CreateChecked(11), Half.CreateChecked(10), false);
-        PerformScalarTest<Half>(device, Half.CreateChecked(9), Half.CreateChecked(10), true);
+        PerformScalarTest(device, Half.CreateChecked(10), Half.CreateChecked(10), true);
+        PerformScalarTest(device, Half.CreateChecked(11), Half.CreateChecked(10), false);
+        PerformScalarTest(device, Half.CreateChecked(9), Half.CreateChecked(10), true);
     }
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void ReturnCorrectResult_GivenFp32Scalar(IDevice device)
     {
-        PerformScalarTest<float>(device, float.CreateChecked(10), float.CreateChecked(10), true);
-        PerformScalarTest<float>(device, float.CreateChecked(11), float.CreateChecked(10), false);
-        PerformScalarTest<float>(device, float.CreateChecked(9), float.CreateChecked(10), true);
+        PerformScalarTest(device, float.CreateChecked(10), float.CreateChecked(10), true);
+        PerformScalarTest(device, float.CreateChecked(11), float.CreateChecked(10), false);
+        PerformScalarTest(device, float.CreateChecked(9), float.CreateChecked(10), true);
     }
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void ReturnCorrectResult_GivenFp64Scalar(IDevice device)
     {
-        PerformScalarTest<double>(device, double.CreateChecked(10), double.CreateChecked(10), true);
-        PerformScalarTest<double>(device, double.CreateChecked(11), double.CreateChecked(10), false);
-        PerformScalarTest<double>(device, double.CreateChecked(9), double.CreateChecked(10), true);
+        PerformScalarTest(device, double.CreateChecked(10), double.CreateChecked(10), true);
+        PerformScalarTest(device, double.CreateChecked(11), double.CreateChecked(10), false);
+        PerformScalarTest(device, double.CreateChecked(9), double.CreateChecked(10), true);
     }
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void ReturnCorrectResult_GivenI8Scalar(IDevice device)
     {
-        PerformScalarTest<sbyte>(device, sbyte.CreateChecked(10), sbyte.CreateChecked(10), true);
-        PerformScalarTest<sbyte>(device, sbyte.CreateChecked(11), sbyte.CreateChecked(10), false);
-        PerformScalarTest<sbyte>(device, sbyte.CreateChecked(9), sbyte.CreateChecked(10), true);
+        PerformScalarTest(device, sbyte.CreateChecked(10), sbyte.CreateChecked(10), true);
+        PerformScalarTest(device, sbyte.CreateChecked(11), sbyte.CreateChecked(10), false);
+        PerformScalarTest(device, sbyte.CreateChecked(9), sbyte.CreateChecked(10), true);
     }
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void ReturnCorrectResult_GivenU8Scalar(IDevice device)
     {
-        PerformScalarTest<byte>(device, byte.CreateChecked(10), byte.CreateChecked(10), true);
-        PerformScalarTest<byte>(device, byte.CreateChecked(11), byte.CreateChecked(10), false);
-        PerformScalarTest<byte>(device, byte.CreateChecked(9), byte.CreateChecked(10), true);
+        PerformScalarTest(device, byte.CreateChecked(10), byte.CreateChecked(10), true);
+        PerformScalarTest(device, byte.CreateChecked(11), byte.CreateChecked(10), false);
+        PerformScalarTest(device, byte.CreateChecked(9), byte.CreateChecked(10), true);
     }
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void ReturnCorrectResult_GivenI16Scalar(IDevice device)
     {
-        PerformScalarTest<short>(device, short.CreateChecked(10), short.CreateChecked(10), true);
-        PerformScalarTest<short>(device, short.CreateChecked(11), short.CreateChecked(10), false);
-        PerformScalarTest<short>(device, short.CreateChecked(9), short.CreateChecked(10), true);
+        PerformScalarTest(device, short.CreateChecked(10), short.CreateChecked(10), true);
+        PerformScalarTest(device, short.CreateChecked(11), short.CreateChecked(10), false);
+        PerformScalarTest(device, short.CreateChecked(9), short.CreateChecked(10), true);
     }
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void ReturnCorrectResult_GivenU16Scalar(IDevice device)
     {
-        PerformScalarTest<ushort>(device, ushort.CreateChecked(10), ushort.CreateChecked(10), true);
-        PerformScalarTest<ushort>(device, ushort.CreateChecked(11), ushort.CreateChecked(10), false);
-        PerformScalarTest<ushort>(device, ushort.CreateChecked(9), ushort.CreateChecked(10), true);
+        PerformScalarTest(device, ushort.CreateChecked(10), ushort.CreateChecked(10), true);
+        PerformScalarTest(device, ushort.CreateChecked(11), ushort.CreateChecked(10), false);
+        PerformScalarTest(device, ushort.CreateChecked(9), ushort.CreateChecked(10), true);
     }
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void ReturnCorrectResult_GivenI32Scalar(IDevice device)
     {
-        PerformScalarTest<int>(device, int.CreateChecked(10), int.CreateChecked(10), true);
-        PerformScalarTest<int>(device, int.CreateChecked(11), int.CreateChecked(10), false);
-        PerformScalarTest<int>(device, int.CreateChecked(9), int.CreateChecked(10), true);
+        PerformScalarTest(device, int.CreateChecked(10), int.CreateChecked(10), true);
+        PerformScalarTest(device, int.CreateChecked(11), int.CreateChecked(10), false);
+        PerformScalarTest(device, int.CreateChecked(9), int.CreateChecked(10), true);
     }
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void ReturnCorrectResult_GivenU32Scalar(IDevice device)
     {
-        PerformScalarTest<uint>(device, uint.CreateChecked(10), uint.CreateChecked(10), true);
-        PerformScalarTest<uint>(device, uint.CreateChecked(11), uint.CreateChecked(10), false);
-        PerformScalarTest<uint>(device, uint.CreateChecked(9), uint.CreateChecked(10), true);
+        PerformScalarTest(device, uint.CreateChecked(10), uint.CreateChecked(10), true);
+        PerformScalarTest(device, uint.CreateChecked(11), uint.CreateChecked(10), false);
+        PerformScalarTest(device, uint.CreateChecked(9), uint.CreateChecked(10), true);
     }
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void ReturnCorrectResult_GivenI64Scalar(IDevice device)
     {
-        PerformScalarTest<long>(device, long.CreateChecked(10), long.CreateChecked(10), true);
-        PerformScalarTest<long>(device, long.CreateChecked(11), long.CreateChecked(10), false);
-        PerformScalarTest<long>(device, long.CreateChecked(9), long.CreateChecked(10), true);
+        PerformScalarTest(device, long.CreateChecked(10), long.CreateChecked(10), true);
+        PerformScalarTest(device, long.CreateChecked(11), long.CreateChecked(10), false);
+        PerformScalarTest(device, long.CreateChecked(9), long.CreateChecked(10), true);
     }
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void ReturnCorrectResult_GivenU64Scalar(IDevice device)
     {
-        PerformScalarTest<ulong>(device, ulong.CreateChecked(10), ulong.CreateChecked(10), true);
-        PerformScalarTest<ulong>(device, ulong.CreateChecked(11), ulong.CreateChecked(10), false);
-        PerformScalarTest<ulong>(device, ulong.CreateChecked(9), ulong.CreateChecked(10), true);
+        PerformScalarTest(device, ulong.CreateChecked(10), ulong.CreateChecked(10), true);
+        PerformScalarTest(device, ulong.CreateChecked(11), ulong.CreateChecked(10), false);
+        PerformScalarTest(device, ulong.CreateChecked(9), ulong.CreateChecked(10), true);
     }
 
     [Theory]

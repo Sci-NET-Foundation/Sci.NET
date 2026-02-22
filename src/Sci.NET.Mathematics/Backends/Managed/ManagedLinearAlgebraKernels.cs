@@ -34,12 +34,12 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
     public unsafe void Hypot<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
         where TNumber : unmanaged, IFloatingPointIeee754<TNumber>, IRootFunctions<TNumber>
     {
-        ManagedStreamingBinaryOperationIterator.For<HypotMicroKernel<TNumber>, TNumber>(
+        ManagedStreamingBinaryOperationIterator.Apply<HypotMicroKernel<TNumber>, TNumber>(
             left.Memory.ToPointer(),
             right.Memory.ToPointer(),
             result.Memory.ToPointer(),
             left.Shape.ElementCount,
-            (CpuComputeDevice)left.Device);
+            (ICpuComputeDevice)left.Device);
     }
 
     public unsafe void MatrixMultiply<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right, Matrix<TNumber> result)
@@ -57,7 +57,11 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         const int iBlock = 128;
         const int jBlock = 16;
 
-        if (IntrinsicsHelper.IsAvxFmaSupported() && typeof(TNumber) == typeof(float))
+        var cpuDevice = left.Device as ICpuComputeDevice;
+
+        if ((cpuDevice?.IsAvx2Supported() ?? false) &&
+            IntrinsicsHelper.IsAvx2Supported() &&
+            typeof(TNumber) == typeof(float))
         {
             MatrixMultiplyFmaAvxFp32(
                 (float*)leftMemoryBlockPtr,
@@ -69,7 +73,9 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
             return;
         }
 
-        if (IntrinsicsHelper.IsAvxFmaSupported() && typeof(TNumber) == typeof(double))
+        if ((cpuDevice?.IsAvx2Supported() ?? false) &&
+            IntrinsicsHelper.IsAvx2Supported() &&
+            typeof(TNumber) == typeof(double))
         {
             MatrixMultiplyFmaAvxFp64(
                 (double*)leftMemoryBlockPtr,
@@ -115,8 +121,11 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         var leftMemoryBlock = (SystemMemoryBlock<TNumber>)left.Memory;
         var rightMemoryBlock = (SystemMemoryBlock<TNumber>)right.Memory;
         var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Memory;
+        var cpuDevice = left.Device as ICpuComputeDevice;
 
-        if (IntrinsicsHelper.IsAvxFmaSupported() && typeof(TNumber) == typeof(float))
+        if ((cpuDevice?.IsAvx2Supported() ?? false) &&
+            IntrinsicsHelper.IsAvx2Supported() &&
+            typeof(TNumber) == typeof(float))
         {
             InnerProductFp32FmaAvx(
                 (float*)leftMemoryBlock.Pointer,
@@ -127,7 +136,9 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
             return;
         }
 
-        if (IntrinsicsHelper.IsAvxFmaSupported() && typeof(TNumber) == typeof(double))
+        if ((cpuDevice?.IsAvx2Supported() ?? false) &&
+            IntrinsicsHelper.IsAvx2Supported() &&
+            typeof(TNumber) == typeof(double))
         {
             InnerProductFp64FmaAvx(
                 (double*)leftMemoryBlock.Pointer,
@@ -160,7 +171,6 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         resultMemoryBlock[0] = sum;
     }
 
-    [MethodImpl(ImplementationOptions.HotPath)]
     private static unsafe void MatrixMultiplyFmaAvxFp32(
         float* a,
         float* b,
@@ -210,7 +220,6 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
             NativeMemory.AlignedFree(panels.B);
         }
 
-        [MethodImpl(ImplementationOptions.HotPath)]
         void InnerLoop(int tileIdx, Panel2dFp32 panels)
         {
             var mBase = tileIdx * MatrixMultiplyMcFp32;
@@ -828,7 +837,6 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         }
     }
 
-    [MethodImpl(ImplementationOptions.HotPath)]
     private static unsafe void InnerProductFp32FmaAvx(float* leftMemoryPtr, float* rightMemoryPtr, float* resultPtr, long n)
     {
         if (n <= 0)
@@ -864,7 +872,6 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
 
         resultPtr[0] = s + c;
 
-        [MethodImpl(ImplementationOptions.HotPath)]
         void InnerLoop(int tid)
         {
             var start = tid * n / processes;

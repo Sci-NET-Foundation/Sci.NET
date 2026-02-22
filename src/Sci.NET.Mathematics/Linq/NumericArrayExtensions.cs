@@ -29,7 +29,7 @@ public static class NumericArrayExtensions
     /// </summary>
     /// <param name="source">The sequence to find the mean of.</param>
     /// <typeparam name="TNumber">The number type of the sequence.</typeparam>
-    /// <returns>>The mean of the sequence.</returns>
+    /// <returns>The mean of the sequence.</returns>
     /// <exception cref="InvalidOperationException">Thrown if the sequence contains no elements.</exception>
     public static TNumber Mean<TNumber>(this IEnumerable<TNumber> source)
         where TNumber : unmanaged, INumber<TNumber>

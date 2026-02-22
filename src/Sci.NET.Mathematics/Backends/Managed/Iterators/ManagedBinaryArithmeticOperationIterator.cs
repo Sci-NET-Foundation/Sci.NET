@@ -9,27 +9,27 @@ using System.Runtime.Intrinsics.X86;
 using Sci.NET.Mathematics.Attributes;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Backends.Iterators;
-using Sci.NET.Mathematics.Backends.Managed.Buffers;
 using Sci.NET.Mathematics.Backends.Managed.MicroKernels;
 using Sci.NET.Mathematics.Concurrency;
+using Sci.NET.Mathematics.Intrinsics;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends.Managed.Iterators;
 
 internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
-    where TOp : IBinaryOperation<TNumber>, IBinaryOperationAvx
+    where TOp : IBinaryOperation<TNumber>, IBinaryOperationAvx2
     where TNumber : unmanaged, INumber<TNumber>
 {
     private readonly DimRange[] _dimRanges;
     private readonly unsafe TNumber* _leftPtr;
     private readonly unsafe TNumber* _rightPtr;
     private readonly unsafe TNumber* _resultPtr;
-    private readonly CpuComputeDevice _device;
+    private readonly ICpuComputeDevice _device;
 
     [AssumesValidDevice]
     public unsafe ManagedBinaryArithmeticOperationIterator(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
     {
-        _device = (CpuComputeDevice)result.Device;
+        _device = (ICpuComputeDevice)result.Device;
         _dimRanges = BuildDimRanges(left, right, result);
         _leftPtr = left.Memory.ToPointer();
         _rightPtr = right.Memory.ToPointer();
@@ -50,15 +50,15 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
         }
         else if (rank == 1)
         {
-            if (_device.IsAvxSupported() && TOp.IsAvxSupported())
+            if (_device.IsAvx2Supported() && TOp.HasAvx2Implementation())
             {
                 switch (TNumber.Zero)
                 {
                     case float:
-                        Apply1dAvxFp32((float*)_leftPtr, (float*)_rightPtr, (float*)_resultPtr);
+                        Apply1dAvx2((float*)_leftPtr, (float*)_rightPtr, (float*)_resultPtr);
                         return;
                     case double:
-                        Apply1dAvxFp64((double*)_leftPtr, (double*)_rightPtr, (double*)_resultPtr);
+                        Apply1dAvx2((double*)_leftPtr, (double*)_rightPtr, (double*)_resultPtr);
                         return;
                 }
             }
@@ -67,15 +67,15 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
         }
         else if (rank == 2)
         {
-            if (_device.IsAvxSupported() && TOp.IsAvxSupported())
+            if (_device.IsAvx2Supported() && TOp.HasAvx2Implementation())
             {
                 switch (TNumber.Zero)
                 {
                     case float:
-                        Apply2dAvxFp32((float*)_leftPtr, (float*)_rightPtr, (float*)_resultPtr);
+                        Apply2dAvx2((float*)_leftPtr, (float*)_rightPtr, (float*)_resultPtr);
                         return;
                     case double:
-                        Apply2dAvxFp64((double*)_leftPtr, (double*)_rightPtr, (double*)_resultPtr);
+                        Apply2dAvx2((double*)_leftPtr, (double*)_rightPtr, (double*)_resultPtr);
                         return;
                 }
             }
@@ -84,15 +84,15 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
         }
         else
         {
-            if (_device.IsAvxSupported() && TOp.IsAvxSupported())
+            if (_device.IsAvx2Supported() && TOp.HasAvx2Implementation())
             {
                 switch (TNumber.Zero)
                 {
                     case float:
-                        ApplyNdAvxFp32((float*)_leftPtr, (float*)_rightPtr, (float*)_resultPtr);
+                        ApplyNdAvx2((float*)_leftPtr, (float*)_rightPtr, (float*)_resultPtr);
                         return;
                     case double:
-                        ApplyNdAvxFp64((double*)_leftPtr, (double*)_rightPtr, (double*)_resultPtr);
+                        ApplyNdAvx2((double*)_leftPtr, (double*)_rightPtr, (double*)_resultPtr);
                         return;
                 }
             }
@@ -236,7 +236,7 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
             });
     }
 
-    private unsafe void Apply1dAvxFp32(float* leftPtr, float* rightPtr, float* resultPtr)
+    private unsafe void Apply1dAvx2(float* leftPtr, float* rightPtr, float* resultPtr)
     {
         var d0 = _dimRanges[0];
         var extent = d0.Extent;
@@ -246,14 +246,14 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
 
         if (sL == 1 && sR == 1 && sO == 1)
         {
-            var rangePartitioner = Partitioner.Create(0L, extent, Math.Max(NativeBufferHelpers.AvxVectorSizeFp32 * 16, 4096));
+            var rangePartitioner = Partitioner.Create(0L, extent, Math.Max(IntrinsicsHelper.AvxVectorSizeFp32 * 16, 4096));
 
             _ = Parallel.ForEach(rangePartitioner, range =>
             {
                 var (start, end) = range;
                 var i = start;
 
-                for (; i <= end - NativeBufferHelpers.AvxVectorSizeFp32; i += NativeBufferHelpers.AvxVectorSizeFp32)
+                for (; i <= end - IntrinsicsHelper.AvxVectorSizeFp32; i += IntrinsicsHelper.AvxVectorSizeFp32)
                 {
                     var leftVector = Avx.LoadVector256(leftPtr + i);
                     var rightVector = Avx.LoadVector256(rightPtr + i);
@@ -263,7 +263,7 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
 
                 for (; i < end; i++)
                 {
-                    resultPtr[i] = TOp.ApplyTailFp32(leftPtr[i], rightPtr[i]);
+                    resultPtr[i] = TOp.ApplyScalarFp32(leftPtr[i], rightPtr[i]);
                 }
             });
         }
@@ -279,12 +279,12 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
                     var offsetRight = i * sR;
                     var offsetResult = i * sO;
 
-                    resultPtr[offsetResult] = TOp.ApplyTailFp32(leftPtr[offsetLeft], rightPtr[offsetRight]);
+                    resultPtr[offsetResult] = TOp.ApplyScalarFp32(leftPtr[offsetLeft], rightPtr[offsetRight]);
                 });
         }
     }
 
-    private unsafe void Apply1dAvxFp64(double* leftPtr, double* rightPtr, double* resultPtr)
+    private unsafe void Apply1dAvx2(double* leftPtr, double* rightPtr, double* resultPtr)
     {
         var d0 = _dimRanges[0];
         var extent = d0.Extent;
@@ -294,14 +294,14 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
 
         if (sL == 1 && sR == 1 && sO == 1)
         {
-            var rangePartitioner = Partitioner.Create(0L, extent, Math.Max(NativeBufferHelpers.AvxVectorSizeFp64 * 16, 4096));
+            var rangePartitioner = Partitioner.Create(0L, extent, Math.Max(IntrinsicsHelper.AvxVectorSizeFp64 * 16, 4096));
 
             _ = Parallel.ForEach(rangePartitioner, range =>
             {
                 var (start, end) = range;
                 var i = start;
 
-                for (; i <= end - NativeBufferHelpers.AvxVectorSizeFp64; i += NativeBufferHelpers.AvxVectorSizeFp64)
+                for (; i <= end - IntrinsicsHelper.AvxVectorSizeFp64; i += IntrinsicsHelper.AvxVectorSizeFp64)
                 {
                     var leftVector = Avx.LoadVector256(leftPtr + i);
                     var rightVector = Avx.LoadVector256(rightPtr + i);
@@ -311,7 +311,7 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
 
                 for (; i < end; i++)
                 {
-                    resultPtr[i] = TOp.ApplyTailFp64(leftPtr[i], rightPtr[i]);
+                    resultPtr[i] = TOp.ApplyScalarFp64(leftPtr[i], rightPtr[i]);
                 }
             });
         }
@@ -327,7 +327,7 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
                     var offsetRight = i * sR;
                     var offsetResult = i * sO;
 
-                    resultPtr[offsetResult] = TOp.ApplyTailFp64(leftPtr[offsetLeft], rightPtr[offsetRight]);
+                    resultPtr[offsetResult] = TOp.ApplyScalarFp64(leftPtr[offsetLeft], rightPtr[offsetRight]);
                 });
         }
     }
@@ -361,7 +361,7 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
             });
     }
 
-    private unsafe void Apply2dAvxFp32(float* leftPtr, float* rightPtr, float* resultPtr)
+    private unsafe void Apply2dAvx2(float* leftPtr, float* rightPtr, float* resultPtr)
     {
         var dim0 = _dimRanges[0];
         var dim1 = _dimRanges[1];
@@ -383,7 +383,7 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
                 var baseResult = i * dim0.StrideResult;
 
                 var j = 0L;
-                for (; j < extent1 - NativeBufferHelpers.AvxVectorSizeFp32; j += NativeBufferHelpers.AvxVectorSizeFp32)
+                for (; j < extent1 - IntrinsicsHelper.AvxVectorSizeFp32; j += IntrinsicsHelper.AvxVectorSizeFp32)
                 {
                     var offsetLeft = baseLeft + (j * dim1.StrideLeft);
                     var offsetRight = baseRight + (j * dim1.StrideRight);
@@ -406,12 +406,12 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
                     var offsetRight = baseRight + (j * dim1.StrideRight);
                     var offsetResult = baseResult + (j * dim1.StrideResult);
 
-                    resultPtr[offsetResult] = TOp.ApplyTailFp32(leftPtr[offsetLeft], rightPtr[offsetRight]);
+                    resultPtr[offsetResult] = TOp.ApplyScalarFp32(leftPtr[offsetLeft], rightPtr[offsetRight]);
                 }
             });
     }
 
-    private unsafe void Apply2dAvxFp64(double* leftPtr, double* rightPtr, double* resultPtr)
+    private unsafe void Apply2dAvx2(double* leftPtr, double* rightPtr, double* resultPtr)
     {
         var dim0 = _dimRanges[0];
         var dim1 = _dimRanges[1];
@@ -433,7 +433,7 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
                 var baseResult = i * dim0.StrideResult;
 
                 var j = 0L;
-                for (; j < extent1 - NativeBufferHelpers.AvxVectorSizeFp64; j += NativeBufferHelpers.AvxVectorSizeFp64)
+                for (; j < extent1 - IntrinsicsHelper.AvxVectorSizeFp64; j += IntrinsicsHelper.AvxVectorSizeFp64)
                 {
                     var offsetLeft = baseLeft + (j * dim1.StrideLeft);
                     var offsetRight = baseRight + (j * dim1.StrideRight);
@@ -456,7 +456,7 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
                     var offsetRight = baseRight + (j * dim1.StrideRight);
                     var offsetResult = baseResult + (j * dim1.StrideResult);
 
-                    resultPtr[offsetResult] = TOp.ApplyTailFp64(leftPtr[offsetLeft], rightPtr[offsetRight]);
+                    resultPtr[offsetResult] = TOp.ApplyScalarFp64(leftPtr[offsetLeft], rightPtr[offsetRight]);
                 }
             });
     }
@@ -506,7 +506,7 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
             });
     }
 
-    private unsafe void ApplyNdAvxFp32(float* leftPtr, float* rightPtr, float* resultPtr)
+    private unsafe void ApplyNdAvx2(float* leftPtr, float* rightPtr, float* resultPtr)
     {
         var rank = _dimRanges.Length;
         var innerDim = _dimRanges[rank - 1];
@@ -544,7 +544,7 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
                 }
 
                 var j = 0L;
-                for (; j < innerExtent - NativeBufferHelpers.AvxVectorSizeFp32; j += NativeBufferHelpers.AvxVectorSizeFp32)
+                for (; j < innerExtent - IntrinsicsHelper.AvxVectorSizeFp32; j += IntrinsicsHelper.AvxVectorSizeFp32)
                 {
                     var offsetLeft = baseLeft + (j * innerDim.StrideLeft);
                     var offsetRight = baseRight + (j * innerDim.StrideRight);
@@ -567,12 +567,12 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
                     var offsetRight = baseRight + (j * innerDim.StrideRight);
                     var offsetResult = baseResult + (j * innerDim.StrideResult);
 
-                    resultPtr[offsetResult] = TOp.ApplyTailFp32(leftPtr[offsetLeft], rightPtr[offsetRight]);
+                    resultPtr[offsetResult] = TOp.ApplyScalarFp32(leftPtr[offsetLeft], rightPtr[offsetRight]);
                 }
             });
     }
 
-    private unsafe void ApplyNdAvxFp64(double* leftPtr, double* rightPtr, double* resultPtr)
+    private unsafe void ApplyNdAvx2(double* leftPtr, double* rightPtr, double* resultPtr)
     {
         var rank = _dimRanges.Length;
         var innerDim = _dimRanges[rank - 1];
@@ -610,7 +610,7 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
                 }
 
                 var j = 0L;
-                for (; j < innerExtent - NativeBufferHelpers.AvxVectorSizeFp64; j += NativeBufferHelpers.AvxVectorSizeFp64)
+                for (; j < innerExtent - IntrinsicsHelper.AvxVectorSizeFp64; j += IntrinsicsHelper.AvxVectorSizeFp64)
                 {
                     var offsetLeft = baseLeft + (j * innerDim.StrideLeft);
                     var offsetRight = baseRight + (j * innerDim.StrideRight);
@@ -633,7 +633,7 @@ internal class ManagedBinaryArithmeticOperationIterator<TOp, TNumber>
                     var offsetRight = baseRight + (j * innerDim.StrideRight);
                     var offsetResult = baseResult + (j * innerDim.StrideResult);
 
-                    resultPtr[offsetResult] = TOp.ApplyTailFp64(leftPtr[offsetLeft], rightPtr[offsetRight]);
+                    resultPtr[offsetResult] = TOp.ApplyScalarFp64(leftPtr[offsetLeft], rightPtr[offsetRight]);
                 }
             });
     }

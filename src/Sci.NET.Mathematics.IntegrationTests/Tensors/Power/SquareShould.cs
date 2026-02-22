@@ -20,7 +20,7 @@ public class SquareShould : IntegrationTestBase
         SquareScalarTest<byte>(2, device).Should().Be(4);
         SquareScalarTest<short>(2, device).Should().Be(4);
         SquareScalarTest<ushort>(2, device).Should().Be(4);
-        SquareScalarTest<int>(2, device).Should().Be(4);
+        SquareScalarTest(2, device).Should().Be(4);
         SquareScalarTest<uint>(2, device).Should().Be(4);
         SquareScalarTest<long>(2, device).Should().Be(4);
         SquareScalarTest<ulong>(2, device).Should().Be(4);
@@ -42,16 +42,16 @@ public class SquareShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenVector(IDevice device)
     {
-        SquareVectorTest<float>(new float[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new float[] { 1, 4, 9 });
-        SquareVectorTest<double>(new double[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new double[] { 1, 4, 9 });
-        SquareVectorTest<sbyte>(new sbyte[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new sbyte[] { 1, 4, 9 });
-        SquareVectorTest<byte>(new byte[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new byte[] { 1, 4, 9 });
-        SquareVectorTest<short>(new short[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new short[] { 1, 4, 9 });
-        SquareVectorTest<ushort>(new ushort[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new ushort[] { 1, 4, 9 });
-        SquareVectorTest<int>(new int[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new int[] { 1, 4, 9 });
-        SquareVectorTest<uint>(new uint[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new uint[] { 1, 4, 9 });
-        SquareVectorTest<long>(new long[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new long[] { 1, 4, 9 });
-        SquareVectorTest<ulong>(new ulong[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new ulong[] { 1, 4, 9 });
+        SquareVectorTest(new float[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new float[] { 1, 4, 9 });
+        SquareVectorTest(new double[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new double[] { 1, 4, 9 });
+        SquareVectorTest(new sbyte[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new sbyte[] { 1, 4, 9 });
+        SquareVectorTest(new byte[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new byte[] { 1, 4, 9 });
+        SquareVectorTest(new short[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new short[] { 1, 4, 9 });
+        SquareVectorTest(new ushort[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new ushort[] { 1, 4, 9 });
+        SquareVectorTest(new int[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new int[] { 1, 4, 9 });
+        SquareVectorTest(new uint[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new uint[] { 1, 4, 9 });
+        SquareVectorTest(new long[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new long[] { 1, 4, 9 });
+        SquareVectorTest(new ulong[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new ulong[] { 1, 4, 9 });
     }
 
     private static Array SquareVectorTest<TNumber>(TNumber[] numbers, IDevice device)
@@ -70,16 +70,16 @@ public class SquareShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenMatrix(IDevice device)
     {
-        SquareMatrixTest<float>(new float[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new float[,] { { 1, 4, 9 }, { 16, 25, 36 } });
-        SquareMatrixTest<double>(new double[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new double[,] { { 1, 4, 9 }, { 16, 25, 36 } });
-        SquareMatrixTest<sbyte>(new sbyte[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new sbyte[,] { { 1, 4, 9 }, { 16, 25, 36 } });
-        SquareMatrixTest<byte>(new byte[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new byte[,] { { 1, 4, 9 }, { 16, 25, 36 } });
-        SquareMatrixTest<short>(new short[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new short[,] { { 1, 4, 9 }, { 16, 25, 36 } });
-        SquareMatrixTest<ushort>(new ushort[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new ushort[,] { { 1, 4, 9 }, { 16, 25, 36 } });
-        SquareMatrixTest<int>(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new int[,] { { 1, 4, 9 }, { 16, 25, 36 } });
-        SquareMatrixTest<uint>(new uint[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new uint[,] { { 1, 4, 9 }, { 16, 25, 36 } });
-        SquareMatrixTest<long>(new long[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new long[,] { { 1, 4, 9 }, { 16, 25, 36 } });
-        SquareMatrixTest<ulong>(new ulong[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new ulong[,] { { 1, 4, 9 }, { 16, 25, 36 } });
+        SquareMatrixTest(new float[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new float[,] { { 1, 4, 9 }, { 16, 25, 36 } });
+        SquareMatrixTest(new double[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new double[,] { { 1, 4, 9 }, { 16, 25, 36 } });
+        SquareMatrixTest(new sbyte[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new sbyte[,] { { 1, 4, 9 }, { 16, 25, 36 } });
+        SquareMatrixTest(new byte[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new byte[,] { { 1, 4, 9 }, { 16, 25, 36 } });
+        SquareMatrixTest(new short[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new short[,] { { 1, 4, 9 }, { 16, 25, 36 } });
+        SquareMatrixTest(new ushort[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new ushort[,] { { 1, 4, 9 }, { 16, 25, 36 } });
+        SquareMatrixTest(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new int[,] { { 1, 4, 9 }, { 16, 25, 36 } });
+        SquareMatrixTest(new uint[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new uint[,] { { 1, 4, 9 }, { 16, 25, 36 } });
+        SquareMatrixTest(new long[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new long[,] { { 1, 4, 9 }, { 16, 25, 36 } });
+        SquareMatrixTest(new ulong[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new ulong[,] { { 1, 4, 9 }, { 16, 25, 36 } });
     }
 
     private static Array SquareMatrixTest<TNumber>(TNumber[,] numbers, IDevice device)
@@ -98,16 +98,16 @@ public class SquareShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenTensor(IDevice device)
     {
-        SquareTensorTest<float>(new float[,,] { { { 1, 2, 3 }, { 4, 5, 6 } } }, device).Should().BeEquivalentTo(new float[,,] { { { 1, 4, 9 }, { 16, 25, 36 } } });
-        SquareTensorTest<double>(new double[,,] { { { 1, 2, 3 }, { 4, 5, 6 } } }, device).Should().BeEquivalentTo(new double[,,] { { { 1, 4, 9 }, { 16, 25, 36 } } });
-        SquareTensorTest<sbyte>(new sbyte[,,] { { { 1, 2, 3 }, { 4, 5, 6 } } }, device).Should().BeEquivalentTo(new sbyte[,,] { { { 1, 4, 9 }, { 16, 25, 36 } } });
-        SquareTensorTest<byte>(new byte[,,] { { { 1, 2, 3 }, { 4, 5, 6 } } }, device).Should().BeEquivalentTo(new byte[,,] { { { 1, 4, 9 }, { 16, 25, 36 } } });
-        SquareTensorTest<short>(new short[,,] { { { 1, 2, 3 }, { 4, 5, 6 } } }, device).Should().BeEquivalentTo(new short[,,] { { { 1, 4, 9 }, { 16, 25, 36 } } });
-        SquareTensorTest<ushort>(new ushort[,,] { { { 1, 2, 3 }, { 4, 5, 6 } } }, device).Should().BeEquivalentTo(new ushort[,,] { { { 1, 4, 9 }, { 16, 25, 36 } } });
-        SquareTensorTest<int>(new int[,,] { { { 1, 2, 3 }, { 4, 5, 6 } } }, device).Should().BeEquivalentTo(new int[,,] { { { 1, 4, 9 }, { 16, 25, 36 } } });
-        SquareTensorTest<uint>(new uint[,,] { { { 1, 2, 3 }, { 4, 5, 6 } } }, device).Should().BeEquivalentTo(new uint[,,] { { { 1, 4, 9 }, { 16, 25, 36 } } });
-        SquareTensorTest<long>(new long[,,] { { { 1, 2, 3 }, { 4, 5, 6 } } }, device).Should().BeEquivalentTo(new long[,,] { { { 1, 4, 9 }, { 16, 25, 36 } } });
-        SquareTensorTest<ulong>(new ulong[,,] { { { 1, 2, 3 }, { 4, 5, 6 } } }, device).Should().BeEquivalentTo(new ulong[,,] { { { 1, 4, 9 }, { 16, 25, 36 } } });
+        SquareTensorTest(new float[,,] { { { 1, 2, 3 }, { 4, 5, 6 } } }, device).Should().BeEquivalentTo(new float[,,] { { { 1, 4, 9 }, { 16, 25, 36 } } });
+        SquareTensorTest(new double[,,] { { { 1, 2, 3 }, { 4, 5, 6 } } }, device).Should().BeEquivalentTo(new double[,,] { { { 1, 4, 9 }, { 16, 25, 36 } } });
+        SquareTensorTest(new sbyte[,,] { { { 1, 2, 3 }, { 4, 5, 6 } } }, device).Should().BeEquivalentTo(new sbyte[,,] { { { 1, 4, 9 }, { 16, 25, 36 } } });
+        SquareTensorTest(new byte[,,] { { { 1, 2, 3 }, { 4, 5, 6 } } }, device).Should().BeEquivalentTo(new byte[,,] { { { 1, 4, 9 }, { 16, 25, 36 } } });
+        SquareTensorTest(new short[,,] { { { 1, 2, 3 }, { 4, 5, 6 } } }, device).Should().BeEquivalentTo(new short[,,] { { { 1, 4, 9 }, { 16, 25, 36 } } });
+        SquareTensorTest(new ushort[,,] { { { 1, 2, 3 }, { 4, 5, 6 } } }, device).Should().BeEquivalentTo(new ushort[,,] { { { 1, 4, 9 }, { 16, 25, 36 } } });
+        SquareTensorTest(new int[,,] { { { 1, 2, 3 }, { 4, 5, 6 } } }, device).Should().BeEquivalentTo(new int[,,] { { { 1, 4, 9 }, { 16, 25, 36 } } });
+        SquareTensorTest(new uint[,,] { { { 1, 2, 3 }, { 4, 5, 6 } } }, device).Should().BeEquivalentTo(new uint[,,] { { { 1, 4, 9 }, { 16, 25, 36 } } });
+        SquareTensorTest(new long[,,] { { { 1, 2, 3 }, { 4, 5, 6 } } }, device).Should().BeEquivalentTo(new long[,,] { { { 1, 4, 9 }, { 16, 25, 36 } } });
+        SquareTensorTest(new ulong[,,] { { { 1, 2, 3 }, { 4, 5, 6 } } }, device).Should().BeEquivalentTo(new ulong[,,] { { { 1, 4, 9 }, { 16, 25, 36 } } });
     }
 
     private static Array SquareTensorTest<TNumber>(TNumber[,,] numbers, IDevice device)

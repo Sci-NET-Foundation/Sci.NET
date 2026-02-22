@@ -14,62 +14,62 @@ internal class ManagedExponentialKernels : IExponentialKernels
     public unsafe void Pow<TNumber>(ITensor<TNumber> value, Scalar<TNumber> power, ITensor<TNumber> result)
         where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>
     {
-        ManagedParameterizedUnaryOperation.For<PowMicroKernel<TNumber>, TNumber>(
+        ManagedUnaryOperationIterator.Apply(
             value.Memory.ToPointer(),
             result.Memory.ToPointer(),
             new PowMicroKernel<TNumber>(power.Value),
             value.Shape.ElementCount,
-            (CpuComputeDevice)value.Device);
+            (ICpuComputeDevice)value.Device);
     }
 
     public unsafe void PowBackwards<TNumber>(ITensor<TNumber> value, Scalar<TNumber> power, ITensor<TNumber> result)
         where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>
     {
-        ManagedParameterizedUnaryOperation.For<PowBackwardMicroKernel<TNumber>, TNumber>(
+        ManagedUnaryOperationIterator.Apply(
             value.Memory.ToPointer(),
             result.Memory.ToPointer(),
             new PowBackwardMicroKernel<TNumber>(power.Value),
             value.Shape.ElementCount,
-            (CpuComputeDevice)value.Device);
+            (ICpuComputeDevice)value.Device);
     }
 
     public unsafe void Square<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        ManagedUnaryOperationIterator.For<SquareMicroKernel<TNumber>, TNumber>(
+        ManagedUnaryOperationIterator.Apply<SquareMicroKernel<TNumber>, TNumber>(
             value.Memory.ToPointer(),
             result.Memory.ToPointer(),
             value.Shape.ElementCount,
-            (CpuComputeDevice)value.Device);
+            (ICpuComputeDevice)value.Device);
     }
 
     public unsafe void Exp<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
-        ManagedUnaryOperationIterator.For<ExpMicroKernel<TNumber>, TNumber>(
+        ManagedUnaryOperationIterator.Apply<ExpMicroKernel<TNumber>, TNumber>(
             value.Memory.ToPointer(),
             result.Memory.ToPointer(),
             value.Shape.ElementCount,
-            (CpuComputeDevice)value.Device);
+            (ICpuComputeDevice)value.Device);
     }
 
     public unsafe void Log<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
-        ManagedUnaryOperationIterator.For<LogMicroKernel<TNumber>, TNumber>(
+        ManagedUnaryOperationIterator.Apply<LogMicroKernel<TNumber>, TNumber>(
             value.Memory.ToPointer(),
             result.Memory.ToPointer(),
             value.Shape.ElementCount,
-            (CpuComputeDevice)value.Device);
+            (ICpuComputeDevice)value.Device);
     }
 
     public unsafe void LogBackwards<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
-        ManagedUnaryOperationIterator.For<LogBackwardMicroKernel<TNumber>, TNumber>(
+        ManagedUnaryOperationIterator.Apply<LogBackwardMicroKernel<TNumber>, TNumber>(
             value.Memory.ToPointer(),
             result.Memory.ToPointer(),
             value.Shape.ElementCount,
-            (CpuComputeDevice)value.Device);
+            (ICpuComputeDevice)value.Device);
     }
 }

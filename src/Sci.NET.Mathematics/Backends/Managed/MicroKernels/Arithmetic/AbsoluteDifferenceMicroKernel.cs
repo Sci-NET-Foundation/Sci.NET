@@ -6,26 +6,18 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
-using Sci.NET.Mathematics.Exceptions;
-using Sci.NET.Mathematics.Intrinsics;
 using Sci.NET.Mathematics.Performance;
 
 namespace Sci.NET.Mathematics.Backends.Managed.MicroKernels.Arithmetic;
 
 [SuppressMessage("Roslynator", "RCS1158:Static member in generic type should use a type parameter", Justification = "By design")]
-internal class AbsoluteDifferenceMicroKernel<TNumber> : IBinaryOperation<TNumber>, IBinaryOperationAvx, IBinaryOperationAvxFma
+internal class AbsoluteDifferenceMicroKernel<TNumber> : IBinaryOperation<TNumber>, IBinaryOperationAvx2
     where TNumber : unmanaged, INumber<TNumber>
 {
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static bool IsAvxSupported()
+    public static bool HasAvx2Implementation()
     {
-        return IntrinsicsHelper.IsAvxSupported();
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static bool IsAvxFmaSupported()
-    {
-        return false;
+        return true;
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
@@ -35,13 +27,13 @@ internal class AbsoluteDifferenceMicroKernel<TNumber> : IBinaryOperation<TNumber
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static float ApplyTailFp32(float left, float right)
+    public static float ApplyScalarFp32(float left, float right)
     {
         return MathF.Abs(left - right);
     }
 
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static double ApplyTailFp64(double left, double right)
+    public static double ApplyScalarFp64(double left, double right)
     {
         return Math.Abs(left - right);
     }
@@ -60,17 +52,5 @@ internal class AbsoluteDifferenceMicroKernel<TNumber> : IBinaryOperation<TNumber
         var difference = Avx.Subtract(left, right);
 
         return Avx.AndNot(Vector256.Create(-0.0d), difference);
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<float> ApplyAvxFmaFp32(Vector256<float> left, Vector256<float> right)
-    {
-        throw new IntrinsicTypeNotImplementedException();
-    }
-
-    [MethodImpl(ImplementationOptions.HotPath)]
-    public static Vector256<double> ApplyAvxFmaFp64(Vector256<double> left, Vector256<double> right)
-    {
-        throw new IntrinsicTypeNotImplementedException();
     }
 }
