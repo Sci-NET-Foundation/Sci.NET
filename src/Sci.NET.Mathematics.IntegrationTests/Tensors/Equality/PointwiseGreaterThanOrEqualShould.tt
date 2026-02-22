@@ -33,7 +33,7 @@ using Sci.NET.Tests.Framework.Integration;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.Equality;
 
-public class PointwiseGreaterOrEqualThanShould : IntegrationTestBase
+public class PointwiseGreaterThanOrEqualShould : IntegrationTestBase
 {
 <#
     foreach (var function in scalarTestCases)
